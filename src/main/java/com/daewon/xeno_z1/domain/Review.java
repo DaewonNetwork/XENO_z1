@@ -21,18 +21,22 @@ public class Review extends BaseEntity {
   private long reviewId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productId", referencedColumnName = "productId", unique = true)
+  @JoinColumn(name = "productId", referencedColumnName = "productId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Products products;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", referencedColumnName = "userId", unique = true)
+  @JoinColumn(name = "userId", referencedColumnName = "userId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Users users;
 
   private String text;
 
   private long star;
+
+  private Long productImage;
+  
+  private Long size;
 
   public void setReview(String text,int star) {
     this.text = text;
@@ -48,5 +52,12 @@ public class Review extends BaseEntity {
     this.users = Users.builder().userId(userId).build();
   }
 
+  public void setProductImage(Long productImage) {
+    this.productImage = productImage;
+  } 
+
+  public void setSize(Long size) {
+      this.size = size;
+  }
 
 }
