@@ -4,7 +4,7 @@ package com.daewon.xeno_z1.service;
 import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
 import com.daewon.xeno_z1.repository.*;
-import com.daewon.xeno_z1.security.ProductNotFoundException;
+import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
