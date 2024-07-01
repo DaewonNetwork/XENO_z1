@@ -1,0 +1,40 @@
+.product_slider_list {
+    display: block;
+}
+
+.product_item {
+    display: block;
+
+    .img_item {
+        display: block;
+
+        & > div {
+            border-radius: 8px;
+            height: 180px;
+        }
+    }
+
+    
+    .text_item {
+        display: block;
+        margin-top: 10px;
+
+        .product_brand {
+            display: block;
+            margin-bottom: 4px;
+        }
+    
+        .product_name {
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .product_price {
+            display: block;
+    
+            span {
+                margin-right: 4px;
+            }
+        }
+    }
+}

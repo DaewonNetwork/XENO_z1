@@ -1,0 +1,44 @@
+.header {
+    height: 60px;
+
+    .header_inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+        position: relative;
+
+        .header_logo {
+            display: block;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .header_left {
+            display: block;
+        }
+
+        .header_right {
+            display: block;
+
+            a {
+                &:first-child {
+                    margin-right: 6px;
+                }
+            }
+        }
+    }
+}
+
+.nav {
+    height: 60px;
+    
+    .nav_inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+        position: relative;
+    }
+}

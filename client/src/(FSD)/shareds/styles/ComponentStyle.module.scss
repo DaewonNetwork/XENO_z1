@@ -1,0 +1,82 @@
+$content_pad_top: 60px;
+$nav_height: 54px;
+$form_height: 58px;
+$width: 520px;
+
+@mixin content_pad_top_mixin($is_has_nav: false, $is_has_form: false) {
+    $padding_top: $content_pad_top;
+
+    @if $is_has_nav {
+        $padding_top: $padding_top + $nav_height;
+    }
+
+    @if $is_has_form {
+        $padding_top: $padding_top + $form_height;
+    }
+
+    padding-top: $padding_top;
+}
+
+.root {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    
+    .root_box {
+        position: relative;
+        width: $width;
+        height: 100%;
+
+        overflow-y: scroll;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}
+
+.container {
+    display: block;
+    height: auto;
+    width: 100%;
+    height: 100%;
+}
+
+.fixed_top_bar {
+    width: $width;
+    display: block;
+    position: fixed;
+    top: 0;
+    z-index: 999;
+}
+
+.fixed_btm_bar {
+    width: $width;
+    display: block;
+    position: fixed;
+    bottom: 0;
+    z-index: 999;
+}
+
+.section {
+    padding: 60px 0;
+}
+
+.inner {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0 12px;
+}
+
+.text_box { 
+    max-width: 100%;
+    p {
+        max-width: 100%;
+        display: inline-block;
+        text-wrap: balance;
+        word-wrap: break-word;
+    }
+}
