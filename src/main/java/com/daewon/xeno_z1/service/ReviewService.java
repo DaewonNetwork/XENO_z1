@@ -20,6 +20,6 @@ public interface ReviewService {
     ReviewDTO getReviewDetails(Long reviewId);
 
     // 리뷰 생성
-     Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
+    Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
 
 }
