@@ -1,6 +1,7 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Users;
+import com.daewon.xeno_z1.dto.auth.AuthSignupDTO;
 
 public interface AuthService {
 
@@ -12,6 +13,8 @@ public interface AuthService {
             super(msg);
         }
     }
+
+    Users signup(AuthSignupDTO authSignupDTO) throws UserEmailExistException;
 
     Users signin(final String email, final String password);
 }

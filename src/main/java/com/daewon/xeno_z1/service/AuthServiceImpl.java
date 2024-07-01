@@ -1,6 +1,8 @@
 package com.daewon.xeno_z1.service;
 
+import com.daewon.xeno_z1.domain.UserRole;
 import com.daewon.xeno_z1.domain.Users;
+import com.daewon.xeno_z1.dto.auth.AuthSignupDTO;
 import com.daewon.xeno_z1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +20,25 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public Users signup(AuthSignupDTO authSignupDTO) throws UserEmailExistException {
+        if(userRepository.existsByEmail(authSignupDTO.getEmail())) {
+            throw new UserEmailExistException();
+        }
+
+        Users users = modelMapper.map(authSignupDTO, Users.class);
+
+        users.setPassword(passwordEncoder.encode(authSignupDTO.getPassword()));
+        users.addRole(UserRole.USER);
+
+        log.info("================================");
+        log.info(users);
+        log.info(users.getRoleSet());
+
+        userRepository.save(users);
+        return users;
+    }
 
     @Override
     public Users signin(String email, String password) {

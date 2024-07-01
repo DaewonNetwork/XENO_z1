@@ -2,6 +2,7 @@ package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.auth.AuthSigninDTO;
+import com.daewon.xeno_z1.dto.auth.AuthSignupDTO;
 import com.daewon.xeno_z1.security.UsersDetailsService;
 import com.daewon.xeno_z1.service.AuthService;
 import com.daewon.xeno_z1.utils.JWTUtil;
@@ -32,6 +33,30 @@ public class AuthController {
     private final AuthService authService;
     private final UsersDetailsService usersDetailsService;
 //    private final RefreshTokenRepository refreshTokenRepository;
+
+    @GetMapping("/signup")
+    public void signupGET() {
+        log.info("join get");
+    }
+
+    @Operation(summary = "회원가입 처리", description = "회원가입 요청을 처리합니다.")
+    @PostMapping("/signup")
+    public Users signup(@RequestBody AuthSignupDTO authSignupDTO) {
+        log.info("signup post.....");
+        log.info(authSignupDTO);
+
+        try {
+            Users user = authService.signup(authSignupDTO);
+
+            log.info(user);
+
+            return user;
+        } catch (AuthService.UserEmailExistException e) {
+            log.error("Email already exists: " + authSignupDTO.getEmail(), e);
+        }
+
+        return null;
+    }
 
     @GetMapping("/signin")
     public void signinGET(String error, String logout) {
