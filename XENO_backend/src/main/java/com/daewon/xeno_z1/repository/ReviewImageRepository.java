@@ -1,8 +1,7 @@
 package com.daewon.xeno_z1.repository;
 
+import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.domain.ReviewImage;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +20,5 @@ public interface ReviewImageRepository extends JpaRepository<ReviewImage, Long>{
     @Query("SELECT rie FROM ReviewImage rie WHERE rie.review.products.productId = :productId")
     List<ReviewImage> findAllReviewImagesByProductId(@Param("productId") Long productId);
 
+    List<ReviewImage> findByReview(Review review);
 }

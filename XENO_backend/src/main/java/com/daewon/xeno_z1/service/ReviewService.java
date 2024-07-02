@@ -17,7 +17,7 @@ public interface ReviewService {
     List<ReviewImage> findAllReviewImagesByProductId(Long productId);
 
     // 리뷰 조회
-    ReviewDTO getReviewDetails(Long reviewId);
+    // ReviewDTO getReviewDetails(Long reviewId);
 
     // 리뷰 생성
     Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
