@@ -7,7 +7,7 @@ const ProductImagesSlideList = ({ productImages }: { productImages?: Uint8Array[
     const images = productImages || [];
 
     const sliderSettings = {
-        dots: true,
+        dots: false,
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,

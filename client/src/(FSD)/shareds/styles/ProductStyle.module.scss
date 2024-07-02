@@ -126,27 +126,36 @@
 /* ProductStyle.module.scss */
 
 .product_detail_slide_list {
-    width: 600px;
+    width: 520px;
     height: 640px;
-    margin: 0 auto; /* 가운데 정렬 */
+    margin: 0 auto; 
   }
   
   .slide_block {
-    width: 500px;
+    
+    width: 520px;
     height: 600px;
-    margin: 0 auto; /* 이미지를 가운데 정렬하기 위해 */
+    margin: 0 auto;
   }
   
   .image {
-    width: 100%;
+    width: 480px;
     height: 100%;
-    object-fit: cover; /* 이미지 비율 유지 */
+    object-fit: cover;
   }
   
   .image_order {
-    text-align: center;
     margin-top: 10px;
     font-size: 14px;
     color: #999;
   }
-  
+
+
+.product-rating {
+    display: flex; /* 별점과 후기 수를 가로로 정렬하기 위해 flexbox 사용 */
+    align-items: center; /* 세로 중앙 정렬 */
+}
+
+.star-rating-count {
+    margin-right: 8px; /* 별점과 후기 사이의 여백 조정 */
+}
