@@ -26,11 +26,13 @@ const ProductImagesSlideList = ({ productImages }: { productImages?: Uint8Array[
                             alt={`Product Image ${index + 1}`}
                             className={style.image}
                         />
-                        <div className={style.image_order}><strong>{index + 1}</strong> / {images.length}</div>
-
+                      
                     </div>
                 ))}
             </Slider>
+            <div className={style.image_order}>
+                <strong>{currentSlide + 1}</strong> <span style={{ margin: "0 4px" }}>/</span> {images.length}
+            </div>
         </div>
     );
 };

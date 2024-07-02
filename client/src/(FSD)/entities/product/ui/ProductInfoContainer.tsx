@@ -11,28 +11,29 @@ import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
 
 
 const ProductInfoContainer = () => {
-    // const { productId } = useParams<{ productId: string }>();
-    // const { data, isError, error, isPending, refetch } = useProductRead(Number(productId));
+    const { productId } = useParams<{ productId: string }>();
+    const { data, isError, error, isPending, refetch } = useProductRead(Number(productId));
 
-    // const product: ProductInfoType = data;
+    const product: ProductInfoType = data;
 
-    // useEffect(() => {
-    //     refetch();
-    // }, [productId]);
+    useEffect(() => {
+        refetch();
+    }, [productId]);
 
-    // // console.log("id"+productId)
-    // // console.log("data:"+data)
-    // // console.log(product)
-    // // console.log(useProductRead)
-    // // if(isError) notFound();
-    // // if(isPending) return <Loading />;
+    // console.log("id"+productId)
+    // console.log("data:"+data)
+    // console.log(product)
+    // console.log(useProductRead)
+    // if(isError) notFound();
+    // if(isPending) return <Loading />;
 
-    // if (!product) return <></>;
+    if (!product) return <></>;
 
     return (
 
         <>
-            <ProductImagesSlideList productImages={productImages} />
+            <ProductImagesSlideList productImages={product.productImages} />
+            {/* <ProductImagesSlideList productImages={productImages} /> */}
             <ProductInfo />
         </>
     );
