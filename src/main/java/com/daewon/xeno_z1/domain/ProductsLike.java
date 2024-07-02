@@ -21,7 +21,7 @@ public class ProductsLike {
   private long productLikeId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productId", referencedColumnName = "productId", unique = true)
+  @JoinColumn(name = "productId", referencedColumnName = "productId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Products products;
 
