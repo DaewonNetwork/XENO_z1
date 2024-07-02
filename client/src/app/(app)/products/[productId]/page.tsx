@@ -1,10 +1,11 @@
+import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
 import React from "react";
 
 const Page = () => {
     return (
-        <div>
-
-        </div>
+        <AppSection>
+            a
+        </AppSection>
     );
 };
 

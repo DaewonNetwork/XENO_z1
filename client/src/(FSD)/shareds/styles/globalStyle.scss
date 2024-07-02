@@ -54,13 +54,13 @@ div[data-overlay-container=true] {
 
 .slick-track {
     & > div {
-        div[class*="product_item"] {
+        div[class*="product_card"] {
             margin-left: 10px;
         }
     }
 
     & > div:first-child {
-        div[class*="product_item"] {
+        div[class*="product_card"] {
             margin-left: 0;
         }
     }

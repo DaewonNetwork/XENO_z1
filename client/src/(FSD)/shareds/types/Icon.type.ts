@@ -6,6 +6,6 @@ export interface IconType {
     "matching" | "matching_active" | "like" |
     "setting" | "pencil" | "menu" | "search" | "map" | "review" | "person" | "star" | "hospital" | "ellip" | "cart"
     ;
-    iconSize?: "small" | "medium" | "large";
+    iconSize?: "sm" | "md" | "lg";
     className?: string;
 }

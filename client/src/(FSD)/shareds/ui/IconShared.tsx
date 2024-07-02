@@ -11,7 +11,7 @@ import { IoPerson } from "react-icons/io5";
 import { GoHeartFill } from "react-icons/go";
 import { MdLocalHospital } from "react-icons/md";
 
-const IconShared = ({ iconType, iconSize = "medium", className, ...props }: IconType) => {
+const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType) => {
     let component = null;
 
     switch (iconType) {

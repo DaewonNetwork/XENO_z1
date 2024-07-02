@@ -14,14 +14,14 @@ const AppHeader = () => {
                 <AppInner>
                     <div className={styles.header_inner}>
                         <div className={styles.header_left}>
-                            <Button variant={"light"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"large"} iconType={"menu"} />} />
+                            <Button variant={"light"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"md"} iconType={"menu"} />} />
                         </div>
                         <div className={styles.header_logo}>
                             <LogoShared />
                         </div>
                         <div className={styles.header_right}>
-                            <LinkBtnShared href={"/"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"medium"} iconType={"search"} />} />
-                            <LinkBtnShared href={"/"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"medium"} iconType={"cart"} />} />
+                            <LinkBtnShared href={"/"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"md"} iconType={"search"} />} />
+                            <LinkBtnShared href={"/"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"md"} iconType={"cart"} />} />
                         </div>
                     </div>
                 </AppInner>
