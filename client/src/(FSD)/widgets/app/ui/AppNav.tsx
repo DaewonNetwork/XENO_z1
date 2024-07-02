@@ -14,23 +14,23 @@ const AppNav = () => {
             <AppContainer>
                 <AppInner>
                     <div className={styles.nav_inner}>
-                        <LinkBtnShared href={"/"}>
+                        <LinkBtnShared href={"/"} data-hover={false} disableAnimation>
                             <IconShared iconType={"menu"} />
                             <TextXSmallShared> 카테고리</TextXSmallShared>
                         </LinkBtnShared>
-                        <LinkBtnShared href={"/"}>
+                        <LinkBtnShared href={"/"} data-hover={false} disableAnimation>
                             <IconShared iconType={"review"} />
                             <TextXSmallShared>리뷰</TextXSmallShared>
                         </LinkBtnShared>
-                        <LinkBtnShared href={"/"}>
+                        <LinkBtnShared href={"/"} data-hover={false} disableAnimation>
                             <IconShared iconType={"home"} />
                             <TextXSmallShared>홈</TextXSmallShared>
                         </LinkBtnShared>
-                        <LinkBtnShared href={"/"}>
+                        <LinkBtnShared href={"/"} data-hover={false} disableAnimation>
                             <IconShared iconType={"like"} />
                             <TextXSmallShared>좋아요</TextXSmallShared>
                         </LinkBtnShared>
-                        <LinkBtnShared href={"/"}>
+                        <LinkBtnShared href={"/"} data-hover={false} disableAnimation>
                             <IconShared iconType={"person"} />
                             <TextXSmallShared>마이</TextXSmallShared>
                         </LinkBtnShared>
