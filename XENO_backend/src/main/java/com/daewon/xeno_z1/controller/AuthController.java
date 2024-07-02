@@ -59,6 +59,23 @@ public class AuthController {
         return null;
     }
 
+    @Operation(summary = "판매자 회원가입 처리", description = "판매자 회원가입 요청을 처리합니다.")
+    @PostMapping("/signup/seller")
+    public Users signupSeller(@RequestBody AuthSignupDTO authSignupDTO) {
+        log.info("seller signup post.....");
+        log.info(authSignupDTO);
+
+        try {
+            Users user = authService.signupSeller(authSignupDTO);
+            log.info(user);
+            return user;
+        } catch (AuthService.UserEmailExistException e) {
+            log.error("Email already exists: " + authSignupDTO.getEmail(), e);
+        }
+
+        return null;
+    }
+
     @GetMapping("/signin")
     public void signinGET(String error, String logout) {
         log.info("signin get..................");
