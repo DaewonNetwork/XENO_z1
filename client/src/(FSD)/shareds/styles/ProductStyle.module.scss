@@ -1,13 +1,42 @@
 .product_header {
     display: block;   
+    height: 60px;
 
     .header_inner {
-        display: block;
+        display: flex;
+        height: 100%;
+        align-items: center;
+        justify-content: space-between;
+
+        .back_btn {
+            display: block;
+        }
+
+        .left_btns {
+            display: block;
+        }
     }
 }
 
 .product_order_bar {
     display: block;
+    height: 60px;
+
+    .order_inner {
+        display: flex;
+        align-items: center;
+        height: 100%;
+
+        .order_like_btn {
+            display: block;
+            margin-right: 10px;
+        }
+
+        .order_btn {
+            display: block;
+            flex-grow: 1;
+        }
+    }
 }
 
 .product_rank_container {
@@ -84,6 +113,10 @@
 
 .like_btn {
     color: #ccc;
+
+    &.index_btn {
+        display: flex;
+    }
 
     &.active {
         color: red;
