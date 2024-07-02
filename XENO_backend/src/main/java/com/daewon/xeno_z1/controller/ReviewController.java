@@ -35,12 +35,23 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/{reviewId}")
+    @PostMapping
     public ResponseEntity<Page<ReviewDTO>> getReviews(
         @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size) {
+        @RequestParam(defaultValue = "10") int size) {  
         Page<ReviewDTO> reviews = reviewService.getReviews(page, size);
         return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/{reviewId}")
+    public ResponseEntity<ReviewDTO> getReviewDetails(@PathVariable Long reviewId) {
+        try {
+            ReviewDTO reviewDTO = reviewService.getReviewDetails(reviewId);
+            return ResponseEntity.ok(reviewDTO);
+        } catch (RuntimeException e) {
+            log.error("Error fetching review details: ", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
      @PostMapping(
@@ -57,7 +68,7 @@ public class ReviewController {
          ReviewDTO reviewDTO;
          try {
              ObjectMapper objectMapper = new ObjectMapper();
-             String decodedReviewDTO = new String(reviewDTOStr.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+             String decodedReviewDTO = new String(reviewDTOStr.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
              reviewDTO = objectMapper.readValue(decodedReviewDTO, ReviewDTO.class);
          } catch (IOException e) {
              log.error(e.getMessage());

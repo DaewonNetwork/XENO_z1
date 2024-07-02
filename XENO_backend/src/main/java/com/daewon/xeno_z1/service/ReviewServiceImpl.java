@@ -1,6 +1,7 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Products;
+import com.daewon.xeno_z1.domain.ProductsImage;
 import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.domain.ReviewImage;
 import com.daewon.xeno_z1.domain.Users;
@@ -52,22 +53,31 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     // 리뷰 조회
-    // @Override
-    // public ReviewDTO getReviewDetails(Long reviewId) {
-    //     Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("Review not found"));
-    //     ReviewDTO reviewDTO = new ReviewDTO();
-    //     reviewDTO.setReviewId(review.getReviewId());
-    //     reviewDTO.setProductId(review.getProducts().getProductId());
-    //     reviewDTO.setUserId(review.getUsers().getUserId());
-    //     reviewDTO.setText(review.getText());
-    //     reviewDTO.setStar((int) review.getStar());
-    //     reviewDTO.setReviewDate(review.getCreateAt().toString());
-    //     reviewDTO.setNickname(usersRepository.findById(review.getUsers().getUserId()).get().getName());
-    //     reviewDTO.setProductImage(productsImageRepository.findByProductId(review.getProducts().getProductId()).get(0).getFileName());
-    //     reviewDTO.setSize(review.getSize().toString());
-
-    //     return reviewDTO;
-    // }
+    @Override
+    public ReviewDTO getReviewDetails(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
+    
+        ReviewDTO dto = new ReviewDTO();
+        dto.setReviewId(review.getReviewId());
+        dto.setProductId(review.getProducts().getProductId());
+        dto.setUserId(review.getUsers().getUserId());
+        dto.setText(review.getText());
+        dto.setStar((int) review.getStar());
+        dto.setReviewDate(review.getCreateAt() != null ? review.getCreateAt().toString() : null);
+        dto.setNickname(review.getUsers().getName());
+        dto.setProductImage(productsImageRepository.findByProductId(review.getProducts().getProductId())
+                .stream().findFirst().map(ProductsImage::getFileName).orElse(null));
+        dto.setSize(review.getSize().toString());
+    
+        List<String> imageUrls = reviewImageRepository.findByReview(review)
+                .stream()
+                .map(ReviewImage::getFileName)
+                .collect(Collectors.toList());
+        dto.setImageUrls(imageUrls);
+    
+        return dto;
+    }
 
     // 리뷰 생성
     @Override
