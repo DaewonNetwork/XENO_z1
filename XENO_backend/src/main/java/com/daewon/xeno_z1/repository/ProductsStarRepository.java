@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 
-public interface ProductsStarRepository extends JpaRepository<ProductsStar, Long>{
+public interface ProductsStarRepository extends JpaRepository<ProductsStar, Long> {
 
     @Query("select p from ProductsStar p where p.products.productId=:productId")
     Optional<ProductsStar> findByProductId(Long productId);
