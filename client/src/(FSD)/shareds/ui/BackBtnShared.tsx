@@ -9,7 +9,7 @@ const BackBtnShared = () => {
     const router = useRouter();
     
     return (
-        <Button onClick={_ => router.back()} variant={"light"} isIconOnly endContent={<IconShared iconType={"left"} />} />
+        <Button size={"sm"} onClick={_ => router.back()} variant={"light"} isIconOnly endContent={<IconShared iconType={"left"} iconSize={"md"} />} />
     )
 }
 

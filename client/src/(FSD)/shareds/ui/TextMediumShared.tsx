@@ -1,8 +1,9 @@
-import React, { ReactNode } from "react";
+import React from "react";
+import type { TextType } from "../types/Text.type";
 
-const TextMediumShared = ({ children }: { children: ReactNode }) => {
+const TextMediumShared = ({ className, children }: TextType) => {
     return (
-        <p data-slot={"text_medium"} className={"text-medium"}>{children}</p>
+        <p data-slot={"text_medium"} className={`${className} text-medium`}>{children}</p>
     );
 };
 

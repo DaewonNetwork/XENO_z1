@@ -2,14 +2,12 @@ import React from "react"
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaPlus } from "react-icons/fa";
 import { RiKakaoTalkFill } from "react-icons/ri";
-import { FaChevronLeft, FaChevronRight, FaEye, FaEyeSlash, FaStar } from "react-icons/fa6";
-import { IoCloseCircle, IoPersonSharp, IoChatbubble, IoPersonCircleOutline, IoPersonCircle, IoCopy, IoChatbubbleOutline, IoCopyOutline, IoHeart, IoHeartOutline, IoSettingsSharp, IoMenu, IoSearchOutline, IoBagOutline, IoEllipsisHorizontal, IoMenuOutline } from "react-icons/io5";
-import { GoHome, GoHomeFill, GoPencil } from "react-icons/go";
+import { FaEye, FaEyeSlash, FaStar } from "react-icons/fa6";
+import { IoCloseCircle, IoSettingsSharp, IoSearchOutline, IoBagOutline, IoMenuOutline } from "react-icons/io5";
 import { IconType } from "../types/Icon.type";
-import { IoMdListBox } from "react-icons/io";
-import { IoPerson } from "react-icons/io5";
-import { GoHeartFill } from "react-icons/go";
+import { GoHeartFill, GoHeart, GoProjectRoadmap, GoHome, GoHomeFill, GoPerson  } from "react-icons/go";
 import { MdLocalHospital } from "react-icons/md";
+import { LiaAngleLeftSolid, LiaAngleRightSolid } from "react-icons/lia";
 
 const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType) => {
     let component = null;
@@ -25,10 +23,10 @@ const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType
             component = <RiKakaoTalkFill />;
             break;
         case "left":
-            component = <FaChevronLeft />;
+            component = <LiaAngleLeftSolid />;
             break;
         case "right":
-            component = <FaChevronRight />;
+            component = <LiaAngleRightSolid />;
             break;
         case "eye":
             component = <FaEye />;
@@ -43,7 +41,7 @@ const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType
             component = <FaPlus />;
             break;
         case "person":
-            component = <IoPersonSharp />;
+            component = <GoPerson />;
             break;
         case "home":
             component = <GoHome />;
@@ -51,44 +49,20 @@ const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType
         case "home_active":
             component = <GoHomeFill />;
             break;
-        case "chat":
-            component = <IoChatbubbleOutline />;
-            break;
-        case "chat_active":
-            component = <IoChatbubble />;
-            break;
-        case "profile":
-            component = <IoPersonCircleOutline />;
-            break;
-        case "profile_active":
-            component = <IoPersonCircle />;
-            break;
-        case "matching":
-            component = <IoCopyOutline />;
-            break;
-        case "matching_active":
-            component = <IoCopy />;
-            break;
         case "like":
+            component = <GoHeart />;
+            break;
+        case "like_active":
             component = <GoHeartFill />;
             break;
         case "setting":
             component = <IoSettingsSharp />;
             break;
-        case "pencil":
-            component = <GoPencil />;
-            break;
-        case "ellip":
-            component = <IoEllipsisHorizontal />;
-            break;
         case "search":
             component = <IoSearchOutline />;
             break;
         case "review":
-            component = <IoMdListBox />;
-            break;
-        case "person":
-            component = <IoPerson />;
+            component = <GoProjectRoadmap />;
             break;
         case "star":
             component = <FaStar />;
