@@ -1,40 +1,107 @@
-.product_slider_list {
+.product_rank_container {
     display: block;
+    margin-bottom: 20px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .rank_box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 }
 
-.product_item {
+.product_card_slide_list {
+    display: block;
+    margin-top: 10px;
+}
+
+
+.product_detail_slide_list {
+    width: 520px;
+    height: 640px;
+    margin: 0 auto; /* 가운데 정렬 */
+  }
+  
+  .slide_block {
+    width: 480px;
+    height: 600px;
+    margin: 0 auto; /* 이미지를 가운데 정렬하기 위해 */
+  }
+  
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지 비율 유지 */
+  }
+  
+  .image_order {
+    
+    margin-top: 10px;
+    font-size: 14px;
+    color: #999;
+  }
+
+
+
+.product_card {
     display: block;
 
-    .img_item {
+    .card_top {
         display: block;
+        height: 146px;
+        position: relative;
 
-        & > div {
-            border-radius: 8px;
-            height: 180px;
+        .product_image {
+            display: block;
+            height: 100%;
+        }
+
+        .product_rank {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 9;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product_skeleton {
+            display: block;
+            height: 100%;
+        }
+
+        .product_like_btn {
+            display: block;
+            position: absolute;
+            bottom: 0;
+            right: 0;
         }
     }
 
-    
-    .text_item {
+    .card_btm {
         display: block;
         margin-top: 10px;
 
-        .product_brand {
-            display: block;
-            margin-bottom: 4px;
-        }
-    
-        .product_name {
-            display: block;
-            margin-bottom: 4px;
-        }
-        
-        .product_price {
-            display: block;
-    
-            span {
-                margin-right: 4px;
+        p {
+            margin-bottom: 5px;
+
+            &:last-child {
+                margin-bottom: 0;
             }
         }
+    }
+}
+
+.like_btn {
+    color: #ccc;
+
+    &.active {
+        color: red;
     }
 }

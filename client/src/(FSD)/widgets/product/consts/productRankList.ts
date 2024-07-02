@@ -11,7 +11,8 @@ export const productRankList: ProductType[] = [
         productState: "판매중",
         productImage: null,
         productCategory: "상의",
-        productSubCategory: "반팔"
+        productSubCategory: "반팔",
+        isLike: true,
     },
     {
         productId: 2,
@@ -23,7 +24,8 @@ export const productRankList: ProductType[] = [
         productState: "판매중",
         productImage: null,
         productCategory: "상의",
-        productSubCategory: "긴팔"
+        productSubCategory: "긴팔",
+        isLike: false,
     },
     {
         productId: 3,
@@ -35,7 +37,8 @@ export const productRankList: ProductType[] = [
         productState: "판매중",
         productImage: null,
         productCategory: "하의",
-        productSubCategory: "청바지"
+        productSubCategory: "청바지",
+        isLike: false,
     },
     {
         productId: 4,
@@ -47,7 +50,8 @@ export const productRankList: ProductType[] = [
         productState: "판매중",
         productImage: null,
         productCategory: "하의",
-        productSubCategory: "면"
+        productSubCategory: "면",
+        isLike: false,
     },
     {
         productId: 5,
@@ -59,7 +63,8 @@ export const productRankList: ProductType[] = [
         productState: "판매중",
         productImage: null,
         productCategory: "하의",
-        productSubCategory: "나일론"
+        productSubCategory: "나일론",
+        isLike: false,
     },
     {
         productId: 6,
@@ -71,7 +76,8 @@ export const productRankList: ProductType[] = [
         productState: "판매중",
         productImage: null,
         productCategory: "아우터",
-        productSubCategory: "후드집업"
+        productSubCategory: "후드집업",
+        isLike: false,
     },
     {
         productId: 7,
@@ -83,7 +89,8 @@ export const productRankList: ProductType[] = [
         productState: "품절",
         productImage: null,
         productCategory: "아우터",
-        productSubCategory: "코트"
+        productSubCategory: "코트",
+        isLike: false,
     },
     {
         productId: 8,
@@ -95,7 +102,8 @@ export const productRankList: ProductType[] = [
         productState: "판매중",
         productImage: null,
         productCategory: "아우터",
-        productSubCategory: "바람막이"
+        productSubCategory: "바람막이",
+        isLike: false,
     },
     {
         productId: 9,
@@ -107,7 +115,8 @@ export const productRankList: ProductType[] = [
         productState: "판매중",
         productImage: null,
         productCategory: "아우터",
-        productSubCategory: "패딩"
+        productSubCategory: "패딩",
+        isLike: false,
     },
     {
         productId: 10,
@@ -119,6 +128,7 @@ export const productRankList: ProductType[] = [
         productState: "판매중",
         productImage: null,
         productCategory: "아우터",
-        productSubCategory: "자켓"
+        productSubCategory: "자켓",
+        isLike: false,
     }
 ];

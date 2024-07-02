@@ -2,7 +2,7 @@ import { FetchType } from "../types/FetchData.type";
 
 export const fetchData = async ({ path, method = "GET", contentType = "application/json", isAuthRequired = false, isNotAuthRequired = false, body }: FetchType) => {
     let response = null;
-
+    console.log("path:"+path)
     response = await fetch(`http://localhost:8090${path}`, {
         method: method,
         headers: {
@@ -10,7 +10,9 @@ export const fetchData = async ({ path, method = "GET", contentType = "applicati
         },
         body: JSON.stringify(body)
     });
-    
+
+
+   
     // const { isLoggedIn, accessToken } = useUserStore.getState();
     // if ((!isNotAuthRequired && isLoggedIn) || (isAuthRequired && isLoggedIn)) {
     //     response = await fetch(`http://localhost:8090/api${path}`, {
