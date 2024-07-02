@@ -17,6 +17,7 @@ const QueryProvider = ({ children, }: Readonly<{ children: React.ReactNode; }>) 
         })
     );
 
+
     return (
         <QueryClientProvider client={client}>
             {children}
