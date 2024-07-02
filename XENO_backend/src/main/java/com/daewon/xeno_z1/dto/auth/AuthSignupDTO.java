@@ -1,4 +1,3 @@
-
 package com.daewon.xeno_z1.dto.auth;
 
 import lombok.Data;
@@ -10,7 +9,8 @@ public class AuthSignupDTO {
     private String password;
     private String name;
     private String email;
+    private String companyId;
+    private boolean isSeller;
 
     private Date createAt;
 }
-

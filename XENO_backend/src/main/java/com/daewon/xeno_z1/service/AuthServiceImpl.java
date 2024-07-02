@@ -1,4 +1,3 @@
-
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.UserRole;
@@ -40,6 +39,27 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(users);
         return users;
     }
+    
+    // 판매자 회원가입 추가
+    @Override
+    public Users signupSeller(AuthSignupDTO authSignupDTO) throws UserEmailExistException {
+        if(userRepository.existsByEmail(authSignupDTO.getEmail())) {
+            throw new UserEmailExistException();
+        }
+    
+        Users users = modelMapper.map(authSignupDTO, Users.class);
+    
+        users.setPassword(passwordEncoder.encode(authSignupDTO.getPassword()));
+        users.addRole(UserRole.SELLER);
+        users.setCompanyId(authSignupDTO.getCompanyId());
+    
+        log.info("================================");
+        log.info(users);
+        log.info(users.getRoleSet());
+    
+        userRepository.save(users);
+        return users;
+    }
 
     @Override
     public Users signin(String email, String password) {
@@ -70,4 +90,3 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 }
-
