@@ -165,7 +165,7 @@ client
 │  │  │     ├─ TextLargeShared.tsx
 │  │  │     ├─ TextMediumShared.tsx
 │  │  │     ├─ TextSmallShared.tsx
-│  │  │     └─ TextXlargeShared.tsx
+│  │  │     └─ TextXLargeShared.tsx
 │  │  └─ widgets
 │  │     ├─ app
 │  │     │  └─ ui

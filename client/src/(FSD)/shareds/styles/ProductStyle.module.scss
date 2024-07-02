@@ -1,3 +1,44 @@
+.product_header {
+    display: block;   
+    height: 60px;
+
+    .header_inner {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        justify-content: space-between;
+
+        .back_btn {
+            display: block;
+        }
+
+        .left_btns {
+            display: block;
+        }
+    }
+}
+
+.product_order_bar {
+    display: block;
+    height: 60px;
+
+    .order_inner {
+        display: flex;
+        align-items: center;
+        height: 100%;
+
+        .order_like_btn {
+            display: block;
+            margin-right: 10px;
+        }
+
+        .order_btn {
+            display: block;
+            flex-grow: 1;
+        }
+    }
+}
+
 .product_rank_container {
     display: block;
     margin-bottom: 20px;
@@ -17,34 +58,6 @@
     display: block;
     margin-top: 10px;
 }
-
-
-.product_detail_slide_list {
-    width: 520px;
-    height: 640px;
-    margin: 0 auto; /* 가운데 정렬 */
-  }
-  
-  .slide_block {
-    width: 480px;
-    height: 600px;
-    margin: 0 auto; /* 이미지를 가운데 정렬하기 위해 */
-  }
-  
-  .image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 이미지 비율 유지 */
-  }
-  
-  .image_order {
-    
-    margin-top: 10px;
-    font-size: 14px;
-    color: #999;
-  }
-
-
 
 .product_card {
     display: block;
@@ -100,6 +113,10 @@
 
 .like_btn {
     color: #ccc;
+
+    &.index_btn {
+        display: flex;
+    }
 
     &.active {
         color: red;
