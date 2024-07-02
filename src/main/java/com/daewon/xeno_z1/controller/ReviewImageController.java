@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.daewon.xeno_z1.domain.ReviewImageEntity;
+import com.daewon.xeno_z1.domain.ReviewImage;
 import com.daewon.xeno_z1.service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,8 +30,8 @@ public class ReviewImageController {
 
     @Operation(summary = "구매자가 올린 사진의 전체 이미지")
     @GetMapping
-    public ResponseEntity<List<ReviewImageEntity>> getAllReviewImagesByProductId(@PathVariable Long productId) {
-        List<ReviewImageEntity> images = reviewService.findAllReviewImagesByProductId(productId);
+    public ResponseEntity<List<ReviewImage>> getAllReviewImagesByProductId(@PathVariable Long productId) {
+        List<ReviewImage> images = reviewService.findAllReviewImagesByProductId(productId);
         if (images.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

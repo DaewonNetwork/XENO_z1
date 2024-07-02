@@ -2,7 +2,7 @@ package com.daewon.xeno_z1.repository;
 
 
 import com.daewon.xeno_z1.domain.Review;
-import com.daewon.xeno_z1.domain.ReviewImageEntity;
+import com.daewon.xeno_z1.domain.ReviewImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

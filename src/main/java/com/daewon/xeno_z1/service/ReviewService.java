@@ -1,7 +1,7 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Review;
-import com.daewon.xeno_z1.domain.ReviewImageEntity;
+import com.daewon.xeno_z1.domain.ReviewImage;
 import com.daewon.xeno_z1.dto.ReviewDTO;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -14,7 +14,7 @@ public interface ReviewService {
     Long countReviewImagesByProductId(Long productId);
 
     // 제품의 전체 후기 사진
-    List<ReviewImageEntity> findAllReviewImagesByProductId(Long productId);
+    List<ReviewImage> findAllReviewImagesByProductId(Long productId);
 
     // 리뷰 조회
     ReviewDTO getReviewDetails(Long reviewId);

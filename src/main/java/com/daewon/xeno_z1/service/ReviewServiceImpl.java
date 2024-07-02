@@ -3,7 +3,7 @@ package com.daewon.xeno_z1.service;
 import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.domain.ProductsImage;
 import com.daewon.xeno_z1.domain.Review;
-import com.daewon.xeno_z1.domain.ReviewImageEntity;
+import com.daewon.xeno_z1.domain.ReviewImage;
 import com.daewon.xeno_z1.domain.Size;
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.ReviewDTO;
@@ -45,7 +45,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     // 제품의 전체 후기 사진
     @Override
-    public List<ReviewImageEntity> findAllReviewImagesByProductId(Long productId) {
+    public List<ReviewImage> findAllReviewImagesByProductId(Long productId) {
         return reviewImageRepository.findAllReviewImagesByProductId(productId);
     }
 
@@ -98,7 +98,7 @@ public class ReviewServiceImpl implements ReviewService {
                      image.transferTo(dest);
 
                      // ReviewImageEntity 생성 및 저장
-                     ReviewImageEntity reviewImage = ReviewImageEntity.builder()
+                     ReviewImage reviewImage = ReviewImage.builder()
                              .review(review)
                              .fileName(savedName)
                              .uuid(uuid)
