@@ -57,7 +57,6 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewDTO getReviewDetails(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
-
         ReviewDTO dto = new ReviewDTO();
         dto.setReviewId(review.getReviewId());
         dto.setProductId(review.getProducts().getProductId());
@@ -69,13 +68,11 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setProductImage(productsImageRepository.findByProductId(review.getProducts().getProductId())
                 .stream().findFirst().map(ProductsImage::getFileName).orElse(null));
         dto.setSize(review.getSize().toString());
-
         List<String> imageUrls = reviewImageRepository.findByReview(review)
                 .stream()
                 .map(ReviewImage::getFileName)
                 .collect(Collectors.toList());
         dto.setImageUrls(imageUrls);
-
         return dto;
     }
 
