@@ -3,20 +3,6 @@ $nav_height: 54px;
 $form_height: 58px;
 $width: 520px;
 
-@mixin content_pad_top_mixin($is_has_nav: false, $is_has_form: false) {
-    $padding_top: $content_pad_top;
-
-    @if $is_has_nav {
-        $padding_top: $padding_top + $nav_height;
-    }
-
-    @if $is_has_form {
-        $padding_top: $padding_top + $form_height;
-    }
-
-    padding-top: $padding_top;
-}
-
 .root {
     width: 100%;
     height: 100%;
