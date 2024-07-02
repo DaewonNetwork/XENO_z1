@@ -34,6 +34,10 @@ public class Review extends BaseEntity {
 
   private long star;
 
+  private Long productImage;
+  
+  private Long size;
+
   public void setReview(String text,int star) {
     this.text = text;
     this.star = star;
@@ -48,5 +52,12 @@ public class Review extends BaseEntity {
     this.users = Users.builder().userId(userId).build();
   }
 
+  public void setProductImage(Long productImage) {
+    this.productImage = productImage;
+  } 
+
+  public void setSize(Long size) {
+      this.size = size;
+  }
 
 }
