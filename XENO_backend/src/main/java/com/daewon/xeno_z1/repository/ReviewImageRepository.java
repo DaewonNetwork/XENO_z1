@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ReviewImageRepository extends JpaRepository<ReviewImage, Long>{
+public interface ReviewImageRepository extends JpaRepository<ReviewImage, Long> {
 
     // 제품 상세 페이지 이미지 총 갯수
     @Query("SELECT COUNT(rie) FROM ReviewImage rie WHERE rie.review.products.productId = :productId")
