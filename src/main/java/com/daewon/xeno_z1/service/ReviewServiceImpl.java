@@ -1,10 +1,8 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Products;
-import com.daewon.xeno_z1.domain.ProductsImage;
 import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.domain.ReviewImage;
-import com.daewon.xeno_z1.domain.Size;
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.ReviewDTO;
 import com.daewon.xeno_z1.repository.ProductsImageRepository;
@@ -29,10 +27,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
-    private UserRepository usersRepository;
-    private ReviewRepository reviewRepository;
-    private ReviewImageRepository reviewImageRepository;
-    private ProductsImageRepository productsImageRepository;
+    private final UserRepository usersRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewImageRepository reviewImageRepository;
+    private final ProductsImageRepository productsImageRepository;
 
      @Value("${uploadPath}")
      private String uploadPath;
@@ -89,7 +87,7 @@ public class ReviewServiceImpl implements ReviewService {
                  try {
                      // 이미지 파일 저장
                      String originalFilename = image.getOriginalFilename();
-                     String uuid = UUID.randomUUID().toString();
+                     String uuid = UUID.randomUUID().toString(); 
                      String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
                      String savedName = uuid + extension;
                      String savePath = uploadPath + File.separator + savedName;
@@ -97,7 +95,7 @@ public class ReviewServiceImpl implements ReviewService {
                      File dest = new File(savePath);
                      image.transferTo(dest);
 
-                     // ReviewImageEntity 생성 및 저장
+                     // ReviewImage 생성 및 저장
                      ReviewImage reviewImage = ReviewImage.builder()
                              .review(review)
                              .fileName(savedName)

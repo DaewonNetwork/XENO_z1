@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/api/reviews")
+@RequestMapping("/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -49,8 +49,8 @@ public class ReviewController {
      )
      @Operation(summary = "리뷰 생성")
      public ResponseEntity<?> createReview(
-         @RequestPart("reviewDTO") String reviewDTOStr,
-         @RequestPart(name = "images", required = false) List<MultipartFile> images) {
+        @RequestPart(name = "reviewDTO") String reviewDTOStr,
+        @RequestPart(name = "images", required = false) List<MultipartFile> images) {
          log.info("Review DTO String: " + reviewDTOStr);
          log.info("Images: " + images);
 

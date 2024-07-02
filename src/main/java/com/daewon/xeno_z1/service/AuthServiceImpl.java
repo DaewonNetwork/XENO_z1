@@ -39,6 +39,8 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(users);
         return users;
     }
+    
+    // 판매자 회원가입 추가
 
     @Override
     public Users signin(String email, String password) {
