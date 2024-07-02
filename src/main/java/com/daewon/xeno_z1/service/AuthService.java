@@ -16,5 +16,7 @@ public interface AuthService {
 
     Users signup(AuthSignupDTO authSignupDTO) throws UserEmailExistException;
 
+    Users signupSeller(AuthSignupDTO authSignupDTO) throws UserEmailExistException;
+
     Users signin(final String email, final String password);
 }

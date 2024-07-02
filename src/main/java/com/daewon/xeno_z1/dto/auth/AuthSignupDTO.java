@@ -9,6 +9,8 @@ public class AuthSignupDTO {
     private String password;
     private String name;
     private String email;
+    private String companyId;
+    private boolean isSeller;
 
     private Date createAt;
 }
