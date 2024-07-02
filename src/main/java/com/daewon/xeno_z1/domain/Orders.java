@@ -22,17 +22,17 @@ public class Orders extends BaseEntity {
 
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productId", referencedColumnName = "productId", unique = true)
+  @JoinColumn(name = "productId", referencedColumnName = "productId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Products products;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productImageId", referencedColumnName = "productImageId", unique = true)
+  @JoinColumn(name = "productImageId", referencedColumnName = "productImageId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private ProductsImage productsImage;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", referencedColumnName = "userId", unique = true)
+  @JoinColumn(name = "userId", referencedColumnName = "userId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Users users;
 

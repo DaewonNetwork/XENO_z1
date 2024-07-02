@@ -14,14 +14,14 @@ import org.hibernate.annotations.OnDeleteAction;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ReviewImageEntity {
+public class ReviewImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment와 같은
     private long reviewImageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reviewId", referencedColumnName = "reviewId", unique = true)
+    @JoinColumn(name = "reviewId", referencedColumnName = "reviewId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Review review;
 
