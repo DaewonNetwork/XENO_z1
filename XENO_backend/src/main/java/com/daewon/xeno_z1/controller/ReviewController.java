@@ -56,28 +56,36 @@ public class ReviewController {
         }
     }
 
-     @PostMapping(
-         consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-         produces = MediaType.APPLICATION_JSON_VALUE
-     )
-     @Operation(summary = "리뷰 생성")
-     public ResponseEntity<?> createReview(
-        @RequestPart(name = "reviewDTO") String reviewDTOStr,
-        @RequestPart(name = "images", required = false) List<MultipartFile> images) {
-         log.info("Review DTO String: " + reviewDTOStr);
-         log.info("Images: " + images);
+    @PostMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "리뷰 생성")
+    public ResponseEntity<?> createReview(
+            @RequestPart(name = "reviewDTO") String reviewDTOStr,
+            @RequestPart(name = "images", required = false) List<MultipartFile> images) {
+        log.info("Review DTO String: " + reviewDTOStr);
+        log.info("Images: " + images);
 
-         ReviewDTO reviewDTO;
-         try {
-             ObjectMapper objectMapper = new ObjectMapper();
-             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-             String decodedReviewDTO = URLDecoder.decode(reviewDTOStr, StandardCharsets.UTF_8.name());
-             reviewDTO = objectMapper.readValue(decodedReviewDTO, ReviewDTO.class);
-             log.info("Original reviewDTOStr: " + reviewDTOStr);
-             log.info("Decoded reviewDTOStr: " + decodedReviewDTO);
-         } catch (IOException e) {
-             log.error(e.getMessage());
-             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
-         }
+        ReviewDTO reviewDTO;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            String decodedReviewDTO = URLDecoder.decode(reviewDTOStr, StandardCharsets.UTF_8.name());
+            reviewDTO = objectMapper.readValue(decodedReviewDTO, ReviewDTO.class);
+            log.info("Original reviewDTOStr: " + reviewDTOStr);
+            log.info("Decoded reviewDTOStr: " + decodedReviewDTO);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
+        }
+
+        try {
+            Review createdReview = reviewService.createReview(reviewDTO, images);
+            return ResponseEntity.ok(createdReview);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request", e);
+        }
     }
 }
