@@ -1,8 +1,9 @@
-import React, { ReactNode } from "react";
+import React from "react";
+import type { TextType } from "../types/Text.type";
 
-const TextLargeShared = ({ children }: { children: ReactNode }) => {
+const TextLargeShared = ({ className, children }: TextType) => {
     return (
-        <h1 data-slot={"text_large"} className={"text-large font-medium"}>{children}</h1>
+        <h1 data-slot={"text_large"} className={`${className} text-large font-medium`}>{children}</h1>
     );
 };
 
