@@ -21,12 +21,12 @@ public class Reply extends BaseEntity {
   private long replyId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", referencedColumnName = "userId", unique = true)
+  @JoinColumn(name = "userId", referencedColumnName = "userId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Users users;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "reviewId", referencedColumnName = "reviewId", unique = true)
+  @JoinColumn(name = "reviewId", referencedColumnName = "reviewId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Review review;
 

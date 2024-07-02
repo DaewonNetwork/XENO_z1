@@ -21,12 +21,12 @@ public class LikeProducts {
   private long likeId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", referencedColumnName = "userId", unique = true)
+  @JoinColumn(name = "userId", referencedColumnName = "userId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Users users;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productLikeId", referencedColumnName = "productLikeId", unique = true)
+  @JoinColumn(name = "productLikeId", referencedColumnName = "productLikeId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private ProductsLike productsLike;
 
