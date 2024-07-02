@@ -6,6 +6,7 @@ export interface UserType {
     exp?: number;
     iat?: number;
     roles?: string[];
+    brandName?: string;
 };
 
 export interface UserAtomType {
