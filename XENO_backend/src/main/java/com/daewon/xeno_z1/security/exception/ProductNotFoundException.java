@@ -1,4 +1,4 @@
-package com.daewon.xeno_z1.security;
+package com.daewon.xeno_z1.security.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 
