@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -151,5 +153,87 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setImageUrls(imageUrls);
 
         return dto;
+    }
+
+    @Override
+    public Review updateReview(Long reviewId, ReviewDTO reviewDTO, List<MultipartFile> newImages) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
+    
+        // 리뷰 정보 업데이트
+        review.setText(reviewDTO.getText());
+        review.setStar(reviewDTO.getStar());
+        review.setSize(Long.parseLong(reviewDTO.getSize()));
+    
+        // 기존 이미지 삭제
+        List<ReviewImage> oldImages = reviewImageRepository.findByReview(review);
+        for (ReviewImage oldImage : oldImages) {
+            // 파일 시스템에서 이미지 삭제
+            String filePath = uploadPath + File.separator + oldImage.getUuid() + "_" + oldImage.getFileName();
+            try {
+                Files.deleteIfExists(Paths.get(filePath));
+            } catch (IOException e) {
+                log.error("Failed to delete old image file: " + filePath, e);
+            } catch (java.io.IOException e) {
+                throw new RuntimeException(e);
+            }
+            // 데이터베이스에서 이미지 정보 삭제
+            reviewImageRepository.delete(oldImage);
+        }
+    
+        // 새 이미지 추가
+        if (newImages != null && !newImages.isEmpty()) {
+            for (MultipartFile image : newImages) {
+                try {
+                    // 이미지 파일 저장
+                    String originalFilename = image.getOriginalFilename();
+                    String uuid = UUID.randomUUID().toString();
+                    String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                    String savedName = uuid + extension;
+                    String savePath = uploadPath + File.separator + savedName;
+    
+                    File dest = new File(savePath);
+                    image.transferTo(dest);
+    
+                    // ReviewImage 생성 및 저장
+                    ReviewImage reviewImage = ReviewImage.builder()
+                            .review(review)
+                            .fileName(savedName)
+                            .uuid(uuid)
+                            .build();
+                    reviewImageRepository.save(reviewImage);
+                } catch (IOException | java.io.IOException e) {
+                    log.error("Failed to save new image file", e);
+                    throw new RuntimeException("Failed to save new image file", e);
+                }
+            }
+        }
+    
+        // 업데이트된 리뷰 저장
+        return reviewRepository.save(review);
+    }
+
+    // 리뷰 삭제
+    @Override
+    public void deleteReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found with id : " + reviewId));
+        
+        // 리뷰와 관련된 이미지 삭제
+        List<ReviewImage> images = reviewImageRepository.findByReview(review);
+        for(ReviewImage image : images) {
+            // 파일 시스템에서 이미지 삭제
+            String filePath = uploadPath + File.separator + image.getUuid() + "_" + image.getFileName();
+            try {
+                Files.deleteIfExists(Paths.get(filePath));
+            } catch (IOException | java.io.IOException e) {
+                log.error("Failed to delete image file :" + filePath, e);
+            }
+            // DB에서 이미지 정보 삭제
+            reviewImageRepository.delete(image);
+        }
+
+        // 리뷰 삭제
+        reviewRepository.delete(review);
     }
 }
