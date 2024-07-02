@@ -3,7 +3,7 @@ export interface ProductInfoType {
   name: string;
   brandName: string;
   price: number;
-  isSale: boolean;
+  sale: boolean;
   priceSale: number;
   productsNumber: number;
   season: string;

@@ -37,6 +37,15 @@ public class ProductServiceImpl implements ProductService {
     @Value("${uploadPath}")
     private String uploadPath;
 
+    public byte[] getImage(String uuid, String fileName) throws IOException {
+        String filePath = uploadPath + uuid + "_" + fileName;
+
+        // 파일을 바이트 배열로 읽기
+        Path path = Paths.get(filePath);
+        byte[] image = Files.readAllBytes(path);
+        return image;
+    }
+
     @Override
     public ProductInfoDTO getProductInfo(Long productId) {
         log.info(productId);
@@ -74,7 +83,13 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         productInfoDTO.setProductImages(imageBytesList);
-        List<ProductsDetailImage> productDetailImages = productsDetailImageRepository.findByProductId(products.getProductId());
+
+        return productInfoDTO;
+    }
+
+    @Override
+    public List<byte[]> getProductDetailImages(Long productId) {
+        List<ProductsDetailImage> productDetailImages = productsDetailImageRepository.findByProductId(productId);
         List<byte[]> detailImageBytesList = new ArrayList<>();
         for (ProductsDetailImage productsImage : productDetailImages) {
             try {
@@ -85,22 +100,6 @@ public class ProductServiceImpl implements ProductService {
                 e.printStackTrace();
             }
         }
-        productInfoDTO.setProductDetailImages(detailImageBytesList);
-
-
-
-
-        return productInfoDTO;
-    }
-
-
-
-    public byte[] getImage(String uuid, String fileName) throws IOException {
-        String filePath = uploadPath + uuid + "_" + fileName;
-
-        // 파일을 바이트 배열로 읽기
-        Path path = Paths.get(filePath);
-        byte[] image = Files.readAllBytes(path);
-        return image;
+        return detailImageBytesList;
     }
 }

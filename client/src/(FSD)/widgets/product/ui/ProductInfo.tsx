@@ -3,30 +3,46 @@ import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 import TextSmallShared from "@/(FSD)/shareds/ui/TextSmallShared";
 import TextXLargeShared from "@/(FSD)/shareds/ui/TextXlargeShared";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss"
+import { ProductInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 
 
-const ProductInfo = () => {
+const ProductInfo = ({ product }: { product: ProductInfoType }) => {
+    const calculateDiscountPercent = (price: number, priceSale: number): number => {
+        return Math.round(((price - priceSale) / price) * 100);
+    };
+
+    const discountPercent = calculateDiscountPercent(product.price, product.priceSale);
+
     return (
         <>
-            <div className={styles.product_category}>상의 &gt; 반소매 티셔츠 (디스이즈네버댓)</div>
+            <div className={styles.product_category}>{product.category} &gt; {product.categorySub} ({product.brandName})</div>
             <div className={styles.product_name_block}>
                 <h2 className={styles.product_name}>
-                    T-Logo Tee
+                    {product.name}
                 </h2>
             </div>
             <div className={styles.product_rating}>
-                <p className={styles.product_star_avg}>4.5</p>
-                <p className={styles.product_review_count}>후기 2000개</p>
+                <p className={styles.product_star_avg}>{product.starAvg}</p>
+                <p className={styles.product_review_count}>후기 {product.reviewIndex}개</p>
             </div>
             <div className={styles.product_price_info}>
-                <div className={styles.product_sale_price_info}>
-                    <span className={styles.product_sale_price}>27,000원</span>
-                    <div className={styles.product_sale_info}>
-                        <span className={styles.product_sale_percent}>40%</span>
-                        <span className={styles.product_sale}>SALE</span>
+                {product.sale ? (
+                    <>
+                    <div className={styles.product_sale_price_info}>
+                        <span className={styles.product_sale_price}>{product.priceSale.toLocaleString()}원</span>
+                        <div className={styles.product_sale_info}>
+                            <span className={styles.product_sale_percent}>{discountPercent}%</span>
+                            <span className={styles.product_sale}>SALE</span>
+                        </div>
+                        
                     </div>
-                </div>
-                <span className={styles.product_original_price}>45,000원</span>
+                    <span className={styles.product_original_price}>{product.price.toLocaleString()}원</span>
+                    </>
+                ) : (
+                    <div className={styles.product_sale_price_info}>
+                    <span className={styles.product_sale_price}>{product.price.toLocaleString()}원</span>
+                    </div>
+                )}
             </div>
         </>
     );

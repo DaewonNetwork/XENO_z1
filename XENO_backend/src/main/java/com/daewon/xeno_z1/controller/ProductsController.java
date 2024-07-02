@@ -9,6 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 //@RestController
 @Controller
@@ -29,6 +32,13 @@ public class ProductsController {
         ProductInfoDTO productInfoDTO = productService.getProductInfo(productId);
     log.info(productId);
         return ResponseEntity.ok(productInfoDTO);
+    }
+
+    @GetMapping("/readImages")
+    public ResponseEntity<List<byte[]>> readProductDetailImages(@RequestParam Long productId) {
+        List<byte[]> productDetailImages = productService.getProductDetailImages(productId);
+        log.info(productId);
+        return ResponseEntity.ok(productDetailImages);
     }
 
 
