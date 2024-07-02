@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import styles from "@/(FSD)/shareds/styles/AuthStyle.module.scss";
 import { UserType } from "@/(FSD)/shareds/types/User.type";
-import { useAuthSignin } from "../api/useAuthSIgnin";
+import { useAuthSignin } from "../api/useAuthSignin";
 import { userState } from "@/(FSD)/shareds/stores/UserAtom";
 import { useSetRecoilState } from "recoil";
 
@@ -19,6 +19,7 @@ const AuthSigninForm = () => {
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
 
     const [userData, setUserData] = useState<UserType | null>(null);
+    
     const setUser = useSetRecoilState(userState);
 
     const schema = z.object({
@@ -42,7 +43,7 @@ const AuthSigninForm = () => {
         localStorage.setItem("refresh_token", data.refreshToken);        
         
         setUser({ user: userData });
-        
+
         router.push("/");
     }
 
