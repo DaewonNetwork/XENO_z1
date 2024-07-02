@@ -2,7 +2,6 @@
     "name": "XENO-client",
     "version": "0.1.0",
     "private": true,
-    "proxy": "http://localhost:8090",
     "scripts": {
         "dev": "next dev",
         "build": "next build",
