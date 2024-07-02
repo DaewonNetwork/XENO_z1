@@ -14,14 +14,18 @@ type PaymentFunction = (product: ProductType) => Promise<any>;
 // 실제 결제 로직을 수행하는 함수
 const performPayment: PaymentFunction = async (product) => {
     // 여기서 실제 결제 API를 호출함.
-    const res = await fetch('/api/payment', {
+    const res = await fetch("/api/payment", {
         method: 'POST',
         body: JSON.stringify(product),
     });
     if (!res.ok) {
-        throw new Error('Payment failed');
+        throw new Error("Payment failed");
     }
 }
+// fetch 함수는 즉시 Promise를 반환하고 HTTP 응답으로 해결됨.
+// await는 Promise가 해결될 때 까지 기다림
+// 응답이 도착하면 await로 인해 일시중지 되었던 함수가 다시 실행되고 응답 객체가 res 변수에 할당됨.
+
 
 // 결제 액션을 위한 커스텀 훅
 export const usePaymentAction = ({ product }: PaymentActionType) => {
