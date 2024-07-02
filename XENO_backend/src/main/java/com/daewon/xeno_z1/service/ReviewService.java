@@ -4,6 +4,8 @@ import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.domain.ReviewImage;
 import com.daewon.xeno_z1.dto.ReviewDTO;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ReviewService {
@@ -19,5 +21,8 @@ public interface ReviewService {
 
     // 리뷰 생성
     Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
+
+    // 리뷰 페이지네이션
+    Page<ReviewDTO> getReviews(int page, int size);
 
 }

@@ -66,49 +66,49 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     // 리뷰 생성
-     @Override
-     public Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images) {
-         // 리뷰 엔티티 생성
-         Review review = Review.builder()
-                 .text(reviewDTO.getText())
-                 .star(reviewDTO.getStar())
-                 .products(Products.builder().productId(reviewDTO.getProductId()).build())
-                 .users(Users.builder().userId(reviewDTO.getUserId()).build())
-                 .productImage(Long.parseLong(reviewDTO.getProductImage()))
-                 .size(Long.parseLong(reviewDTO.getSize()))
-                 .build();
+    @Override
+    public Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images) {
+        // 리뷰 엔티티 생성
+        Review review = Review.builder()
+                .text(reviewDTO.getText())
+                .star(reviewDTO.getStar())
+                .products(Products.builder().productId(reviewDTO.getProductId()).build())
+                .users(Users.builder().userId(reviewDTO.getUserId()).build())
+                .productImage(Long.parseLong(reviewDTO.getProductImage()))
+                .size(Long.parseLong(reviewDTO.getSize()))
+                .build();
 
-         // 리뷰 저장
-         review = reviewRepository.save(review);
+        // 리뷰 저장
+        review = reviewRepository.save(review);
 
-         // 이미지 처리
-         if (images != null && !images.isEmpty()) {
-             for (MultipartFile image : images) {
-                 try {
-                     // 이미지 파일 저장
-                     String originalFilename = image.getOriginalFilename();
-                     String uuid = UUID.randomUUID().toString(); 
-                     String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-                     String savedName = uuid + extension;
-                     String savePath = uploadPath + File.separator + savedName;
+        // 이미지 처리
+        if (images != null && !images.isEmpty()) {
+            for (MultipartFile image : images) {
+                try {
+                    // 이미지 파일 저장
+                    String originalFilename = image.getOriginalFilename();
+                    String uuid = UUID.randomUUID().toString(); 
+                    String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                    String savedName = uuid + extension;
+                    String savePath = uploadPath + File.separator + savedName;
                     
-                     File dest = new File(savePath);
-                     image.transferTo(dest);
+                    File dest = new File(savePath);
+                    image.transferTo(dest);
 
                      // ReviewImage 생성 및 저장
-                     ReviewImage reviewImage = ReviewImage.builder()
+                    ReviewImage reviewImage = ReviewImage.builder()
                              .review(review)
                              .fileName(savedName)
                              .uuid(uuid)
                              .build();
-                     reviewImageRepository.save(reviewImage);
-                 } catch (IOException | java.io.IOException e) {
-                     throw new RuntimeException("Failed to save image file", e);
-                 }
-             }
-         }
+                    reviewImageRepository.save(reviewImage);
+                } catch (IOException | java.io.IOException e) {
+                    throw new RuntimeException("Failed to save image file", e);
+                }
+            }
+        }
 
          return review;
-     }
+    }
 
 }

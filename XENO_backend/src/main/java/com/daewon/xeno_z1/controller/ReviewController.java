@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,13 +36,11 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/{reviewId}")
-    public ResponseEntity<ReviewDTO> getReviewDetails(@PathVariable Long reviewId) {
-        try {
-            ReviewDTO reviewDTO = reviewService.getReviewDetails(reviewId);
-            return ResponseEntity.ok(reviewDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Page<ReviewDTO>> getReviews(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+        Page<ReviewDTO> reviews = reviewService.getReviews(page, size);
+        return ResponseEntity.ok(reviews);
     }
 
      @PostMapping(
