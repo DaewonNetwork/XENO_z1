@@ -1,38 +1,42 @@
+"use client";
+
 import { Button } from "@nextui-org/button";
 import React from "react";
-import { usePaymentAction } from "../api/useProductPayment";
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk"
 
-// 버튼 컴포넌트의 props 타입 정의
-interface ProductPaymentBtnProps {
+interface ProductPaymentBtnType {
     product: ProductType;
 }
 
-// 결제 버튼 컴포넌트
-const ProductPaymentBtn = ({ product }: ProductPaymentBtnProps) => {
-    // usePaymentAction 훅을 사용하여 결제 관련 상태와 액션 가져오기
-    const { action, isSuccess, isPending, error } = usePaymentAction({ product });
+const ProductPaymentBtn = ({ product }: ProductPaymentBtnType) => {
+    const handleClick = async () => {
+        const tossPayments = await loadTossPayments("test_ck_Z1aOwX7K8m4b7av0xO6WryQxzvNP");
 
-    // 버튼 클릭 핸들러
-    const onClick = () => {
-        action();   // 결제 액션 실행
+        const payment = tossPayments.payment({ customerKey: "a8s7d8asd" });
+
+        await payment.requestPayment({
+            method: "CARD",
+            amount: {
+                currency: "KRW",
+                value: product.price
+            },
+            orderId: "q6bxUBH3NTaBGL99FGPpq",
+            orderName: product.productName,
+            customerEmail: "customer123@gmail.com",
+            customerName: "김토스",
+            customerMobilePhone: "01012341234",
+            card: {
+                useEscrow: false,
+                flowMode: "DEFAULT",
+                useCardPoint: false,
+                useAppCardOnly: false,
+            },
+        });
     };
 
     return (
-        <>
-            <Button 
-                onClick={onClick} fullWidth color="primary"
-                disabled={isPending}    // 결제 진행 중일 때는 버튼 비활성화
-            >
-                {isPending ? "처리 중" : "결제하기"}
-            </Button>
-            {isSuccess && <p>결제 완료</p>}    {/* 결제 성공 시 메시지 표시 */}
-            {error && (
-                <p style={{ color: "red" }}>
-                    결제 중 오류가 발생했습니다: {error.message}
-                </p>
-            )}
-        </>
+        <Button onClick={handleClick} fullWidth color={"primary"}>결제하기</Button>
     );
 };
 
