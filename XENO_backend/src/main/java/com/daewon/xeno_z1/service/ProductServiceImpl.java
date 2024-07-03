@@ -39,6 +39,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductsLikeRepository productsLikeRepository;
     private final ReviewRepository reviewRepository;
     private final ModelMapper modelMapper;
+    private final ProductsColorRepository productsColorRepository;
 
     @Value("${uploadPath}")
     private String uploadPath;
@@ -55,10 +56,14 @@ public class ProductServiceImpl implements ProductService {
     public ProductInfoDTO getProductInfo(Long productId) {
         log.info(productId);
 
-        Optional<Products> result = productsRepository.findById(productId);
-        Products products = result.orElseThrow(() -> new ProductNotFoundException()); // Products 객체 생성
-
+        Optional<ProductsColor> result = productsColorRepository.findById(productId);
+        ProductsColor products = result.orElseThrow(() -> new ProductNotFoundException()); // Products 객체 생성
+        List<ProductsColor> resultList = productsColorRepository.findByProductId(productId);
+        // resultList의 크기가 2개 이상인 경우 isColor를 true로 설정
         ProductInfoDTO productInfoDTO = modelMapper.map(products, ProductInfoDTO.class); // dto 매핑
+        if (resultList.size() > 1) {
+            productInfoDTO.setColor(true);
+        }
 
 
         // 별점 매긴 약국 찾기
@@ -76,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
                 reviewRepository.countByProductsProductId(productId) != 0 ? reviewRepository.countByProductsProductId(productId) : 0);
 
 
-        List<ProductsImage> productImages = productsImageRepository.findByProductId(products.getProductId());
+        List<ProductsImage> productImages = productsImageRepository.findByProductId(products.getProductColorId());
         List<byte[]> imageBytesList = new ArrayList<>();
         for (ProductsImage productsImage : productImages) {
             try {
