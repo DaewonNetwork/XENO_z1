@@ -7,7 +7,7 @@ export const useProductRead = (productId: number) => {
         queryKey: ["product_read", productId],
         queryFn: async () => {
             const response = await fetch(`http://localhost:8090/product/read?productId=${productId}`);
-            
+            console.log(response);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

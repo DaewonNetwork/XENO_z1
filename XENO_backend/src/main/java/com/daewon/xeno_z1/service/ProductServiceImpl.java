@@ -1,7 +1,9 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
+import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
+
 import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,10 @@ import lombok.extern.log4j.Log4j2;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -39,7 +45,6 @@ public class ProductServiceImpl implements ProductService {
 
     public byte[] getImage(String uuid, String fileName) throws IOException {
         String filePath = uploadPath + uuid + "_" + fileName;
-
         // 파일을 바이트 배열로 읽기
         Path path = Paths.get(filePath);
         byte[] image = Files.readAllBytes(path);
@@ -88,18 +93,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<byte[]> getProductDetailImages(Long productId) {
-        List<ProductsDetailImage> productDetailImages = productsDetailImageRepository.findByProductId(productId);
-        List<byte[]> detailImageBytesList = new ArrayList<>();
-        for (ProductsDetailImage productsImage : productDetailImages) {
+    public ProductDetailImagesDTO getProductDetailImages(Long productId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductsDetailImage> productDetailImages = productsDetailImageRepository.findByProductId(productId, pageable);
+        long count = productDetailImages.getTotalElements();
+        // ProductsDetailImage를 byte[]로 변환하여 새로운 Page 객체 생성
+        Page<byte[]> detailImageBytesPage = productDetailImages.map(productsImage -> {
             try {
                 byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
-                detailImageBytesList.add(imageData);
+                return imageData;
             } catch (IOException e) {
                 // 예외 처리
                 e.printStackTrace();
+                return null; // 예외 발생 시 null 반환
             }
-        }
-        return detailImageBytesList;
+        });
+
+        ProductDetailImagesDTO productDetailImagesDTO = new ProductDetailImagesDTO();
+        productDetailImagesDTO.setProductImages(detailImageBytesPage);
+        productDetailImagesDTO.setImagesCount(count);
+        log.info("카운트"+count);
+        log.info("카운트1"+productDetailImages);
+        return productDetailImagesDTO;
     }
+
 }

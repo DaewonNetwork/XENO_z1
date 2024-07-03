@@ -44,6 +44,7 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
                     </div>
                 )}
             </div>
+            <div className={styles.block}/>
         </>
     );
 }
