@@ -4,6 +4,8 @@ import com.daewon.xeno_z1.domain.Cart;
 import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.CartRequestDTO;
+import com.daewon.xeno_z1.exception.ProductNotFoundException;
+import com.daewon.xeno_z1.exception.UserNotFoundException;
 import com.daewon.xeno_z1.repository.CartRepository;
 import com.daewon.xeno_z1.repository.ProductsRepository;
 import com.daewon.xeno_z1.repository.UserRepository;
@@ -27,10 +29,10 @@ public class CartServiceImpl implements CartService{
 
         // 회원 정보
         Users user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new NoSuchElementException("USER_NOT_FOUND"));
+                .orElseThrow(() -> new UserNotFoundException("해당하는 유저를 찾을 수 없습니다."));
         // 상품 정보
         Products product = productsRepository.findById(productId)
-                .orElseThrow(() -> new NoSuchElementException("PRODUCT_NOT_FOUND"));
+                .orElseThrow(() -> new ProductNotFoundException("해당하는 제품을 찾을 수 없습니다."));
 
 
         Cart existingCart = cartRepository.findByProductAndUser(product, user).orElse(null);
