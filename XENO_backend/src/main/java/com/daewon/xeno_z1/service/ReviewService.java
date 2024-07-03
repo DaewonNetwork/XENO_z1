@@ -3,6 +3,8 @@ package com.daewon.xeno_z1.service;
 import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.domain.ReviewImage;
 import com.daewon.xeno_z1.dto.ReviewDTO;
+
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -17,12 +19,18 @@ public interface ReviewService {
     List<ReviewImage> findAllReviewImagesByProductId(Long productId);
 
     // 리뷰 조회
-    // ReviewDTO getReviewDetails(Long reviewId);
+    ReviewDTO getReviewDetails(Long reviewId);
 
     // 리뷰 생성
     Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
 
     // 리뷰 페이지네이션
     Page<ReviewDTO> getReviews(int page, int size);
+
+    // 리뷰 수정
+    Review updateReview(Long reviewId, ReviewDTO reviewDTO, List<MultipartFile> newImages) throws IOException;
+
+    // 리뷰 삭제
+    void deleteReview(Long reviewId);
 
 }
