@@ -12,6 +12,7 @@ import styles from "@/(FSD)/shareds/styles/AuthStyle.module.scss";
 import { UserType } from "@/(FSD)/shareds/types/User.type";
 import { useSetRecoilState } from "recoil";
 import { userState } from "@/(FSD)/shareds/stores/UserAtom";
+import { useSellerAuthSignup } from "../api/useSellerAuthSignup";
 
 const SellerAuthSignupForm = () => {
     const companyIdRegex = /^\d{3}-\d{2}-\d{5}$/;
@@ -62,6 +63,12 @@ const SellerAuthSignupForm = () => {
         router.push("/");
     }
 
+    const onError = () => {
+
+    }
+
+    const { mutate } = useSellerAuthSignup({ onSuccess, onError });
+
     const onSubmit = (data: any) => {
         if ((!data.brandName) || (!data.email) || (!data.password)) return;
 
@@ -72,6 +79,7 @@ const SellerAuthSignupForm = () => {
         };
 
         setUserData(user);
+        mutate(user);
     };
 
     return (

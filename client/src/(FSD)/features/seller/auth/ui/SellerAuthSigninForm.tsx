@@ -12,6 +12,7 @@ import styles from "@/(FSD)/shareds/styles/AuthStyle.module.scss";
 import { UserType } from "@/(FSD)/shareds/types/User.type";
 import { userState } from "@/(FSD)/shareds/stores/UserAtom";
 import { useSetRecoilState } from "recoil";
+import { useSellerAuthSignin } from "../api/useSellerAuthSignin";
 
 const SellerAuthSigninForm = () => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -39,7 +40,7 @@ const SellerAuthSigninForm = () => {
 
     const onSuccess = (data: any) => {
         localStorage.setItem("access_token", data.accessToken);
-        localStorage.setItem("refresh_token", data.refreshToken);        
+        localStorage.setItem("refresh_token", data.refreshToken);
         
         setUser({ user: userData });
 
@@ -50,6 +51,8 @@ const SellerAuthSigninForm = () => {
 
     }
 
+    const { mutate } = useSellerAuthSignin({ onSuccess, onError });
+
     const onSubmit = (data: any) => {
         if ((!data.email) || (!data.password)) return;
 
@@ -59,6 +62,7 @@ const SellerAuthSigninForm = () => {
         };
 
         setUserData(user);
+        mutate(user);
     };
 
     return (
