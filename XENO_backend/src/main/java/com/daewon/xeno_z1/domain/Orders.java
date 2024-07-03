@@ -20,11 +20,10 @@ public class Orders extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment와 같은
   private long orderId;
 
-
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productId", referencedColumnName = "productId")
+  @JoinColumn(name = "productColorSizeId", referencedColumnName = "productColorSizeId")
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private Products products;
+  private ProductsColorSize productsColorSize;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "productImageId", referencedColumnName = "productImageId")
