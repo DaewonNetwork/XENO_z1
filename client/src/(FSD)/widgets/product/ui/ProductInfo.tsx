@@ -22,6 +22,9 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
                 </h2>
             </div>
             <div className={styles.product_rating}>
+                <div className={styles.product_star_img}>
+                    
+                </div>
                 <p className={styles.product_star_avg}>{product.starAvg}</p>
                 <p className={styles.product_review_count}>후기 {product.reviewIndex}개</p>
             </div>

@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import { useProductRead } from "../api/useProductRead";
 import { ProductInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 import ProductImagesSlideList from "@/(FSD)/widgets/product/ui/ProductImagesSlideList";
-import { productImages } from "../consts/productImages";
+
 import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
 import ProductDetailImages from "./ProductDetailImages";
 
@@ -17,8 +17,6 @@ const ProductInfoContainer = () => {
     const { data, isError, error, isPending, refetch } = useProductRead(Number(productId));
 
     const product: ProductInfoType = data;
-
-  
 
     useEffect(() => {
         refetch();

@@ -18,6 +18,7 @@ const ProductDetailImages = ({ productId }: Props) => {
 
     useEffect(() => {
         refetch();
+        console.log("불러오기")
     }, [size]);
 
 
@@ -44,13 +45,13 @@ const ProductDetailImages = ({ productId }: Props) => {
         if (!isOpen) {
             setIsOpen(true); // isOpen 상태를 열린 상태로 변경
             if (!loaded) {
-                setSize(totalImagesCount); // 전체 이미지 개수로 size 상태 업데이트
-                setLoaded(true); // 이미지 추가로 로드됨을 표시
+                setSize(totalImagesCount);
+                setLoaded(true); 
             }
         } else {
-            setIsOpen(false); // isOpen 상태를 닫힌 상태로 변경
-            setSize(2); // 전체 이미지 개수로 size 상태 업데이트
-            setLoaded(false); // 이미지 추가로 로드됨을 표시
+            setIsOpen(false); 
+            setSize(2); 
+            setLoaded(false); 
         }
     };
 
@@ -73,8 +74,8 @@ const ProductDetailImages = ({ productId }: Props) => {
             ))}
         </div>
         <div className={style.product_load_more}>
-            <Button color="default" className={style.load_more_button} onClick={handleLoadMore}>
-                {isOpen ? '닫기' : '더 보기'}
+            <Button className={style.load_more_button} onClick={handleLoadMore}>
+                {isOpen ? '접기' : '더 보기'}
             </Button>
         </div>
         <div className={style.block}/>

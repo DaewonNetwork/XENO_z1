@@ -211,6 +211,13 @@
     cursor: pointer;
 }
 
+.product_star {
+    overflow: hidden;
+    display: block;
+    width: 89px;
+    height: 19px;
+    background: url(https://static.msscdn.net/skin/m_musinsa/images/icon_star_score3.png) 1px 0px / 88px 216px no-repeat;
+}
 .product_star_avg {
     margin-left: 5px;
     font-size: 14px;
