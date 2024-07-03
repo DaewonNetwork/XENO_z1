@@ -18,12 +18,16 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
             <div className={styles.product_category}>{product.category} &gt; {product.categorySub} ({product.brandName})</div>
             <div className={styles.product_name_block}>
                 <h2 className={styles.product_name}>
-                    {product.name}
+                    {product.booleanColor ? (
+                        `${product.name} (${product.color})`
+                    ) : (
+                        `${product.name}`
+                    )}
                 </h2>
             </div>
             <div className={styles.product_rating}>
                 <div className={styles.product_star_img}>
-                    
+
                 </div>
                 <p className={styles.product_star_avg}>{product.starAvg}</p>
                 <p className={styles.product_review_count}>후기 {product.reviewIndex}개</p>
@@ -31,23 +35,23 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
             <div className={styles.product_price_info}>
                 {product.sale ? (
                     <>
-                    <div className={styles.product_sale_price_info}>
-                        <span className={styles.product_sale_price}>{product.priceSale.toLocaleString()}원</span>
-                        <div className={styles.product_sale_info}>
-                            <span className={styles.product_sale_percent}>{discountPercent}%</span>
-                            <span className={styles.product_sale}>SALE</span>
+                        <div className={styles.product_sale_price_info}>
+                            <span className={styles.product_sale_price}>{product.priceSale.toLocaleString()}원</span>
+                            <div className={styles.product_sale_info}>
+                                <span className={styles.product_sale_percent}>{discountPercent}%</span>
+                                <span className={styles.product_sale}>SALE</span>
+                            </div>
+
                         </div>
-                        
-                    </div>
-                    <span className={styles.product_original_price}>{product.price.toLocaleString()}원</span>
+                        <span className={styles.product_original_price}>{product.price.toLocaleString()}원</span>
                     </>
                 ) : (
                     <div className={styles.product_sale_price_info}>
-                    <span className={styles.product_sale_price}>{product.price.toLocaleString()}원</span>
+                        <span className={styles.product_sale_price}>{product.price.toLocaleString()}원</span>
                     </div>
                 )}
             </div>
-            <div className={styles.block}/>
+            <div className={styles.block} />
         </>
     );
 }

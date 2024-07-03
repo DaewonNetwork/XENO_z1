@@ -39,7 +39,11 @@ public class ProductInfoDTO {
 
     private long reviewIndex;
 
-    private boolean isColor;
+    private boolean booleanColor;
+
+    private String color;
+
+    private List<String> colorType;
 
     private List<byte[]> productImages;
 

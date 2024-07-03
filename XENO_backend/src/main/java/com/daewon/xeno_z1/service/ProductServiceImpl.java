@@ -58,12 +58,31 @@ public class ProductServiceImpl implements ProductService {
 
         Optional<ProductsColor> result = productsColorRepository.findById(productId);
         ProductsColor products = result.orElseThrow(() -> new ProductNotFoundException()); // Products 객체 생성
-        List<ProductsColor> resultList = productsColorRepository.findByProductId(productId);
-        // resultList의 크기가 2개 이상인 경우 isColor를 true로 설정
+        List<ProductsColor> resultList = productsColorRepository.findByProductId(products.getProducts().getProductId());
+
         ProductInfoDTO productInfoDTO = modelMapper.map(products, ProductInfoDTO.class); // dto 매핑
         if (resultList.size() > 1) {
-            productInfoDTO.setColor(true);
+            productInfoDTO.setBooleanColor(true);
+            List<String> colors = new ArrayList<>();
+            for (ProductsColor productsColor : resultList) {
+                colors.add(productsColor.getColor());
+            }
+            productInfoDTO.setColorType(colors);
+        } else {
+            productInfoDTO.setBooleanColor(false); // resultList의 크기가 1 이하인 경우 false로 설정
+            // 필요한 경우 다른 로직 추가
         }
+
+        productInfoDTO.setProductId(products.getProducts().getProductId());
+        productInfoDTO.setBrandName(products.getProducts().getBrandName());
+        productInfoDTO.setName(products.getProducts().getName());
+        productInfoDTO.setCategory(products.getProducts().getCategory());
+        productInfoDTO.setCategorySub(products.getProducts().getCategorySub());
+        productInfoDTO.setPrice(products.getProducts().getPrice());
+        productInfoDTO.setPriceSale(products.getProducts().getPriceSale());
+        productInfoDTO.setProductsNumber(products.getProducts().getProductsNumber());
+        productInfoDTO.setSeason(products.getProducts().getSeason());
+        productInfoDTO.setSale(products.getProducts().isSale());
 
 
         // 별점 매긴 약국 찾기
@@ -79,8 +98,6 @@ public class ProductServiceImpl implements ProductService {
         // 약국정보의 총 리뷰 수를 Review 테이블에서 productId를 통해 Select, Count 반환, 없을경우 0
         productInfoDTO.setReviewIndex(
                 reviewRepository.countByProductsProductId(productId) != 0 ? reviewRepository.countByProductsProductId(productId) : 0);
-
-
         List<ProductsImage> productImages = productsImageRepository.findByProductId(products.getProductColorId());
         List<byte[]> imageBytesList = new ArrayList<>();
         for (ProductsImage productsImage : productImages) {
