@@ -7,19 +7,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.daewon.xeno_z1.domain.ReviewImage;
+import com.daewon.xeno_z1.dto.ReviewImageDTO;
 import com.daewon.xeno_z1.service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("api/products/{productId}/reviews")
+@RequestMapping("products/{productId}/reviews")
 public class ReviewImageController {
 
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
 
     @Operation(summary = "전체 이미지 총 갯수")
     @GetMapping("/images/count")
@@ -30,11 +32,23 @@ public class ReviewImageController {
 
     @Operation(summary = "구매자가 올린 사진의 전체 이미지")
     @GetMapping
-    public ResponseEntity<List<ReviewImage>> getAllReviewImagesByProductId(@PathVariable Long productId) {
+    public ResponseEntity<List<ReviewImageDTO>> getAllReviewImagesByProductId(@PathVariable Long productId) {
         List<ReviewImage> images = reviewService.findAllReviewImagesByProductId(productId);
         if (images.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(images);
+        List<ReviewImageDTO> imageDTOs = images.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(imageDTOs);
+    }
+
+    private ReviewImageDTO convertToDTO(ReviewImage reviewImage) {
+        return new ReviewImageDTO(
+            reviewImage.getReviewImageId(),
+            reviewImage.getUuid(),
+            reviewImage.getFileName(),
+            (int) reviewImage.getOrd()
+        );
     }
 }
