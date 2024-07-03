@@ -11,6 +11,6 @@ import java.util.Optional;
 
 public interface ProductsImageRepository extends JpaRepository<ProductsImage, Long> {
 
-    @Query("SELECT p FROM ProductsImage p WHERE p.products.productId = :productId")
+    @Query("SELECT p FROM ProductsImage p WHERE p.productsColor.productColorId = :productId")
     List<ProductsImage> findByProductId(@Param("productId") Long productId);
 }
