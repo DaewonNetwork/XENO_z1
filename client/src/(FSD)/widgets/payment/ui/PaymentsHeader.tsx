@@ -1,10 +1,16 @@
 import React from "react";
 
-const PaymentsHeader = () => {
-    return (
-        <div>
+interface PaymentsHeaderProps {
+    totalAmount: number;
+    productsCount: number;
+}
 
-        </div>
+const PaymentsHeader = ({ totalAmount, productsCount }: PaymentsHeaderProps) => {
+    
+    return (
+        <>
+
+        </>
     );
 };
 
