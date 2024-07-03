@@ -32,13 +32,13 @@ public class Review extends BaseEntity {
 
   private String text;
 
-  private long star;
+  private double star;
 
   private Long productImage;
   
   private Long size;
 
-  public void setReview(String text,int star) {
+  public void setReview(String text,double star) {
     this.text = text;
     this.star = star;
   }

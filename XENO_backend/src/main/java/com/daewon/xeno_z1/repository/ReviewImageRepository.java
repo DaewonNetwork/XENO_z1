@@ -1,5 +1,6 @@
 package com.daewon.xeno_z1.repository;
 
+import com.daewon.xeno_z1.domain.ProductsImage;
 import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.domain.ReviewImage;
 import org.springframework.data.jpa.repository.JpaRepository;
