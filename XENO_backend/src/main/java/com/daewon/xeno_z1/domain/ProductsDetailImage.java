@@ -21,9 +21,9 @@ public class ProductsDetailImage {
   private long productsDetailImageId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productId", referencedColumnName = "productId")
+  @JoinColumn(name = "productColorId", referencedColumnName = "productColorId")
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private Products products;
+  private ProductsColor productsColor;
 
   private String fileName;
 

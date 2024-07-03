@@ -27,7 +27,7 @@ public class ProductInfoDTO {
 
     private long priceSale;
 
-    private boolean isSale = false;
+    private boolean isSale;
 
     private long productsNumber;
 
@@ -39,9 +39,10 @@ public class ProductInfoDTO {
 
     private long reviewIndex;
 
+    private boolean isColor;
 
     private List<byte[]> productImages;
-    private List<byte[]> productDetailImages;
+
 
 
 

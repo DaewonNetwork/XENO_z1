@@ -21,10 +21,9 @@ public class ProductsStar {
   private long productStarId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productId", referencedColumnName = "productId")
+  @JoinColumn(name = "productColorId", referencedColumnName = "productColorId")
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private Products products;
-
+  private ProductsColor productsColor;
   private long starAvg;
 
   private long starTotal;
