@@ -1,8 +1,9 @@
 import React, { ReactNode } from "react";
+import { TextType } from "../types/Text.type";
 
-const TextXSmallShared = ({ children }: { children: ReactNode }) => {
+const TextXSmallShared = ({ className = "", children }: TextType) => {
     return (
-        <p data-slot={"text_xsmall"} className={"text-xsmall"}>{children}</p>
+        <p data-slot={"text_xsmall"} className={`${className} text-xsmall`}>{children}</p>
     );
 };
 

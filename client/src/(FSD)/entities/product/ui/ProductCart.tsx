@@ -8,8 +8,8 @@ interface ProductCartType {
 
 const ProductCart = ({} : ProductCartType) => {
     return (
-        <LinkBtnShared href={"/"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"md"} iconType={"cart"} />} />
-    )
+        <LinkBtnShared href={"/cart"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"md"} iconType={"cart"} />} />
+    );
 };
 
 export default ProductCart;
