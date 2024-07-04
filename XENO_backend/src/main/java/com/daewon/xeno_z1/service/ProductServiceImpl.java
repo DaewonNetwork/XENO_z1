@@ -21,9 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Log4j2
@@ -53,10 +51,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductInfoDTO getProductInfo(Long productId) {
-        log.info(productId);
-
-        Optional<ProductsColor> result = productsColorRepository.findById(productId);
+    public ProductInfoDTO getProductInfo(Long productColorId) {
+        log.info(productColorId);
+        
+        Optional<ProductsColor> result = productsColorRepository.findById(productColorId);
         ProductsColor products = result.orElseThrow(() -> new ProductNotFoundException()); // Products 객체 생성
         List<ProductsColor> resultList = productsColorRepository.findByProductId(products.getProducts().getProductId());
 
@@ -86,19 +84,19 @@ public class ProductServiceImpl implements ProductService {
 
 
         // 별점 매긴 약국 찾기
-        ProductsStar productsStar = productsStarRepository.findByProductId(productId).orElse(null);
+        ProductsStar productsStar = productsStarRepository.findByProductColorId(productColorId).orElse(null);
         // 결과가 null이 아니라면 그 약국의 별점 평균, null이라면 0
         productInfoDTO.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);
 
         // 즐겨찾기한 약국 찾기
-        ProductsLike productsLike = productsLikeRepository.findByProductId(productId).orElse(null);
+        ProductsLike productsLike = productsLikeRepository.findByProductColorId(productColorId).orElse(null);
         // 결과가 null이 아니라면 그 약국의 즐겨찾기 수, null이라면 0
         productInfoDTO.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
 
         // 약국정보의 총 리뷰 수를 Review 테이블에서 productId를 통해 Select, Count 반환, 없을경우 0
         productInfoDTO.setReviewIndex(
-                reviewRepository.countByProductsProductId(productId) != 0 ? reviewRepository.countByProductsProductId(productId) : 0);
-        List<ProductsImage> productImages = productsImageRepository.findByProductId(products.getProductColorId());
+                reviewRepository.countByProductsProductId(productColorId) != 0 ? reviewRepository.countByProductsProductId(productColorId) : 0);
+        List<ProductsImage> productImages = productsImageRepository.findByProductColorId(products.getProductColorId());
         List<byte[]> imageBytesList = new ArrayList<>();
         for (ProductsImage productsImage : productImages) {
             try {
@@ -115,9 +113,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDetailImagesDTO getProductDetailImages(Long productId, int page, int size) {
+    public ProductDetailImagesDTO getProductDetailImages(Long productColorId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ProductsDetailImage> productDetailImages = productsDetailImageRepository.findByProductId(productId, pageable);
+        Page<ProductsDetailImage> productDetailImages = productsDetailImageRepository.findByProductColorId(productColorId, pageable);
         long count = productDetailImages.getTotalElements();
         // ProductsDetailImage를 byte[]로 변환하여 새로운 Page 객체 생성
         Page<byte[]> detailImageBytesPage = productDetailImages.map(productsImage -> {
@@ -146,6 +144,13 @@ public class ProductServiceImpl implements ProductService {
         log.info(productsColorOptional);
 
         List<ProductsColor> productsColors = null;
+        List<ProductsImage> images = new ArrayList<>();
+
+        ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productColorId);
+
+        if (productsImage != null) {
+            images.add(productsImage);
+        }
 
         if (productsColorOptional.isPresent()) {
             Long productsId = productsColorOptional.get().getProducts().getProductId();
@@ -157,27 +162,25 @@ public class ProductServiceImpl implements ProductService {
         }
         log.info(productsColors);
 
-        List<ProductsImage> productsImages = new ArrayList<>();
-
         for (ProductsColor productsColor : productsColors) {
-            Long searchProductColorId = productsColor.getProductColorId();
-            log.info("id"+searchProductColorId);
-            // productColorId를 사용하여 첫 번째 ProductsImage 조회
-            Optional<ProductsImage> productsImageOptional = productsImageRepository.findFirstByProductColorId(searchProductColorId);
-            log.info("image"+productsImageOptional);
-            // ProductsImage가 존재할 경우 리스트에 추가
-            productsImageOptional.ifPresent(productsImages::add);
+            productColorId = productsColor.getProductColorId();
+
+            productsImage = productsImageRepository.findFirstByProductColorId(productColorId);
+            if (images.contains(productsImage)) {
+                images.add(productsImage);
+            }
         }
 
-        log.info(productsImages);
+        log.info(images);
+
 
         // 결과를 담을 리스트 초기화
         List<byte[]> imageBytesList = new ArrayList<>();
 
 // ProductsImages 리스트의 각 ProductsImage를 byte[]로 변환하여 imageBytesList에 추가
-        for (ProductsImage productsImage : productsImages) {
+        for (ProductsImage findProductsImage : images) {
             try {
-                byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
+                byte[] imageData = getImage(findProductsImage.getUuid(), findProductsImage.getFileName());
                 imageBytesList.add(imageData);
             } catch (IOException e) {
                 // IOException 발생 시 예외 처리

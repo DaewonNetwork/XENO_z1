@@ -10,6 +10,6 @@ import java.util.Optional;
 
 public interface ProductsStarRepository extends JpaRepository<ProductsStar, Long> {
 
-    @Query("select p from ProductsStar p where p.productsColor.productColorId=:productId")
-    Optional<ProductsStar> findByProductId(Long productId);
+    @Query("select p from ProductsStar p where p.productsColor.productColorId=:productColorId")
+    Optional<ProductsStar> findByProductColorId(Long productColorId);
 }

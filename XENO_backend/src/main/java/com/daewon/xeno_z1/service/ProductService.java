@@ -10,6 +10,6 @@ import org.springframework.data.domain.Page;
 public interface ProductService {
 
     ProductInfoDTO getProductInfo(Long productId);
-    ProductDetailImagesDTO getProductDetailImages(Long productId, int page, int size);
-    List<byte[]> getRelatedColorProductsImages(Long productId);
+    ProductDetailImagesDTO getProductDetailImages(Long productColorId, int page, int size);
+    List<byte[]> getRelatedColorProductsImages(Long productColorId);
 }

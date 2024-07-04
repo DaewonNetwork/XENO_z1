@@ -9,12 +9,14 @@ import ProductImagesSlideList from "@/(FSD)/widgets/product/ui/ProductImagesSlid
 
 import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
 import ProductDetailImages from "./ProductDetailImages";
+import { useProductFirstImegesRead } from "../api/useProductFirstImegesRead";
 
+interface Props {
+    productId: string;
+}
 
-
-const RelatedColorProducts = () => {
-    const { productId } = useParams<{ productId: string }>();
-    const { data, isError, error, isPending, refetch } = useProductRead(Number(productId));
+const RelatedColorProducts = ({ productId }: Props) => {
+    const { data, isError, error, isPending, refetch } = useProductFirstImegesRead(Number(productId));
 
     const product: ProductInfoType = data;
 

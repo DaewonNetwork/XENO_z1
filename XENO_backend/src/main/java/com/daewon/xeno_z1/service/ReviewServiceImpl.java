@@ -68,7 +68,7 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setStar((int) review.getStar());
         dto.setReviewDate(review.getCreateAt() != null ? review.getCreateAt().toString() : null);
         dto.setNickname(review.getUsers().getName());
-        dto.setProductImage(productsImageRepository.findByProductId(review.getProducts().getProductId())
+        dto.setProductImage(productsImageRepository.findByProductColorId(review.getProducts().getProductId())
                 .stream().findFirst().map(ProductsImage::getFileName).orElse(null));
         dto.setSize(review.getSize().toString());
 
@@ -142,7 +142,7 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setStar((int) review.getStar());
         dto.setReviewDate(review.getCreateAt().toString());
         dto.setNickname(usersRepository.findById(review.getUsers().getUserId()).get().getName());
-        dto.setProductImage(productsImageRepository.findByProductId(review.getProducts().getProductId()).get(0).getFileName());
+        dto.setProductImage(productsImageRepository.findByProductColorId(review.getProducts().getProductId()).get(0).getFileName());
         dto.setSize(review.getSize().toString());
 
         // 리뷰 이미지 URL 설정

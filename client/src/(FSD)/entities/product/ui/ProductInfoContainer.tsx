@@ -9,18 +9,19 @@ import ProductImagesSlideList from "@/(FSD)/widgets/product/ui/ProductImagesSlid
 
 import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
 import ProductDetailImages from "./ProductDetailImages";
+import RelatedColorProducts from "./RelatedColorProducts";
 
 
 
 const ProductInfoContainer = () => {
-    const { productId } = useParams<{ productId: string }>();
-    const { data, isError, error, isPending, refetch } = useProductRead(Number(productId));
+    const { productColorId } = useParams<{ productColorId: string }>();
+    const { data, isError, error, isPending, refetch } = useProductRead(Number(productColorId));
 
     const product: ProductInfoType = data;
 
     useEffect(() => {
         refetch();
-    }, [productId]);
+    }, [productColorId]);
 
     // console.log("id"+productId)
    
@@ -39,7 +40,8 @@ const ProductInfoContainer = () => {
         <>
             <ProductImagesSlideList productImages={product.productImages} />
             <ProductInfo product={product} />
-            <ProductDetailImages productId={productId}/>
+            {/* {product.booleanColor && <RelatedColorProducts productId={productId} />} */}
+            <ProductDetailImages productColorId={productColorId}/>
         </>
     );
 };

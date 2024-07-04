@@ -7,14 +7,14 @@ import ProductImageSkeleton from "@/(FSD)/shareds/ui/ProductImageSkeleton";
 import { Button } from "@nextui-org/button";
 
 interface Props {
-    productId: string;
+    productColorId: string;
 }
 
-const ProductDetailImages = ({ productId }: Props) => {
+const ProductDetailImages = ({ productColorId }: Props) => {
     const [size, setSize] = useState(2);
     const [isOpen, setIsOpen] = useState(false);
     const [loaded, setLoaded] = useState(false);
-    const { data, isError, error, isPending, refetch } = useProductDetailRead(Number(productId), size);
+    const { data, isError, error, isPending, refetch } = useProductDetailRead(Number(productColorId), size);
 
     useEffect(() => {
         refetch();

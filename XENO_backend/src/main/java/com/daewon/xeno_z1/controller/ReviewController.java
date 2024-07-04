@@ -151,7 +151,7 @@ public class ReviewController {
 
         // 사용자 이름과 제품 이미지는 서비스 계층에서 가져옵니다.
         dto.setNickname(userRepository.findById(review.getUsers().getUserId()).map(Users::getName).orElse(null));
-        dto.setProductImage(productsImageRepository.findByProductId(review.getProducts().getProductId())
+        dto.setProductImage(productsImageRepository.findByProductColorId(review.getProducts().getProductId())
                 .stream().findFirst().map(ProductsImage::getFileName).orElse(null));
 
         return dto;

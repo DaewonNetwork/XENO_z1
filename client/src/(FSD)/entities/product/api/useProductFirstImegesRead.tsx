@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 
-export const useProductRead = (productColorId: number) => {
+export const useProductFirstImegesRead = (productColorId: number) => {
     console.log("아이디:", productColorId);
     
     return useQuery({
         queryKey: ["product_read", productColorId],
         queryFn: async () => {
-            const response = await fetch(`http://localhost:8090/product/read?productColorId=${productColorId}`);
+            const response = await fetch(`http://localhost:8090/product/readFirstImages?productColorId=${productColorId}`);
             console.log(response);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
