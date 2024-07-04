@@ -11,5 +11,5 @@ public interface ProductService {
 
     ProductInfoDTO getProductInfo(Long productId);
     ProductDetailImagesDTO getProductDetailImages(Long productId, int page, int size);
-
+    List<byte[]> getRelatedColorProductsImages(Long productId);
 }

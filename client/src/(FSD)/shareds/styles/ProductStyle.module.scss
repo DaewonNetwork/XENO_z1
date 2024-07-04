@@ -212,12 +212,25 @@
 }
 
 .product_star {
+    display: inline-block;
+    width: 100px;
+    /* 별점 하나의 너비 */
+    height: 20px;
+    /* 별점 높이 */
+
+    background-size: 100px 20px;
+    /* 이미지 크기 */
     overflow: hidden;
-    display: block;
-    width: 89px;
-    height: 19px;
-    background: url(https://static.msscdn.net/skin/m_musinsa/images/icon_star_score3.png) 1px 0px / 88px 216px no-repeat;
+    /* 넘치는 부분 숨김 */
+
+    &.half-star {
+        width: 50px;
+        /* 반 별점의 너비 */
+        background-size: 50px 20px;
+        /* 반 별점 이미지 크기 */
+    }
 }
+
 .product_star_avg {
     margin-left: 5px;
     font-size: 14px;
@@ -294,43 +307,52 @@
 
 
 .product_detail_images_list {
-    max-height: inherit;
     padding: 20px 15px 10px;
     overflow: hidden;
     box-sizing: border-box;
-    
+   
+}
 
-    .image_block {
-    position: relative;
+.product_detail_images_list.collapsed {
+    max-height: 1300px; // 원하는 최대 높이로 설정
+}
+
+
+
+.product_detail_images_list.expanded {
+    max-height: inherit;
+}
+
+
+.image_block {
     margin: 0px;
     padding: 0px;
-    margin-bottom: 10px;
-    }
-    
-    .detail_image {
-    width: 450px;
-    max-height: 600px;
-    height: 100%;
-    margin: 0px auto;
-    object-fit: cover;
-    }
-    
-    .image_with_gradient {
-        /* 높이 제한을 가진 이미지 스타일 */
-        max-height: 300px; /* 최대 높이 설정 */
-    }
-    
-    .gradient_overlay {
-        /* 그라데이션 오버레이 스타일 */
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 50px; /* 원하는 그라데이션 높이 설정 */
-        background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1)); /* 투명에서 흰색으로 그라데이션 설정 */
-    }
-  
 }
+
+.detail_image {
+    max-width: 100% !important;
+    border: none;
+    line-height: 0;
+    vertical-align: top;
+}
+
+
+.gradient_overlay_block {
+    display: block;
+    position: relative;
+    padding: 0px 15px 30px;
+}
+
+.gradient_overlay {
+    display: block;
+    width: 100%;
+    height: 80px;
+    margin-top: -80px;
+    background: linear-gradient(rgba(255, 255, 255, 0), rgb(255, 255, 255));
+    content: "";
+}
+
+
 
 .product_load_more {
     display: block;

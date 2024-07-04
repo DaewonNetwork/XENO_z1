@@ -139,4 +139,59 @@ public class ProductServiceImpl implements ProductService {
         return productDetailImagesDTO;
     }
 
+    @Override
+    public List<byte[]> getRelatedColorProductsImages(Long productColorId) {
+
+        Optional<ProductsColor> productsColorOptional = productsColorRepository.findById(productColorId);
+        log.info(productsColorOptional);
+
+        List<ProductsColor> productsColors = null;
+
+        if (productsColorOptional.isPresent()) {
+            Long productsId = productsColorOptional.get().getProducts().getProductId();
+
+            productsColors = productsColorRepository.findByProductId(productsId);
+
+        } else {
+            // productsColorOptional이 비어있을 경우 처리
+        }
+        log.info(productsColors);
+
+        List<ProductsImage> productsImages = new ArrayList<>();
+
+        for (ProductsColor productsColor : productsColors) {
+            Long searchProductColorId = productsColor.getProductColorId();
+            log.info("id"+searchProductColorId);
+            // productColorId를 사용하여 첫 번째 ProductsImage 조회
+            Optional<ProductsImage> productsImageOptional = productsImageRepository.findFirstByProductColorId(searchProductColorId);
+            log.info("image"+productsImageOptional);
+            // ProductsImage가 존재할 경우 리스트에 추가
+            productsImageOptional.ifPresent(productsImages::add);
+        }
+
+        log.info(productsImages);
+
+        // 결과를 담을 리스트 초기화
+        List<byte[]> imageBytesList = new ArrayList<>();
+
+// ProductsImages 리스트의 각 ProductsImage를 byte[]로 변환하여 imageBytesList에 추가
+        for (ProductsImage productsImage : productsImages) {
+            try {
+                byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
+                imageBytesList.add(imageData);
+            } catch (IOException e) {
+                // IOException 발생 시 예외 처리
+                e.printStackTrace();
+            }
+        }
+
+        log.info(imageBytesList);
+
+        return imageBytesList;
+    }
+
+
+
+
+
 }
