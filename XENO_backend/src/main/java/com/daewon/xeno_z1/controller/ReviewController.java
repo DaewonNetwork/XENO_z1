@@ -60,13 +60,7 @@ public class ReviewController {
     @Value("${uploadPath}")
     private String uploadPath;
 
-    @GetMapping
-    public ResponseEntity<Page<ReviewDTO>> getReviews(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<ReviewDTO> reviews = reviewService.getReviews(page, size);
-        return ResponseEntity.ok(reviews);
-    }
+
 
     @Operation(summary = "리뷰 조회")
     @GetMapping("/{reviewId}")
@@ -80,6 +74,14 @@ public class ReviewController {
         }
     }
 
+
+    @GetMapping
+    public ResponseEntity<Page<ReviewDTO>> getReviews(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<ReviewDTO> reviews = reviewService.getReviews(page, size);
+        return ResponseEntity.ok(reviews);
+    }
     @PostMapping(
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
