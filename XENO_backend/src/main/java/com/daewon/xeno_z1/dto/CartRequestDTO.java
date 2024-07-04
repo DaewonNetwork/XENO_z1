@@ -11,11 +11,15 @@ import lombok.NoArgsConstructor;
 public class CartRequestDTO {
 
     private Long userId;
+    private Long productsColorsizeId;
+    private Long productsImageId;
     private Long quantity;
 
     public CartRequestDTO(Cart cart) {
         this(
                 cart.getUser().getUserId(),
+                cart.getProductsColorSize().getProductColorSizeId(),
+                cart.getProductsImage().getProductImageId(),
                 cart.getQuantity()
         );
     }

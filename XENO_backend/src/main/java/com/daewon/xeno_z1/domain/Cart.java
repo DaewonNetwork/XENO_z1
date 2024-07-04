@@ -49,6 +49,10 @@ public class Cart {
         this.price = price;
     }
 
+    public Cart(Users user, Products product, Long quantity, Long price) {
+
+    }
+
     public Cart() {
 
     }
