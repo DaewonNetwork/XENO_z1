@@ -5,8 +5,7 @@ import React from "react";
 const Page = () => {
     return (
         <AppSection>
-        
-        <CartProductList />
+            <CartProductList />
         </AppSection>
     );
 };
