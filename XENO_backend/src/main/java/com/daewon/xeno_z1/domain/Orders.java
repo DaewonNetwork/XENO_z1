@@ -17,9 +17,11 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Orders extends BaseEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment와 같은
-  private long orderId;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long orderId;
 
+  @Column(length = 64, nullable = false, unique = true)
+  private String orderPayId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "productColorSizeId", referencedColumnName = "productColorSizeId")
@@ -40,6 +42,7 @@ public class Orders extends BaseEntity {
 
   private String status;
 
+  // 고객의 요청사항
   private String req;
 
   private long count;

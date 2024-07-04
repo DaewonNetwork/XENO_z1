@@ -1,3 +1,4 @@
+
 package com.daewon.xeno_z1.domain;
 
 import jakarta.persistence.*;
@@ -30,3 +31,4 @@ public class ProductsColorSize {
 
     private long stock_xl;
 }
+
