@@ -21,7 +21,7 @@ const AppHeader = () => {
                             <LogoShared />
                         </div>
                         <div className={styles.header_right}>
-                            <LinkBtnShared href={"/"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"md"} iconType={"search"} />} />
+                            <LinkBtnShared href={"/search"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"md"} iconType={"search"} />} />
                             <ProductCart />
                         </div>
                     </div>
