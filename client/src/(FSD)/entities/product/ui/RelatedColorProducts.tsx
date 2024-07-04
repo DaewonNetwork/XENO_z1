@@ -1,45 +1,59 @@
 "use client";
 
 
-import { notFound, useParams } from "next/navigation";
-import React, { useEffect } from "react";
-import { useProductRead } from "../api/useProductRead";
-import { ProductInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
-import ProductImagesSlideList from "@/(FSD)/widgets/product/ui/ProductImagesSlideList";
 
-import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
-import ProductDetailImages from "./ProductDetailImages";
+import React, { useCallback, useEffect, useState } from "react";
+import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import { useProductFirstImegesRead } from "../api/useProductFirstImegesRead";
 
-interface Props {
-    productId: string;
+interface otherColorProps {
+    productColorImages: Uint8Array[]
+    otherProductColorId: number[]
 }
 
-const RelatedColorProducts = ({ productId }: Props) => {
-    const { data, isError, error, isPending, refetch } = useProductFirstImegesRead(Number(productId));
+const RelatedColorProducts = ({ productColorImages,otherProductColorId}:otherColorProps) => {
 
-    const product: ProductInfoType = data;
+    const [currentSlide, setCurrentSlide] = useState<number>(0);
+    const sliderSettings = {
+        dots: false,
+        speed: 500,
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        autoplay: false,
+        infinite: false,
+        afterChange: (current: number) => setCurrentSlide(current),
+    };
 
-    useEffect(() => {
-        refetch();
-    }, [productId]);
+    const images = productColorImages || [];
 
-    // console.log("id"+productId)
-   
+    const handleFirstImageClick = useCallback(() => {
+        window.location.reload(); // 현재 창을 새로 고침합니다.
+    }, []);
 
-    // console.log(useProductRead)
-    // if(isError) notFound();
-    // if(isPending) return <Loading />;
+    if (!images) return <></>;
 
-    if (!product) return <></>;
     
-    console.log(product)
-    console.log(product.sale)
 
     return (
-
         <>
-      
+            <div className={style.different_color}>
+                <div className={style.different_color_text_block}>
+                    <h4 className={style.different_color_text}>다른 색상 상품도 있어요</h4>
+                </div>
+                <div className={style.different_color_images_block}>
+                    {images.map((image, index) => (
+                        <div key={index} className={style.different_color_images} onClick={index === 0 ? handleFirstImageClick : undefined} style={{ cursor: 'pointer' }}>
+                            <img
+                                src={`data:image/jpeg;base64,${image}`}
+                                alt={`제품 이미지 ${index + 1}`}
+                            />
+                        
+                        </div>
+                    ))}
+
+                </div>
+            </div>
+            <div className={style.block} />
         </>
     );
 };

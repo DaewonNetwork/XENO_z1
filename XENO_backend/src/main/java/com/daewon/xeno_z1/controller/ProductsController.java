@@ -1,13 +1,16 @@
 package com.daewon.xeno_z1.controller;
 
+import com.daewon.xeno_z1.domain.ProductsColorSize;
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
 
+import com.daewon.xeno_z1.repository.ProductsColorSizeRepository;
 import com.daewon.xeno_z1.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,6 +30,8 @@ public class ProductsController {
 
 
     private final ProductService productService;
+    private final ProductsColorSizeRepository productsColorSizeRepository;
+    private final ConversionService conversionService;
 
 //    @PreAuthorize("hasRole('USER')")
 
@@ -62,7 +67,7 @@ public class ProductsController {
 
         try {
             List<byte[]> firstProductImages = productService.getRelatedColorProductsImages(productColorId);
-
+            log.info(firstProductImages);
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(firstProductImages);
         } catch (Exception e) {
@@ -70,10 +75,6 @@ public class ProductsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-
-
-
 
 
 }

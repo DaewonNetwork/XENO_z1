@@ -15,6 +15,8 @@ public class ProductInfoDTO {
 
     private long productId;
 
+    private long productColorId;
+
     private String brandName;
 
     private String name;
@@ -46,6 +48,8 @@ public class ProductInfoDTO {
     private List<String> colorType;
 
     private List<byte[]> productImages;
+
+    private List<ProductColorDTO> productColorImages;
 
 
 

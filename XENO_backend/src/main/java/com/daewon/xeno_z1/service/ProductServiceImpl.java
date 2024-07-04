@@ -1,6 +1,7 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
+import com.daewon.xeno_z1.dto.ProductColorDTO;
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
 
@@ -72,6 +73,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         productInfoDTO.setProductId(products.getProducts().getProductId());
+        productInfoDTO.setProductColorId(productColorId);
         productInfoDTO.setBrandName(products.getProducts().getBrandName());
         productInfoDTO.setName(products.getProducts().getName());
         productInfoDTO.setCategory(products.getProducts().getCategory());
@@ -96,6 +98,8 @@ public class ProductServiceImpl implements ProductService {
         // 약국정보의 총 리뷰 수를 Review 테이블에서 productId를 통해 Select, Count 반환, 없을경우 0
         productInfoDTO.setReviewIndex(
                 reviewRepository.countByProductsProductId(productColorId) != 0 ? reviewRepository.countByProductsProductId(productColorId) : 0);
+
+
         List<ProductsImage> productImages = productsImageRepository.findByProductColorId(products.getProductColorId());
         List<byte[]> imageBytesList = new ArrayList<>();
         for (ProductsImage productsImage : productImages) {
@@ -166,7 +170,7 @@ public class ProductServiceImpl implements ProductService {
             productColorId = productsColor.getProductColorId();
 
             productsImage = productsImageRepository.findFirstByProductColorId(productColorId);
-            if (images.contains(productsImage)) {
+            if (productsImage != null && !images.contains(productsImage)) {
                 images.add(productsImage);
             }
         }

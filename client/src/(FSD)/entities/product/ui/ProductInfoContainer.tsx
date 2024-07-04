@@ -1,47 +1,41 @@
-"use client";
+'use client'
 
-
-import { notFound, useParams } from "next/navigation";
 import React, { useEffect } from "react";
+import { useParams } from "next/navigation";
 import { useProductRead } from "../api/useProductRead";
 import { ProductInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
-import ProductImagesSlideList from "@/(FSD)/widgets/product/ui/ProductImagesSlideList";
-
 import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
-import ProductDetailImages from "./ProductDetailImages";
+import ProductImagesSlideList from "@/(FSD)/widgets/product/ui/ProductImagesSlideList";
 import RelatedColorProducts from "./RelatedColorProducts";
-
-
+import ProductDetailImages from "./ProductDetailImages";
 
 const ProductInfoContainer = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
-    const { data, isError, error, isPending, refetch } = useProductRead(Number(productColorId));
-
-    const product: ProductInfoType = data;
+    const { data: product, isError, error, isPending, refetch } = useProductRead(Number(productColorId));
 
     useEffect(() => {
         refetch();
-    }, [productColorId]);
+    }, [productColorId, refetch]);
 
-    // console.log("id"+productId)
-   
+    if (isError) {
+        // 예외 처리 로직 추가
+        return <div>에러가 발생했습니다.</div>;
+    }
 
-    // console.log(useProductRead)
-    // if(isError) notFound();
-    // if(isPending) return <Loading />;
+    if (isPending || !product) {
+        // 로딩 중이거나 데이터가 없을 때 로딩 스피너 또는 빈 화면 표시
+        return <div>Loading...</div>;
+    }
 
-    if (!product) return <></>;
-    
     console.log(product)
-    console.log(product.sale)
+
 
     return (
-
         <>
             <ProductImagesSlideList productImages={product.productImages} />
             <ProductInfo product={product} />
-            {/* {product.booleanColor && <RelatedColorProducts productId={productId} />} */}
-            <ProductDetailImages productColorId={productColorId}/>
+            <RelatedColorProducts productColorImages={product.productColorImages} />
+            <ProductDetailImages productColorId={productColorId} />
         </>
     );
 };

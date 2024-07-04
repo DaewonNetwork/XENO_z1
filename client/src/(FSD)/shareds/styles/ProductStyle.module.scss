@@ -310,7 +310,7 @@
     padding: 20px 15px 10px;
     overflow: hidden;
     box-sizing: border-box;
-   
+
 }
 
 .product_detail_images_list.collapsed {
@@ -389,4 +389,51 @@
         color: rgb(255, 255, 255);
         /* 호버 시 텍스트 색상 변경 */
     }
+}
+
+.different_color {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    width: 100%;
+    padding: 16px 0px 20px;
+    box-sizing: border-box;
+
+    .different_color_text_block {
+        align-items: center;
+        width: 100%;
+        padding: 8px 15px;
+        box-sizing: border-box;
+        text-align: center;
+
+        .different_color_text {
+            font-size: 20px;
+            line-height: 28px;
+            font-weight: 400;
+            color: rgb(0, 0, 0);
+        }
+    }
+
+    .different_color_images_block {
+        overflow: auto hidden;
+        white-space: nowrap;
+        display: flex;
+        width: 100%;
+        justify-content: center; /* 이미지를 가운데 정렬 */
+    margin-top: 20px; /* 위 여백 조정 */
+        padding: 0px 15px;
+        box-sizing: border-box;
+
+        .different_color_images {
+            display: flex;
+            justify-content: center; /* 요소들을 가운데 정렬 */
+            gap: 10px; /* 요소들 사이의 간격 설정 */
+            .different_color_images img {
+                max-width: 100%; /* 이미지의 최대 너비를 부모 요소의 너비에 맞춤 */
+                height: auto; /* 비율 유지를 위해 높이를 자동으로 설정 */
+            }
+        }
+    }
+
 }
