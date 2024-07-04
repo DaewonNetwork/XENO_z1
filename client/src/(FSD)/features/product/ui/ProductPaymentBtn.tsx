@@ -3,13 +3,21 @@
 import { Button } from "@nextui-org/button";
 import React from "react";
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
-import { loadTossPayments } from "@tosspayments/tosspayments-sdk"
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 
 interface ProductPaymentBtnType {
     product: ProductType;
 }
 
 const ProductPaymentBtn = ({ product }: ProductPaymentBtnType) => {
+    const generateRandomId = () => {
+        const length = Math.floor(Math.random() * (32 - 16 + 1)) + 16;
+        const array = new Uint8Array(length);
+        window.crypto.getRandomValues(array);
+        
+        return Array.from(array, (byte) => ("0" + byte.toString(16)).slice(-2)).join("");
+    };
+
     const handleClick = async () => {
         const tossPayments = await loadTossPayments("test_ck_Z1aOwX7K8m4b7av0xO6WryQxzvNP");
 
@@ -21,7 +29,7 @@ const ProductPaymentBtn = ({ product }: ProductPaymentBtnType) => {
                 currency: "KRW",
                 value: product.price
             },
-            orderId: "q6bxUBH3NTaBGL99FGPpq",
+            orderId: generateRandomId(),
             orderName: product.productName,
             customerEmail: "customer123@gmail.com",
             customerName: "김토스",
