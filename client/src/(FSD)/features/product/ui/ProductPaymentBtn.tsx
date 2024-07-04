@@ -25,7 +25,6 @@ const ProductPaymentBtn = ({ product }: ProductPaymentBtnType) => {
             orderName: product.productName,
             customerEmail: "customer123@gmail.com",
             customerName: "김토스",
-            customerMobilePhone: "01012341234",
             card: {
                 useEscrow: false,
                 flowMode: "DEFAULT",
