@@ -11,6 +11,8 @@ public class AuthSignupDTO {
     private String email;
     private String companyId;
     private boolean isSeller;
+    private String address;
+    private String phoneNumber;
 
     private Date createAt;
 }

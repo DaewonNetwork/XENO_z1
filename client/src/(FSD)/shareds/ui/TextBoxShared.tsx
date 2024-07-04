@@ -6,7 +6,7 @@ interface TextBoxType extends TextType {
     isBgColor?: boolean;
 };
 
-const TextBoxShared = ({ children, className, isBgColor = false }: TextBoxType) => {
+const TextBoxShared = ({ children, className = "", isBgColor = false }: TextBoxType) => {
     return (
         <div data-slot={"text_box"} className={`${className} ${isBgColor ? "bg-content3 rounded-small" : ""} ${styles.text_box}`}>
             {children}

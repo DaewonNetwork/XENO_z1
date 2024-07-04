@@ -1,13 +1,7 @@
 .header {
     height: 60px;
 
-    .header_inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 100%;
-        position: relative;
-
+    .inner {
         .header_logo {
             display: block;
             position: absolute;
@@ -31,15 +25,15 @@
     }
 }
 
+.title_header {
+    height: 60px;
+    display: block;
+}
+
 .nav {
     height: 60px;
-    .nav_inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 100%;
-        position: relative;
 
+    .inner {
         a {
             display: flex;
             flex-direction: column;
@@ -49,4 +43,12 @@
             width: 40px;
         }
     }
+}
+
+.inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    position: relative;
 }
