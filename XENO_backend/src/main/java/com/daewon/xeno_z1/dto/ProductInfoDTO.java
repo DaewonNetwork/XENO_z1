@@ -49,7 +49,7 @@ public class ProductInfoDTO {
 
     private List<byte[]> productImages;
 
-    private List<ProductColorDTO> productColorImages;
+
 
 
 

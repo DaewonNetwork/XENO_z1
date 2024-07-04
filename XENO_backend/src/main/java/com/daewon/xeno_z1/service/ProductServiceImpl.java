@@ -1,7 +1,7 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
-import com.daewon.xeno_z1.dto.ProductColorDTO;
+import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
 
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -54,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductInfoDTO getProductInfo(Long productColorId) {
         log.info(productColorId);
-        
+
         Optional<ProductsColor> result = productsColorRepository.findById(productColorId);
         ProductsColor products = result.orElseThrow(() -> new ProductNotFoundException()); // Products 객체 생성
         List<ProductsColor> resultList = productsColorRepository.findByProductId(products.getProducts().getProductId());
@@ -136,69 +135,53 @@ public class ProductServiceImpl implements ProductService {
         ProductDetailImagesDTO productDetailImagesDTO = new ProductDetailImagesDTO();
         productDetailImagesDTO.setProductImages(detailImageBytesPage);
         productDetailImagesDTO.setImagesCount(count);
-        log.info("카운트"+count);
-        log.info("카운트1"+productDetailImages);
+        log.info("카운트" + count);
+        log.info("카운트1" + productDetailImages);
         return productDetailImagesDTO;
     }
 
     @Override
-    public List<byte[]> getRelatedColorProductsImages(Long productColorId) {
+    public List<ProductOtherColorImagesDTO> getRelatedColorProductsImages(Long productColorId) throws IOException {
+        List<ProductOtherColorImagesDTO> colorImagesList = new ArrayList<>();
 
         Optional<ProductsColor> productsColorOptional = productsColorRepository.findById(productColorId);
-        log.info(productsColorOptional);
 
-        List<ProductsColor> productsColors = null;
-        List<ProductsImage> images = new ArrayList<>();
-
-        ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productColorId);
-
-        if (productsImage != null) {
-            images.add(productsImage);
+        // 현재 상품 색상 이미지 추가
+        ProductsImage currentProductsImage = productsImageRepository.findFirstByProductColorId(productColorId);
+        if (currentProductsImage != null) {
+            byte[] currentImageData = getImage(currentProductsImage.getUuid(), currentProductsImage.getFileName());
+            ProductOtherColorImagesDTO currentColorDTO = new ProductOtherColorImagesDTO();
+            currentColorDTO.setProductColorId(productColorId);
+            currentColorDTO.setProductColorImage(currentImageData);
+            colorImagesList.add(currentColorDTO);
         }
 
-        if (productsColorOptional.isPresent()) {
-            Long productsId = productsColorOptional.get().getProducts().getProductId();
-
-            productsColors = productsColorRepository.findByProductId(productsId);
-
-        } else {
-            // productsColorOptional이 비어있을 경우 처리
-        }
-        log.info(productsColors);
-
-        for (ProductsColor productsColor : productsColors) {
-            productColorId = productsColor.getProductColorId();
-
-            productsImage = productsImageRepository.findFirstByProductColorId(productColorId);
-            if (productsImage != null && !images.contains(productsImage)) {
-                images.add(productsImage);
+        // 상품의 다른 색상 이미지들 추가
+        List<ProductsColor> colors = productsColorRepository.findByProductId(productsColorOptional.get().getProducts().getProductId());
+        for (ProductsColor productsColor : colors) {
+            if (productsColor.getProductColorId() == productColorId) {
+                continue; // 현재 상품 색상은 이미 추가했으므로 건너뜁니다.
             }
-        }
 
-        log.info(images);
+            ProductOtherColorImagesDTO dto = new ProductOtherColorImagesDTO();
+            dto.setProductColorId(productsColor.getProductColorId());
 
-
-        // 결과를 담을 리스트 초기화
-        List<byte[]> imageBytesList = new ArrayList<>();
-
-// ProductsImages 리스트의 각 ProductsImage를 byte[]로 변환하여 imageBytesList에 추가
-        for (ProductsImage findProductsImage : images) {
-            try {
-                byte[] imageData = getImage(findProductsImage.getUuid(), findProductsImage.getFileName());
-                imageBytesList.add(imageData);
-            } catch (IOException e) {
-                // IOException 발생 시 예외 처리
-                e.printStackTrace();
+            ProductsImage otherProductsImage = productsImageRepository.findFirstByProductColorId(productsColor.getProductColorId());
+            if (otherProductsImage != null) {
+                byte[] otherImageData = getImage(otherProductsImage.getUuid(), otherProductsImage.getFileName());
+                dto.setProductColorImage(otherImageData);
             }
+
+            colorImagesList.add(dto);
         }
 
-        log.info(imageBytesList);
-
-        return imageBytesList;
+        return colorImagesList;
     }
 
-
-
-
-
 }
+
+
+
+
+
+

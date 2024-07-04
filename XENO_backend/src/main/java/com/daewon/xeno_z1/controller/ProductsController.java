@@ -4,6 +4,7 @@ import com.daewon.xeno_z1.domain.ProductsColorSize;
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
 
+import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
 import com.daewon.xeno_z1.repository.ProductsColorSizeRepository;
 import com.daewon.xeno_z1.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
+import java.io.IOException;
 import java.util.List;
 
 //@RestController
@@ -38,7 +40,7 @@ public class ProductsController {
 
 
     @GetMapping("/read")
-    public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productColorId) {
+    public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productColorId) throws IOException {
         ProductInfoDTO productInfoDTO = productService.getProductInfo(productColorId);
     log.info(productColorId);
         return ResponseEntity.ok(productInfoDTO);
@@ -63,11 +65,10 @@ public class ProductsController {
     }
 
     @GetMapping("/readFirstImages")
-    public ResponseEntity<List<byte[]>> readFirstProductImages(@RequestParam Long productColorId) {
+    public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
 
         try {
-            List<byte[]> firstProductImages = productService.getRelatedColorProductsImages(productColorId);
-            log.info(firstProductImages);
+            List<ProductOtherColorImagesDTO> firstProductImages = productService.getRelatedColorProductsImages(productColorId);
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(firstProductImages);
         } catch (Exception e) {

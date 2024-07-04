@@ -4,7 +4,7 @@ export const useProductFirstImegesRead = (productColorId: number) => {
     console.log("아이디:", productColorId);
     
     return useQuery({
-        queryKey: ["product_read", productColorId],
+        queryKey: ["product_first_image_read", productColorId],
         queryFn: async () => {
             const response = await fetch(`http://localhost:8090/product/readFirstImages?productColorId=${productColorId}`);
             console.log(response);
