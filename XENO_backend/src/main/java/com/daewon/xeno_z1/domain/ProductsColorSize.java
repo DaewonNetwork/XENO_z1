@@ -22,7 +22,11 @@ public class ProductsColorSize {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductsColor productsColor;
 
-    private String size;
+    private long stock_s;
 
-    private long productStock;
+    private long stock_m;
+
+    private long stock_l;
+
+    private long stock_xl;
 }
