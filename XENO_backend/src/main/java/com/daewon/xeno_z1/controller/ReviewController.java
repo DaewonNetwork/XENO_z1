@@ -202,4 +202,12 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @GetMapping("/images/{productId}")
+    @Operation(summary = "제품의 모든 리뷰 이미지 가져오기")
+    public ResponseEntity<List<byte[]>> getAllReviewImages(@PathVariable Long productId) {
+        List<byte[]> images = reviewService.getAllReviewImages(productId);
+        return ResponseEntity.ok(images);
+    }
+
 }

@@ -60,11 +60,21 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewImageRepository.countReviewImagesByProductId(productId);
     }
 
-    // 제품의 전체 후기 사진
     @Override
-    public List<ReviewImage> findAllReviewImagesByProductId(Long productId) {
-        return reviewImageRepository.findAllReviewImagesByProductId(productId);
-    }
+    public List<byte[]> getAllReviewImages(Long productId) {
+        List<ReviewImage> reviewImages = reviewImageRepository.findAllReviewImagesByProductId(productId);
+        List<byte[]> imageBytesList = new ArrayList<>();
+        for (ReviewImage reviewImage : reviewImages) {
+            try {
+                byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
+                imageBytesList.add(imageData);
+            } catch (IOException | java.io.IOException e) {
+                log.error("Error reading review image file", e);
+            }
+        }
+            return imageBytesList;
+        }
+
 
     // 리뷰 조회
     @Override
