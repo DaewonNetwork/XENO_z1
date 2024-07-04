@@ -7,6 +7,9 @@ export interface UserType {
     iat?: number;
     roles?: string[];
     brandName?: string;
+    address?: string;
+    phoneNumber?: string;
+    companyId?: string;
 };
 
 export interface UserAtomType {
