@@ -48,10 +48,13 @@ public class AuthServiceImpl implements AuthService {
         }
     
         Users users = modelMapper.map(authSignupDTO, Users.class);
-    
+        
+        users.setName(authSignupDTO.getName());  // 명시적으로 이름 설정
         users.setPassword(passwordEncoder.encode(authSignupDTO.getPassword()));
         users.addRole(UserRole.SELLER);
         users.setCompanyId(authSignupDTO.getCompanyId());
+        users.setAddress(authSignupDTO.getAddress());
+        users.setPhoneNumber(authSignupDTO.getPhoneNumber());
     
         log.info("================================");
         log.info(users);
