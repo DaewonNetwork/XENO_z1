@@ -10,7 +10,7 @@ import ProductCart from "@/(FSD)/entities/product/ui/ProductCart";
 
 const AppHeader = () => {
     return (
-        <header className={styles.header}>
+        <header className={`border-default-100 border-b-small ${styles.header}`}>
             <AppContainer>
                 <AppInner>
                     <div className={styles.inner}>

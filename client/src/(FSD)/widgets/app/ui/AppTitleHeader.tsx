@@ -14,7 +14,7 @@ interface AppTitleHeaderType {
 
 const AppTitleHeader = ({ title, right = <ProductCart /> }: AppTitleHeaderType) => {
     return (
-        <header className={styles.title_header}>
+        <header className={`border-default-100 border-b-small ${styles.title_header}`}>
             <AppContainer>
                 <AppInner>
                     <div className={styles.inner}>

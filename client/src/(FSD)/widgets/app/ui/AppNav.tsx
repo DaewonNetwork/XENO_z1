@@ -10,7 +10,7 @@ import IconShared from "@/(FSD)/shareds/ui/IconShared";
 
 const AppNav = () => {
     return (
-        <nav className={styles.nav}>
+        <nav className={`border-default-100 border-t-small ${styles.nav}`}>
             <AppContainer>
                 <AppInner>
                     <div className={styles.inner}>
