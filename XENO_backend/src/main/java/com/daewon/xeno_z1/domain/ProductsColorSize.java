@@ -28,5 +28,5 @@ public class ProductsColorSize {
 
     private long stock_l;
 
-    private long stock_xl;
+    private long stock_xl; 
 }

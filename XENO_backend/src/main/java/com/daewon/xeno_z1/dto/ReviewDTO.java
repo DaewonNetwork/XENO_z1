@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import com.daewon.xeno_z1.domain.ProductsColor;
+import com.daewon.xeno_z1.domain.ProductsColorSize;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +17,11 @@ import java.util.List;
 public class ReviewDTO {
     private long reviewId; // 리뷰
 
-    private long productId; // 리뷰가 작성된 제품
+    private long productId; // 상품 테이블의 외래 키로, 어떤 상품인지를 나타냅니다.
+
+    private String productName;
+
+    // private Long productColorId; // 상품 색상 테이블의 외래 키로, 리뷰가 참조하는 상품의 색상을 나타냅니다.
 
     private long userId; // 리뷰를 작성한 사용자
 
@@ -24,10 +31,15 @@ public class ReviewDTO {
 
     private String reviewDate; // 리뷰 작성 날짜
 
-    private String nickname; // 리뷰 작성자 닉네임
+    private String name; // 리뷰 작성자 닉네임
 
-    private String size; // 구매한 제품의 사이즈
+    private String size;
 
     private List<byte[]> productImages;
     private List<byte[]> reviewDetailImages;
+
+    // ProductsColor 관련 필드
+    private Long productColorId;
+    // ProductsColorSize 관련 필드
+    private Long productColorSizeId;
 }
