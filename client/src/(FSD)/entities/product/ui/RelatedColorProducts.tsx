@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import { useProductFirstImegesRead } from "../api/useProductFirstImegesRead";
 import { useParams } from "next/navigation";
@@ -19,15 +19,17 @@ const RelatedColorProducts = () => {
 
     const [currentSlide, setCurrentSlide] = useState<number>(0);
     const sliderSettings = {
-        dots: false,
+        dots: true,
         speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
+        slidesToShow: 2,
+        slidesToScroll: 2,
         autoplay: false,
         infinite: false,
         afterChange: (current: number) => setCurrentSlide(current),
     };
-    const shouldEnableSlider = productImages.length >= 3;
+    const totalImages = useMemo(() => productImages.filter(p => p.productColorImage).length, [productImages]);
+    const shouldEnableSlider = totalImages >= 3;
+
 
     return (
         <>

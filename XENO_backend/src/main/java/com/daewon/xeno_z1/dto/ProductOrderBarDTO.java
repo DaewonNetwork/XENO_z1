@@ -5,14 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductOtherColorImagesDTO {
+public class ProductOrderBarDTO {
 
-    private long productColorId;
 
-    private byte[] productColorImage;
+    private boolean isLike;
+    private long likeIndex;
+    private List<ProductStockDTO> stock;
 
 }

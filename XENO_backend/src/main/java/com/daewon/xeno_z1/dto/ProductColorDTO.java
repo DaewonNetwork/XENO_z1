@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductOtherColorImagesDTO {
-
+public class ProductColorDTO {
     private long productColorId;
 
-    private byte[] productColorImage;
-
+    private String color;
 }

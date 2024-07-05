@@ -4,6 +4,7 @@ import com.daewon.xeno_z1.domain.ProductsColorSize;
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
 
+import com.daewon.xeno_z1.dto.ProductOrderBarDTO;
 import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
 import com.daewon.xeno_z1.repository.ProductsColorSizeRepository;
 import com.daewon.xeno_z1.service.ProductService;
@@ -76,6 +77,21 @@ public class ProductsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/readOrderBar")
+    public ResponseEntity<ProductOrderBarDTO> readOrderBar(@RequestParam Long productColorId) {
+
+        try {
+            ProductOrderBarDTO orderBar = productService.getProductOrderBar(productColorId);
+            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
+            return ResponseEntity.ok(orderBar);
+        } catch (Exception e) {
+            // 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 
 
 }

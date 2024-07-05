@@ -27,7 +27,6 @@ public class ProductsColorSize {
     private ProductsColor productsColor;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "size")
     private Size size;
 
 

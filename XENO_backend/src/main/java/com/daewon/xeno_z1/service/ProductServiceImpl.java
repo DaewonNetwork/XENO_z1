@@ -1,9 +1,7 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
-import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
-import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
-import com.daewon.xeno_z1.dto.ProductInfoDTO;
+import com.daewon.xeno_z1.dto.*;
 
 import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
@@ -12,9 +10,12 @@ import lombok.extern.log4j.Log4j2;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -38,6 +39,8 @@ public class ProductServiceImpl implements ProductService {
     private final ReviewRepository reviewRepository;
     private final ModelMapper modelMapper;
     private final ProductsColorRepository productsColorRepository;
+    private final ProductsColorSizeRepository productsColorSizeRepository;
+    private final ProductsStockRepository productsStockRepository;
 
     @Value("${uploadPath}")
     private String uploadPath;
@@ -90,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
         productInfoDTO.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);
 
         // 즐겨찾기한 약국 찾기
-        ProductsLike productsLike = productsLikeRepository.findByProductColorId(productColorId).orElse(null);
+        ProductsLike productsLike = productsLikeRepository.findByProductColorId(productColorId);
         // 결과가 null이 아니라면 그 약국의 즐겨찾기 수, null이라면 0
         productInfoDTO.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
 
@@ -170,14 +173,83 @@ public class ProductServiceImpl implements ProductService {
             if (otherProductsImage != null) {
                 byte[] otherImageData = getImage(otherProductsImage.getUuid(), otherProductsImage.getFileName());
                 dto.setProductColorImage(otherImageData);
-            }
+            } 
 
             colorImagesList.add(dto);
         }
 
+
+        
+
         return colorImagesList;
     }
 
+    @Override
+    public ProductOrderBarDTO getProductOrderBar(Long productColorId) {
+        ProductOrderBarDTO dto = new ProductOrderBarDTO();
+        log.info("Initial DTO: " + dto);
+        List<ProductStockDTO> productsStockDTO = new ArrayList<>();
+
+        try {
+
+            // 상품 좋아요 수 가져오기
+            ProductsLike productsLike = productsLikeRepository.findByProductColorId(productColorId);
+            dto.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
+
+            // 상품 색상 정보 가져오기
+            ProductsColor productsColor = productsColorRepository.findById(productColorId)
+                    .orElseThrow(() -> new DataAccessException("Product color not found for ID: " + productColorId) {
+                        // 예외 클래스를 사용자 정의하여 추가 정보를 제공할 수 있습니다.
+                    });
+            List<ProductsColor> productsColors = productsColorRepository.findByProductId(productsColor.getProducts().getProductId());
+
+            List<Long> idList = new ArrayList<>();
+
+            for (ProductsColor pc : productsColors){
+                Long id = pc.getProductColorId();
+                idList.add(id);
+            }
+
+            for(Long id : idList) {
+                List<ProductsColorSize> productsColorSizes = productsColorSizeRepository.findByProductColorId(id);
+                for(ProductsColorSize pcs : productsColorSizes) {
+                ProductStockDTO stockDTO = new ProductStockDTO();
+                    stockDTO.setProductColorId(pcs.getProductsColor().getProductColorId());
+                    stockDTO.setProductColorSizeId(pcs.getProductColorSizeId());
+                    stockDTO.setColor(pcs.getProductsColor().getColor());
+                    stockDTO.setSize(pcs != null ? pcs.getSize().name() : "에러");
+                    ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(id);
+                    stockDTO.setStock(productsStock != null ? productsStock.getStock():0);
+                    productsStockDTO.add(stockDTO);
+                }
+                }
+            dto.setStock(productsStockDTO);
+
+            // 상품 사이즈 및 재고 정보 가져오기
+
+
+
+
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserName = authentication.getName();
+            log.info("이름:" + currentUserName);
+            Users users = userRepository.findByEmail(currentUserName)
+                    .orElse(null); // 유저 객체 생성
+            if (users != null) { // 로그인한 경우
+                Long userId = users.getUserId();
+                LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId,userId);
+                dto.setLike(likeProducts != null ? likeProducts.isLike() : false); // 즐겨찾기 여부
+            } else {
+                dto.setLike(false); // 로그인 안한경우 무조건 false
+            }
+
+        } catch (DataAccessException e) {
+            log.error("Data access error while fetching product order bar details: " + e.getMessage(), e);
+        }
+
+        return dto;
+    }
 }
 
 

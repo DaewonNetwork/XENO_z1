@@ -1,6 +1,7 @@
 import React from "react";
 import { ProductInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
+import { getCategoryID, getCategorySubId } from "@/(FSD)/entities/product/utill/categoryUtils";
 
 const ProductInfo = ({ product }: { product: ProductInfoType }) => {
     const calculateDiscountPercent = (price: number, priceSale: number): number => {
@@ -9,10 +10,18 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
 
     const discountPercent = calculateDiscountPercent(product.price, product.priceSale);
 
+    const categoryId = getCategoryID(product.category)
+    const categorySubId = getCategorySubId(product.categorySub)
+
     return (
         <>
             <div className={styles.product_category}>
-                {product.category} &gt; {product.categorySub} ({product.brandName})
+                < a href={`/category/${categoryId}`}>
+                    {product.category}
+                </a>
+                &nbsp;&gt;&nbsp; < a href={`/category/${categoryId}${categorySubId}`}>
+                    {product.categorySub}
+                </a> &nbsp;({product.brandName})
             </div>
             <div className={styles.product_name_block}>
                 <h2 className={styles.product_name}>

@@ -13,6 +13,7 @@ const ProductInfoContainer = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
     const { data: product, isError, error, isPending, refetch } = useProductRead(Number(productColorId));
 
+
     useEffect(() => {
         refetch();
     }, [productColorId, refetch]);
@@ -34,7 +35,7 @@ const ProductInfoContainer = () => {
         <>
             <ProductImagesSlideList productImages={product.productImages} />
             <ProductInfo product={product} />
-            <RelatedColorProducts productColorImages={product.productColorImages} />
+            <RelatedColorProducts/>
             <ProductDetailImages productColorId={productColorId} />
         </>
     );
