@@ -133,8 +133,6 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
             alert("상품 옵션을 선택해주세요.")
         } else {
             const { action, isSuccess, isPending, error } = useProductAddCart({ products });
-
-            
                 action();   // 결제 액션 실행
         
         }

@@ -14,7 +14,6 @@ public class AddToCartDTO {
 
     private Long productColorSizeId;
 
-    private Long userId;
 
     private Long quantity;  // 수량
 

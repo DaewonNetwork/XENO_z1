@@ -263,10 +263,13 @@ public class ProductServiceImpl implements ProductService {
         Users users = userRepository.findByEmail(currentUserName)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
+        Cart cart = new Cart();
+
         for(AddToCartDTO addToCartDTO: addToCartDTOList) {
+            cart = cartRepository.findByProductColorSizeIdAndUser(addToCartDTO.getProductColorSizeId(),users.getUserId()).orElse(null);
             ProductsColorSize productsColorSize = productsColorSizeRepository.findById(addToCartDTO.getProductColorSizeId()).orElse(null);
-            if(productsColorSize == null) {
-                Cart cart = Cart.builder()
+            if(cart == null) {
+                cart = Cart.builder()
                         .price(addToCartDTO.getPrice())
                         .productsColorSize(productsColorSize)
                         .quantity(addToCartDTO.getQuantity())
@@ -274,16 +277,13 @@ public class ProductServiceImpl implements ProductService {
                         .build();
                 cartRepository.save(cart);
             } else {
-                Cart cart = Cart.builder().build();
+                cart.setQuantity(addToCartDTO.getQuantity());
+                cartRepository.save(cart);
             }
 
         }
 
-
-
-
-
-        return null;
+        return cart;
     }
 }
 

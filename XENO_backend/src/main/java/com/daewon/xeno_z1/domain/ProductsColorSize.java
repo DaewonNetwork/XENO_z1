@@ -19,6 +19,7 @@ public class ProductsColorSize {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment와 같은
+
     private long productColorSizeId;
 
     @ManyToOne(fetch = FetchType.LAZY)

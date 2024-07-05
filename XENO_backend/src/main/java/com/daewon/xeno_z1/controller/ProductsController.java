@@ -89,7 +89,7 @@ public class ProductsController {
     }
 
 
-    @Operation(summary = "회원가입 처리", description = "회원가입 요청을 처리합니다.")
+    @Operation(summary = "카트")
     @PostMapping("/addToCart")
     public Cart addToCart(@RequestBody AddToCartDTO addToCartDTO) {
 

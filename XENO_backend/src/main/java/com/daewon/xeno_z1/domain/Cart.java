@@ -24,7 +24,7 @@ public class Cart {
     private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_color_size_id", referencedColumnName = "product_color_size_id" ,nullable = false)
+    @JoinColumn(name = "productColorSizeId", referencedColumnName = "productColorSizeId" ,nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductsColorSize productsColorSize;
 
