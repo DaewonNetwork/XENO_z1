@@ -201,6 +201,10 @@ public class ProductServiceImpl implements ProductService {
                     .orElseThrow(() -> new DataAccessException("Product color not found for ID: " + productColorId) {
                         // 예외 클래스를 사용자 정의하여 추가 정보를 제공할 수 있습니다.
                     });
+            Products products = productsRepository.findById(productsColor.getProducts().getProductId()).orElse(null);
+
+            dto.setPrice(products.isSale() ? products.getPriceSale() : products.getPrice());
+
             List<ProductsColor> productsColors = productsColorRepository.findByProductId(productsColor.getProducts().getProductId());
 
             List<Long> idList = new ArrayList<>();
@@ -223,13 +227,9 @@ public class ProductServiceImpl implements ProductService {
                     productsStockDTO.add(stockDTO);
                 }
                 }
-            dto.setStock(productsStockDTO);
+            dto.setOrderInfo(productsStockDTO);
 
             // 상품 사이즈 및 재고 정보 가져오기
-
-
-
-
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String currentUserName = authentication.getName();
@@ -247,6 +247,9 @@ public class ProductServiceImpl implements ProductService {
         } catch (DataAccessException e) {
             log.error("Data access error while fetching product order bar details: " + e.getMessage(), e);
         }
+
+
+
 
         return dto;
     }

@@ -393,9 +393,9 @@
 
 .different_color {
     display: flex;
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     padding: 16px 0px 20px;
     box-sizing: border-box;
@@ -420,20 +420,187 @@
         white-space: nowrap;
         display: flex;
         width: 100%;
-        justify-content: center; /* 이미지를 가운데 정렬 */
-    margin-top: 20px; /* 위 여백 조정 */
+        justify-content: center;
+        /* 이미지를 가운데 정렬 */
+        margin-top: 20px;
+        /* 위 여백 조정 */
         padding: 0px 15px;
         box-sizing: border-box;
 
         .different_color_images {
             display: flex;
-            justify-content: center; /* 요소들을 가운데 정렬 */
-            gap: 10px; /* 요소들 사이의 간격 설정 */
+            justify-content: center;
+            /* 요소들을 가운데 정렬 */
+            gap: 10px;
+
+            /* 요소들 사이의 간격 설정 */
             .different_color_images img {
-                max-width: 100%; /* 이미지의 최대 너비를 부모 요소의 너비에 맞춤 */
-                height: auto; /* 비율 유지를 위해 높이를 자동으로 설정 */
+                max-width: 100%;
+                /* 이미지의 최대 너비를 부모 요소의 너비에 맞춤 */
+                height: auto;
+                /* 비율 유지를 위해 높이를 자동으로 설정 */
             }
         }
     }
 
+}
+
+
+.product_order_modal {
+    position: fixed;
+    bottom: 0px;
+    z-index: 1000;
+    max-width: 520px;
+    width: 100%;
+    background: rgb(255, 255, 255);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px -2px 20px;
+
+    .product_order_modal_exit {
+        width: 100%;
+        height: 35px;
+        background: rgb(255, 255, 255);
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .product_order_modal_option_block {
+        max-height: 300px;
+        background: rgb(245, 245, 245);
+        overflow: hidden auto;
+        font-size: 16px;
+        padding: 0px 10px 10px;
+        background: rgb(255, 255, 255);
+        display: flex;
+
+
+        .product_order_modal_option_select_block {
+            display: flex;
+            flex-direction: column;
+            line-height: 25px;
+            align-items: center;
+            justify-content: center;
+            flex: 1 1 0%;
+            flex-wrap: wrap;
+            margin-top: 10px;
+
+            .product_order_option_select_btn {
+                width: 100%;
+                height: 50px;
+                margin-bottom: 10px;
+                padding-left: 11px;
+                padding-right: 38px;
+
+                border: 1px solid rgb(204, 204, 204);
+                overflow: hidden;
+                text-align: left;
+                color: rgb(0, 0, 0);
+                font-size: 16px;
+                line-height: 48px;
+                appearance: none;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .product_order_modal_product_info_block {
+
+                padding: 16px 10px 15px;
+                background: rgb(245, 245, 245);
+                color: rgb(0, 0, 0);
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 1.5;
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+    }
+
+    .product_order_modal_buy_block {
+
+        display: flex;
+        height: 50px;
+        padding-top: 11px;
+        padding-right: 12px;
+        padding-left: 12px;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 11px);
+        font-size: 16px;
+        line-height: 25px;
+        align-items: center;
+        justify-content: center;
+        flex: 1 1 0%;
+        box-sizing: content-box;
+    }
+
+    .product_order_option_select {
+        display: block;
+        font-size: 16px;
+        padding-top: 0px;
+        padding-right: 10px;
+        padding-left: 10px;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
+        .product_order_option_select_btn_after {
+            width: 100%;
+            height: 50px;
+            margin-bottom: 0px;
+            padding-left: 11px;
+            padding-right: 38px;
+            background-color: rgb(245, 245, 245);
+            
+            background-repeat: no-repeat;
+            background-size: 22px 22px;
+            background-position: right 5px top 50%;
+            border: 1px solid rgb(0, 0, 0);
+            text-align: left;
+            color: rgb(0, 0, 0);
+            font-size: 16px;
+            line-height: 48px;
+            appearance: none;
+            
+        }
+        .product_order_option_color_list {
+            max-height: 263px;
+            margin-top: -1.5px;
+            background: rgb(255, 255, 255);
+            border-right: 1px solid rgb(0, 0, 0);
+            border-bottom: 1px solid rgb(0, 0, 0);
+            border-left: 1px solid rgb(0, 0, 0);
+            border-image: initial;
+            border-top: none;
+            overflow: hidden auto;
+            list-style: none;
+            .product_order_option_color_list_item {
+                position: relative;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 13px 11px 11px;
+                font-size: 16px;
+                line-height: 24px;
+                cursor: pointer;
+                color: rgb(0, 0, 0);
+            }
+        }
+    }
+}
+
+.product_order_modal_product_info {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-height: 50px;
+    padding: 7px 5px 7px 10px;
+    background: rgb(255, 255, 255);
+    border-top: 1px solid rgb(245, 245, 245);
+    box-sizing: border-box;
+}
+
+.product_order_modal_price {
+    padding: 16px 10px 15px;
+    background: rgb(245, 245, 245);
+    color: rgb(0, 0, 0);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.5;
+    display: flex;
+    justify-content: space-between;
 }

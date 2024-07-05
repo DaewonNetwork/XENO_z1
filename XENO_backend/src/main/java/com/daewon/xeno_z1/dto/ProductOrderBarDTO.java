@@ -16,6 +16,7 @@ public class ProductOrderBarDTO {
 
     private boolean isLike;
     private long likeIndex;
-    private List<ProductStockDTO> stock;
+    private List<ProductStockDTO> orderInfo;
+    private long price;
 
 }

@@ -11,8 +11,13 @@ import ProductDetailImages from "./ProductDetailImages";
 
 const ProductInfoContainer = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
-    const { data: product, isError, error, isPending, refetch } = useProductRead(Number(productColorId));
+    const { data, isError, error, isPending, refetch } = useProductRead(Number(productColorId));
 
+
+
+    const product:ProductInfoType = data || []
+
+    
 
     useEffect(() => {
         refetch();
@@ -28,6 +33,8 @@ const ProductInfoContainer = () => {
         return <div>Loading...</div>;
     }
 
+   
+
     console.log(product)
 
 
@@ -40,5 +47,6 @@ const ProductInfoContainer = () => {
         </>
     );
 };
+
 
 export default ProductInfoContainer;
