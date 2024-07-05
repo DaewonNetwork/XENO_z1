@@ -8,6 +8,7 @@ import com.daewon.xeno_z1.dto.ProductOrderBarDTO;
 import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
 import com.daewon.xeno_z1.repository.ProductsColorSizeRepository;
 import com.daewon.xeno_z1.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -16,9 +17,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.io.IOException;
@@ -89,6 +88,25 @@ public class ProductsController {
             // 예외 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+
+    @Operation(summary = "회원가입 처리", description = "회원가입 요청을 처리합니다.")
+    @PostMapping("/addToCart")
+    public Users signup(@RequestBody AuthSignupDTO authSignupDTO) {
+
+
+        try {
+            Users user = authService.signup(authSignupDTO);
+
+            log.info(user);
+
+            return user;
+        } catch (AuthService.UserEmailExistException e) {
+            log.error("Email already exists: " + authSignupDTO.getEmail(), e);
+        }
+
+        return null;
     }
 
 

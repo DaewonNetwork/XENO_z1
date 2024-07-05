@@ -8,7 +8,8 @@ import { Button } from "@nextui-org/button";
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
 import { orderInfoType, ProductOrderBarType } from "@/(FSD)/features/product/ui/ProductOrderContainer";
 import { useProductAddCart } from "@/(FSD)/features/product/api/useProductAddCart";
-type productList = {
+
+export type ProductList = {
     productColorSizeId: number;
     color: string;
     size: string;
@@ -27,7 +28,7 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
     const [color, setColor] = useState('');
     const [size, setSize] = useState('');
     const [sizes, setSizes] = useState<string[]>([]);
-    const [products, setProducts] = useState<productList[]>([]);
+    const [products, setProducts] = useState<ProductList[]>([]);
 
     const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
 
@@ -123,9 +124,19 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
     };
 
 
+   
+
+    
+
     const handleAddToCart = () => {
         if(products.length === 0){
             alert("상품 옵션을 선택해주세요.")
+        } else {
+            const { action, isSuccess, isPending, error } = useProductAddCart({ products });
+
+            
+                action();   // 결제 액션 실행
+        
         }
 
     };
