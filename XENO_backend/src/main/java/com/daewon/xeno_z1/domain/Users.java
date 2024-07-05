@@ -19,7 +19,7 @@ public class Users extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment와 같은
-  private long userId;
+  private Long userId;
 
   private String password;
 

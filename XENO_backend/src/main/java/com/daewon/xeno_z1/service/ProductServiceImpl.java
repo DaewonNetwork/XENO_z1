@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductsColorRepository productsColorRepository;
     private final ProductsColorSizeRepository productsColorSizeRepository;
     private final ProductsStockRepository productsStockRepository;
+    private final CartRepository cartRepository;
 
     @Value("${uploadPath}")
     private String uploadPath;
@@ -248,10 +250,40 @@ public class ProductServiceImpl implements ProductService {
             log.error("Data access error while fetching product order bar details: " + e.getMessage(), e);
         }
 
-
-
-
         return dto;
+    }
+
+    @Override
+    public Cart addToCart(List<AddToCartDTO> addToCartDTOList) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String currentUserName = authentication.getName();
+
+        Users users = userRepository.findByEmail(currentUserName)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
+
+        for(AddToCartDTO addToCartDTO: addToCartDTOList) {
+            ProductsColorSize productsColorSize = productsColorSizeRepository.findById(addToCartDTO.getProductColorSizeId()).orElse(null);
+            if(productsColorSize == null) {
+                Cart cart = Cart.builder()
+                        .price(addToCartDTO.getPrice())
+                        .productsColorSize(productsColorSize)
+                        .quantity(addToCartDTO.getQuantity())
+                        .users(users)
+                        .build();
+                cartRepository.save(cart);
+            } else {
+                Cart cart = Cart.builder().build();
+            }
+
+        }
+
+
+
+
+
+        return null;
     }
 }
 

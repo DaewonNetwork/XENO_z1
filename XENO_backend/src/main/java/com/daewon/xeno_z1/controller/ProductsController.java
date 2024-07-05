@@ -1,11 +1,9 @@
 package com.daewon.xeno_z1.controller;
 
+import com.daewon.xeno_z1.domain.Cart;
 import com.daewon.xeno_z1.domain.ProductsColorSize;
-import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
-import com.daewon.xeno_z1.dto.ProductInfoDTO;
+import com.daewon.xeno_z1.dto.*;
 
-import com.daewon.xeno_z1.dto.ProductOrderBarDTO;
-import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
 import com.daewon.xeno_z1.repository.ProductsColorSizeRepository;
 import com.daewon.xeno_z1.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,20 +91,11 @@ public class ProductsController {
 
     @Operation(summary = "회원가입 처리", description = "회원가입 요청을 처리합니다.")
     @PostMapping("/addToCart")
-    public Users signup(@RequestBody AuthSignupDTO authSignupDTO) {
+    public Cart addToCart(@RequestBody AddToCartDTO addToCartDTO) {
 
 
-        try {
-            Users user = authService.signup(authSignupDTO);
+            return null;
 
-            log.info(user);
-
-            return user;
-        } catch (AuthService.UserEmailExistException e) {
-            log.error("Email already exists: " + authSignupDTO.getEmail(), e);
-        }
-
-        return null;
     }
 
 

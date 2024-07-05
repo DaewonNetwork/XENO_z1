@@ -1,9 +1,7 @@
 package com.daewon.xeno_z1.service;
 
-import com.daewon.xeno_z1.dto.ProductOrderBarDTO;
-import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
-import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
-import com.daewon.xeno_z1.dto.ProductInfoDTO;
+import com.daewon.xeno_z1.domain.Cart;
+import com.daewon.xeno_z1.dto.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,4 +13,8 @@ public interface ProductService {
     List<ProductOtherColorImagesDTO>  getRelatedColorProductsImages(Long productColorId) throws IOException;
 
     ProductOrderBarDTO getProductOrderBar(Long productColorId);
+
+    Cart addToCart(List<AddToCartDTO> addToCartDTO);
+
+
 }
