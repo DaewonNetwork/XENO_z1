@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 export const useProductRead = (productColorId: number) => {
-    console.log("아이디:", productColorId);
+   
     
     return useQuery({
         queryKey: ["product_read", productColorId],

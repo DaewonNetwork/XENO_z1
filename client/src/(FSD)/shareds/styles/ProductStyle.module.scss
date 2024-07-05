@@ -589,9 +589,24 @@
     width: 100%;
     min-height: 50px;
     padding: 7px 5px 7px 10px;
-    background: rgb(255, 255, 255);
+    background: rgb(245, 245, 245);
     border-top: 1px solid rgb(245, 245, 245);
     box-sizing: border-box;
+
+    .product_order_modal_product_list {
+        list-style: none;
+        width: 100%;
+        .product_order_modal_product_list_item {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            min-height: 50px;
+            padding: 7px 5px 7px 10px;
+            background: rgb(255, 255, 255);
+            border-top: 1px solid rgb(245, 245, 245);
+            box-sizing: border-box;
+        }
+    }
 }
 
 .product_order_modal_price {

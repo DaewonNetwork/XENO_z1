@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import AppContainer from "../../app/ui/AppContainer";
 import AppInner from "../../app/ui/AppInner";
 import { Button } from "@nextui-org/button";
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
 import { orderInfoType, ProductOrderBarType } from "@/(FSD)/features/product/ui/ProductOrderContainer";
+import { useProductAddCart } from "@/(FSD)/features/product/api/useProductAddCart";
 type productList = {
     productColorSizeId: number;
     color: string;
@@ -25,35 +26,50 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
     const [price, setPrice] = useState(0);
     const [color, setColor] = useState('');
     const [size, setSize] = useState('');
+    const [sizes, setSizes] = useState<string[]>([]);
+    const [products, setProducts] = useState<productList[]>([]);
 
     const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
 
-    const sizes: { [key: string]: string[] } = {};
+    const desiredOrder = ['S', 'M', 'L', 'XL'];
 
-    // 데이터 순회하여 Size 배열에 size 추가
-    orderBar.orderInfo.forEach(item => {
-        const size = item.size;
-
-        if (!sizes[color]) {
-            sizes[color] = [];
-        }
-
-        // 중복 추가 방지
-        if (!sizes[color].includes(size)) {
-            sizes[color].push(size);
-        }
+    Object.keys(sizes).forEach(() => {
+        sizes.sort((a, b) => {
+            return desiredOrder.indexOf(a) - desiredOrder.indexOf(b);
+        });
     });
 
 
-    const desiredOrder = ['S', 'M', 'L', 'XL'];
+    useEffect(() => {
+        if (color === '') {
+            setSizes([]);
+            return;
+        }
 
-    // Object.keys(sizes).forEach(color => {
-    //     sizes[color].sort((a, b) => {
-    //         return desiredOrder.indexOf(a) - desiredOrder.indexOf(b);
-    //     });
-    // });
+        const filteredSizes = orderBar.orderInfo
+            .filter(item => item.color === color)
+            .map(item => item.size);
 
-    console.log(sizes)
+        setSizes(filteredSizes);
+    }, [color, orderBar.orderInfo]);
+
+    useEffect(() => {
+        const totalProductCount = products.reduce((acc, curr) => acc + curr.count, 0);
+        setCount(totalProductCount);
+        const totalProductPrice = products.reduce((acc, curr) => acc + curr.price, 0);
+        setPrice(totalProductPrice);
+      }, [products]);
+
+   
+
+
+    const getProductColorSizeId = (color: string, size: string): number | undefined => {
+        const orderItem = orderBar.orderInfo.find(item => item.color === color && item.size === size);
+        return orderItem?.productColorSizeId;
+    };
+
+
+
 
     const handleBuyClick = () => {
         setIsOpen(true);
@@ -66,32 +82,35 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
     const selectColor = (color: string) => {
         setColor(color)
         setIsSelectedColor(false);
+
     }
-
-    const products: productList[] = [];
-
-
-    const getProductColorSizeId = (color: string, size: string): number | undefined => {
-        const orderItem = orderBar.orderInfo.find(item => item.color === color && item.size === size);
-        return orderItem?.productColorSizeId;
-    };
 
     const selectSize = (size: string) => {
         setSize(size);
+        setIsSelectedSize(false);
         const productColorSizeId = getProductColorSizeId(color, size);
-
+    
         if (productColorSizeId !== undefined) {
-            // 제품 정보를 products 배열에 추가
-            products.push({ productColorSizeId: productColorSizeId, color, size, count: 1, price });
+          // 제품 정보를 products 배열에 추가하기 전에 중복 체크
+          const isDuplicate = products.some(product => product.productColorSizeId === productColorSizeId);
+          
+          if (isDuplicate) {
+            alert("이미 선택한 옵션입니다.");
+          } else {
+            setProducts(prevProducts => [
+              ...prevProducts,
+              { productColorSizeId, color, size, count: 1, price: orderBar.price }
+            ]);
             setColor('');
             setSize('');
             setIsSelectedColor(false);
             setIsSelectedSize(false);
-            console.log(products)
+          }
         } else {
-            console.error(`해당 색상(${color})과 사이즈(${size})에 맞는 제품 정보가 없습니다.`);
+          console.error(`해당 색상(${color})과 사이즈(${size})에 맞는 제품 정보가 없습니다.`);
         }
-    };
+      };
+
 
 
 
@@ -103,16 +122,15 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
         }
     };
 
+
     const handleAddToCart = () => {
-        if (!isSelectedColor || !isSelectedSize) {
-            alert("색상과 사이즈를 모두 선택해 주세요.");
-        } else {
-            // 장바구니에 추가 로직
-            setIsOpen(false);
-            setIsSelectedColor(false);
-            setIsSelectedSize(false);
+        if(products.length === 0){
+            alert("상품 옵션을 선택해주세요.")
         }
+
     };
+      
+
 
     const handlePurchase = () => {
         if (!isSelectedColor || !isSelectedSize) {
@@ -132,16 +150,20 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
         setIsSelectedSize(false);
     }
 
-    const increaseCount = () => {
-        setCount(prevCount => prevCount + 1);
+    const increaseCount = (index: number) => {
+        const updatedProducts = [...products];
+        updatedProducts[index].count += 1;
+        setProducts(updatedProducts);
     };
 
-    const decreaseCount = () => {
-        if (count == 1) {
+    const decreaseCount = (index: number) => {
+        if (products[index].count === 1) {
             alert("더 이상 줄일 수 없습니다.");
-        } else {
-            setCount(prevCount => prevCount - 1);
+            return;
         }
+        const updatedProducts = [...products];
+        updatedProducts[index].count -= 1;
+        setProducts(updatedProducts);
     };
 
     return (
@@ -190,10 +212,8 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
                             <div className={styles.product_order_option_select}>
                                 <button className={styles.product_order_option_select_btn_after} onClick={handleSizeSelect}>사이즈 선택</button>
                                 <ul className={styles.product_order_option_color_list}>
-                                    {sizes[color].map((size, index) => (
-                                        <li className={styles.product_order_option_color_list_item} key={index} onClick={() => selectSize(size)}>
-                                            {size}
-                                        </li>
+                                    {sizes.map((size, index) => (
+                                        <li className={styles.product_order_option_color_list_item} key={index} onClick={() => selectSize(size)}>{size}</li>
                                     ))}
                                 </ul>
 
@@ -203,15 +223,17 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
 
                     {products.length > 0 && (
                         <div className={styles.product_order_modal_product_info}>
+                            <ul className={styles.product_order_modal_product_list}>
                             {products.map((product, index) => (
-                                <div key={index}>
+                                <li className={styles.product_order_modal_product_list_item} key={index}>
                                     {product.color} / {product.size}
-                                    <Button onClick={decreaseCount}>-</Button>
+                                    <Button onClick={() => decreaseCount(index)}>-</Button>
                                     {product.count}
-                                    <Button onClick={increaseCount}>+</Button>
+                                    <Button onClick={() => increaseCount(index)}>+</Button>
                                     {product.price * product.count}원
-                                </div>
+                                </li>
                             ))}
+                            </ul>
                         </div>)
                     }
                     {!isSelectedColor && !isSelectedSize && (
@@ -223,7 +245,7 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
 
                     {!isSelectedColor && !isSelectedSize && (
                         <div className={styles.product_order_modal_buy_block}>
-                            <Button onClick={() => alert("색상과 사이즈를 선택해 주세요.")}>장바구니</Button>
+                            <Button onClick={handleAddToCart}>장바구니</Button>
                             <Button onClick={() => alert("색상과 사이즈를 선택해 주세요.")}>구매하기</Button>
                         </div>
                     )}

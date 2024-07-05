@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 export const useProductDetailRead = (productColorId: number, size:number) => {
-    console.log("아이디:", productColorId);
     
     return useQuery({
         queryKey: ["product_detail_image_read", productColorId],
