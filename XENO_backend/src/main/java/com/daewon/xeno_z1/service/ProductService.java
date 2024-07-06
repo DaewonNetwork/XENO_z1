@@ -14,7 +14,7 @@ public interface ProductService {
 
     ProductOrderBarDTO getProductOrderBar(Long productColorId);
 
-    Cart addToCart(List<AddToCartDTO> addToCartDTO);
+    void addToCart(List<AddToCartDTO> addToCartDTO);
 
 
 }

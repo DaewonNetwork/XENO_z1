@@ -89,13 +89,18 @@ public class ProductsController {
     }
 
 
-    @Operation(summary = "카트")
-    @PostMapping("/addToCart")
-    public Cart addToCart(@RequestBody AddToCartDTO addToCartDTO) {
+    @PostMapping(value = "/addToCart", produces = "application/json")
+    public ResponseEntity<String> addToCart(@RequestBody List<AddToCartDTO> addToCartDTO) {
+        try {
+            // addToCartDTO를 이용한 비즈니스 로직 처리 (예: productService.addToCart(addToCartDTO);)
+            productService.addToCart(addToCartDTO);
+            // 성공적으로 처리된 경우
+            return ResponseEntity.ok("\"Successfully added to cart\"");
 
-
-            return null;
-
+        } catch (Exception e) {
+            // 오류 발생 시
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("\"Failed to add to cart\"");
+        }
     }
 
 

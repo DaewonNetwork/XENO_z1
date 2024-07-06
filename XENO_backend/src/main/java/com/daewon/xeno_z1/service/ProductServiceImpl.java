@@ -154,12 +154,28 @@ public class ProductServiceImpl implements ProductService {
         // 현재 상품 색상 이미지 추가
         ProductsImage currentProductsImage = productsImageRepository.findFirstByProductColorId(productColorId);
         if (currentProductsImage != null) {
-            byte[] currentImageData = getImage(currentProductsImage.getUuid(), currentProductsImage.getFileName());
-            ProductOtherColorImagesDTO currentColorDTO = new ProductOtherColorImagesDTO();
-            currentColorDTO.setProductColorId(productColorId);
-            currentColorDTO.setProductColorImage(currentImageData);
-            colorImagesList.add(currentColorDTO);
+            byte[] currentImageData = null;
+            try {
+                // 서버 파일 시스템에서 파일 존재 여부 확인
+                Path filePath = Paths.get("C:/upload", currentProductsImage.getUuid() + "_" + currentProductsImage.getFileName());
+                if (Files.exists(filePath)) {
+                    currentImageData = getImage(currentProductsImage.getUuid(), currentProductsImage.getFileName());
+                    ProductOtherColorImagesDTO currentColorDTO = new ProductOtherColorImagesDTO();
+                    currentColorDTO.setProductColorId(productColorId);
+                    currentColorDTO.setProductColorImage(currentImageData);
+                    colorImagesList.add(currentColorDTO);
+                } else {
+                    // 파일이 서버에 존재하지 않는 경우 예외 처리 (예: 기본 이미지 설정)
+                    System.out.println("Warning: 현재 상품 색상 이미지 파일이 서버에 존재하지 않습니다. 파일 경로: " + filePath.toString());
+                    // 예외 처리 로직을 추가할 수 있습니다.
+                }
+            } catch (IOException e) {
+                // 파일을 가져오는 도중 예외가 발생한 경우 처리
+                System.out.println("Error fetching current product color image: " + e.getMessage());
+                // 예외 처리 로직을 추가할 수 있습니다.
+            }
         }
+
 
         // 상품의 다른 색상 이미지들 추가
         List<ProductsColor> colors = productsColorRepository.findByProductId(productsColorOptional.get().getProducts().getProductId());
@@ -173,16 +189,20 @@ public class ProductServiceImpl implements ProductService {
 
             ProductsImage otherProductsImage = productsImageRepository.findFirstByProductColorId(productsColor.getProductColorId());
             if (otherProductsImage != null) {
-                byte[] otherImageData = getImage(otherProductsImage.getUuid(), otherProductsImage.getFileName());
-                dto.setProductColorImage(otherImageData);
-            } 
+                // 서버 파일 시스템에서 파일 존재 여부 확인
+                Path filePath = Paths.get("C:/upload", otherProductsImage.getUuid() + "_" + otherProductsImage.getFileName());
+                if (Files.exists(filePath)) {
+                    byte[] otherImageData = getImage(otherProductsImage.getUuid(), otherProductsImage.getFileName());
+                    dto.setProductColorImage(otherImageData);
+                    colorImagesList.add(dto);
+                } else {
+                    // 파일이 서버에 존재하지 않는 경우 예외 처리 (예: 기본 이미지 설정)
+                    log.info("Warning: 파일이 서버에 존재하지 않습니다. 데이터베이스 정보: " + otherProductsImage.getUuid() + "_" + otherProductsImage.getFileName());
+                    // 기본 이미지 설정 등의 로직을 추가할 수 있습니다.
+                }
+            }
 
-            colorImagesList.add(dto);
         }
-
-
-        
-
         return colorImagesList;
     }
 
@@ -254,13 +274,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Cart addToCart(List<AddToCartDTO> addToCartDTOList) {
+    public void addToCart(List<AddToCartDTO> addToCartDTOList) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        log.info(authentication);
         String currentUserName = authentication.getName();
 
-        Users users = userRepository.findByEmail(currentUserName)
+        log.info(currentUserName);
+        String email = "joohyeongzz@naver.com";
+
+        Users users = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
         Cart cart = new Cart();
@@ -277,13 +301,11 @@ public class ProductServiceImpl implements ProductService {
                         .build();
                 cartRepository.save(cart);
             } else {
-                cart.setQuantity(addToCartDTO.getQuantity());
+                cart.setQuantity(cart.getQuantity()+addToCartDTO.getQuantity());
+                cart.setPrice(cart.getPrice()+ addToCartDTO.getPrice());
                 cartRepository.save(cart);
             }
-
         }
-
-        return cart;
     }
 }
 
