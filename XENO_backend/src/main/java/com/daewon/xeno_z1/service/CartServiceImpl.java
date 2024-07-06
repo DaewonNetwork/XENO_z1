@@ -1,7 +1,8 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
-import com.daewon.xeno_z1.dto.CartRequestDTO;
+import com.daewon.xeno_z1.dto.cart.CartDTO;
+import com.daewon.xeno_z1.dto.cart.CartSummaryDTO;
 import com.daewon.xeno_z1.exception.ProductNotFoundException;
 import com.daewon.xeno_z1.exception.UserNotFoundException;
 import com.daewon.xeno_z1.repository.*;
@@ -10,63 +11,84 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
-        private final UserRepository userRepository;
-        private final ProductsRepository productsRepository;
-        private final CartRepository cartRepository;
-        private final ProductsColorSizeRepository productsColorSizeRepository;
-        private final ProductsImageRepository productsImageRepository;
+    private final UserRepository userRepository;
+    private final ProductsRepository productsRepository;
+    private final CartRepository cartRepository;
+    private final ProductsColorSizeRepository productsColorSizeRepository;
+    private final ProductsImageRepository productsImageRepository;
 
-        @Override
-        public Long addCart(CartRequestDTO request, Long productId) {
-            // 회원 정보
-            Users user = userRepository.findById(request.getUserId())
-                    .orElseThrow(() -> new UserNotFoundException("해당하는 유저를 찾을 수 없습니다."));
+    @Override
+    public void addToCart(Long userId, Long productColorSizeId, Long productImageId, Long quantity) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("해당하는 유저를 찾을 수 없습니다."));
+        ProductsColorSize productsColorSize = productsColorSizeRepository.findById(productColorSizeId)
+                .orElseThrow(() -> new ProductNotFoundException("상품의 색상 또는 사이즈를 찾을 수 없습니다."));
+        ProductsImage productsImage = productsImageRepository.findById(productImageId)
+                .orElseThrow(() -> new RuntimeException("상품의 이미지를 찾을 수 없습니다."));
 
-            // 상품 정보
-            Products product = productsRepository.findById(productId)
-                    .orElseThrow(() -> new ProductNotFoundException("해당하는 제품을 찾을 수 없습니다."));
+        Products products = productsColorSize.getProductsColor().getProducts();
+        Long price = products.getPrice() * quantity;
 
-            // ProductsColorSize 정보
-            ProductsColorSize productsColorSize = productsColorSizeRepository.findById(request.getProductsColorsizeId())
-                    .orElseThrow(() -> new ProductNotFoundException("해당하는 제품 색상 및 사이즈를 찾을 수 없습니다."));
+        Cart cart = new Cart(user, productsColorSize, productsImage, quantity, price);
+        cartRepository.save(cart);
+    }
 
-            // ProductsImage 정보
-            ProductsImage productsImage = productsImageRepository.findById(request.getProductsImageId())
-                    .orElseThrow(() -> new ProductNotFoundException("해당하는 제품 이미지를 찾을 수 없습니다."));
+    @Override
+    public List<CartDTO> getCartItems(Long userId) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("해당하는 유저를 찾을 수 없습니다."));
+        List<Cart> carts = cartRepository.findByUser(user);
+        return carts.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
 
-            Long productColorId = productsColorSize.getProductsColor().getProductColorId();
+    @Override
+    public void updateCartItem(Long cartId, Long quantity, boolean selected) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("장바구니 상품을 찾을 수 없습니다."));
+        cart.setQuantity(quantity);
+        cart.setSelected(selected);
+        cart.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPrice() * quantity);
+        cartRepository.save(cart);
+    }
 
-            List<Cart> existingCarts = cartRepository.findByUserAndProductsColorSize_ProductColorId(user, productColorId);
+    @Override
+    public void removeFromCart(Long cartId) {
+        cartRepository.deleteById(cartId);
+    }
 
-            Cart existingCart = existingCarts.stream()
-                    .filter(cart -> cart.getProductsColorSize().getProductColorSizeId().e)
-                    .findFirst()
-                    .orElse(null);
+    @Override
+    public CartSummaryDTO getCartSummary(Long userId) {
+        List<Cart> carts = cartRepository.findByUser(userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found")));
+        long totalPrice = carts.stream()
+                .filter(Cart::isSelected)
+                .mapToLong(cart -> cart.getPrice())
+                .sum();
+        int totalItems = carts.stream()
+                .filter(Cart::isSelected)
+                .mapToInt(cart -> cart.getQuantity().intValue())
+                .sum();
+        return new CartSummaryDTO(totalItems, totalPrice);
+    }
 
-//            Cart existingCart = cartRepository.findByProductsColorSize_ProductsAndUser(product, user).orElse(null);
-
-            // 카트에 이미 상품이 담겨있는 경우
-            if (existingCart != null) {
-                existingCart.setQuantity(existingCart.getQuantity() + request.getQuantity());
-                existingCart.setPrice(existingCart.getPrice() + product.getPrice() * request.getQuantity());
-
-                cartRepository.save(existingCart);
-
-                return existingCart.getCartId();
-            } else {    // 카트에 상품이 없는 경우
-                Long price = product.getPrice() * request.getQuantity();
-                Cart cart = new Cart(user, productsColorSize, productsImage, request.getQuantity(), price);
-
-                cartRepository.save(cart);
-
-                return cart.getCartId();
-            }
-        }
+    @Override
+    public CartDTO convertToDTO(Cart cart) {
+        CartDTO cartDTO = new CartDTO();
+        cartDTO.setCartId(cart.getCartId());
+        cartDTO.setUserId(cart.getUser().getUserId());
+        cartDTO.setProductsColorSizeId(cart.getProductsColorSize().getProductColorSizeId());
+        cartDTO.setProductsImageId(cart.getProductsImage().getProductImageId());
+        cartDTO.setQuantity(cart.getQuantity());
+        cartDTO.setPrice(cart.getPrice());
+        cartDTO.setSelected(cart.isSelected());
+        cartDTO.setBrandName(cart.getProductsColorSize().getProductsColor().getProducts().getBrandName());
+        return cartDTO;
+    }
 }

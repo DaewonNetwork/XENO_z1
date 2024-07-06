@@ -21,10 +21,6 @@ public class Cart {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "product_id", nullable = false)
-//    private Products product;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_color_size", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -41,16 +37,16 @@ public class Cart {
     @Column(name = "price", nullable = false)
     private Long price;
 
+    @Column(name = "selected")
+    private boolean selected;   // 선택 여부
+
     public Cart(Users user, ProductsColorSize productsColorSize, ProductsImage productsImage, Long quantity, Long price) {
         this.user = user;
         this.productsColorSize = productsColorSize;
         this.productsImage = productsImage;
         this.quantity = quantity;
         this.price = price;
-    }
-
-    public Cart(Users user, Products product, Long quantity, Long price) {
-
+        this.selected = true;   // 기본적으로 선택된 상태로 추가
     }
 
     public Cart() {
