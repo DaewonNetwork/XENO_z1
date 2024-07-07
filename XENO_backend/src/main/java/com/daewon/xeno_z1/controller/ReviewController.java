@@ -67,10 +67,12 @@ public class ReviewController {
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewDTO> getReviewDetails(@PathVariable Long reviewId) {
         try {
+            log.info("Fetching review details for reviewId: {}", reviewId);
             ReviewDTO reviewDTO = reviewService.getReviewDetails(reviewId);
+            log.info("Retrieved review details: {}", reviewDTO);
             return ResponseEntity.ok(reviewDTO);
         } catch (RuntimeException e) {
-            log.error("Error fetching review details: ", e);
+            log.error("Error fetching review details for reviewId {}: ", reviewId, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
@@ -152,6 +154,8 @@ public class ReviewController {
             dto.setStar(Math.round(review.getStar() * 10.0) / 10.0);
             dto.setReviewDate(review.getCreateAt() != null ? review.getCreateAt().toString() : null);
             dto.setName(userRepository.findById(review.getUsers().getUserId()).map(Users::getName).orElse(null));
+            dto.setSize(review.getSize());
+            dto.setColor(review.getProductsColor().getColor());
         
             List<ReviewImage> reviewImages = reviewImageRepository.findByReview(review);
             List<byte[]> reviewDetailImages = new ArrayList<>();

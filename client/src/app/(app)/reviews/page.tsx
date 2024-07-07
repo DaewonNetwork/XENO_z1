@@ -21,12 +21,19 @@ const ReviewsPage = () => {
 
     const handleImageClick = async (reviewId: number) => {
         try {
+            console.log(`Fetching review details for reviewId: ${reviewId}`);
             const response = await fetch(`http://localhost:8090/reviews/${reviewId}`);
             if (!response.ok) {
-                throw new Error('리뷰 상세 정보를 불러오는데 실패했습니다.');
+                const errorText = await response.text();
+                throw new Error(`리뷰 상세 정보를 불러오는데 실패했습니다. 상태 코드: ${response.status}, 에러 메시지: ${errorText}`);
             }
             const reviewDetails = await response.json();
-            setSelectedReview(reviewDetails);
+            console.log('Review details:', reviewDetails);
+            if (reviewDetails === null || Object.keys(reviewDetails).length === 0) {
+                console.error('리뷰 상세 정보가 비어있습니다.');
+            } else {
+                setSelectedReview(reviewDetails);
+            }
         } catch (error) {
             console.error('리뷰 상세 정보를 불러오는 중 오류 발생:', error);
         }

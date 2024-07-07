@@ -35,6 +35,8 @@ public class ReviewDTO {
 
     private String size;
 
+    private String color;
+
     private List<byte[]> productImages;
     private List<byte[]> reviewDetailImages;
 

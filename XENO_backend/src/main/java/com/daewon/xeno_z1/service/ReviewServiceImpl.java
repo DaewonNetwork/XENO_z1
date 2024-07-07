@@ -104,8 +104,10 @@ public class ReviewServiceImpl implements ReviewService {
     // 리뷰 조회
     @Override
     public ReviewDTO getReviewDetails(Long reviewId) {
+        log.info("Getting review details for reviewId: {}", reviewId);
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
+        log.info("Found review: {}", review);
         ReviewDTO dto = new ReviewDTO();
         dto.setReviewId(review.getReviewId());
         dto.setProductId(review.getProducts().getProductId());
@@ -114,6 +116,8 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setStar(review.getStar());
         dto.setReviewDate(review.getCreateAt() != null ? review.getCreateAt().toString() : null);
         dto.setName(review.getUsers().getName());
+        dto.setSize(review.getSize());
+        dto.setColor(review.getProductsColor().getColor());
         dto.setProductColorId(review.getProductsColor().getProductColorId());
         dto.setProductColorSizeId(review.getProductsColorSize().getProductColorSizeId());
 
@@ -142,7 +146,7 @@ public class ReviewServiceImpl implements ReviewService {
             }
         }
         dto.setProductImages(productImageBytes);
-    
+        log.info("Converted ReviewDTO: {}", dto);
         return dto;
     }
 
@@ -245,6 +249,7 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setReviewDate(review.getCreateAt().toString());
         dto.setName(usersRepository.findById(review.getUsers().getUserId()).get().getName());
         dto.setSize(review.getSize());
+        dto.setColor(review.getProductsColor().getColor());
     
         // ProductsColor 관련 필드 설정
         dto.setProductColorId(review.getProductsColor().getProductColorId());
