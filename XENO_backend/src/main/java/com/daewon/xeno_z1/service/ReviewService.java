@@ -18,7 +18,9 @@ public interface ReviewService {
     // 제품의 전체 후기 사진
     // List<ReviewImage> findAllReviewImagesByProductId(Long productId);
 
-    List<byte[]> getAllReviewImages(Long productId);
+    List<byte[]> getAllProductReviewImages(Long productId);
+
+    List<byte[]> getAllReviewImages();
 
     // 리뷰 조회
     ReviewDTO getReviewDetails(Long reviewId);

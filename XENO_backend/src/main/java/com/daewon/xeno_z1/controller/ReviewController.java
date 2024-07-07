@@ -206,7 +206,14 @@ public class ReviewController {
     @GetMapping("/images/{productId}")
     @Operation(summary = "제품의 모든 리뷰 이미지 가져오기")
     public ResponseEntity<List<byte[]>> getAllReviewImages(@PathVariable Long productId) {
-        List<byte[]> images = reviewService.getAllReviewImages(productId);
+        List<byte[]> images = reviewService.getAllProductReviewImages(productId);
+        return ResponseEntity.ok(images);
+    }
+
+    @GetMapping("/images")
+    @Operation(summary = "모든 리뷰 이미지 가져오기")
+    public ResponseEntity<List<byte[]>> getAllReviewImages() {
+        List<byte[]> images = reviewService.getAllReviewImages();
         return ResponseEntity.ok(images);
     }
 

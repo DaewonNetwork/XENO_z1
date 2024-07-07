@@ -61,7 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<byte[]> getAllReviewImages(Long productId) {
+    public List<byte[]> getAllProductReviewImages(Long productId) {
         List<ReviewImage> reviewImages = reviewImageRepository.findAllReviewImagesByProductId(productId);
         List<byte[]> imageBytesList = new ArrayList<>();
         for (ReviewImage reviewImage : reviewImages) {
@@ -72,8 +72,23 @@ public class ReviewServiceImpl implements ReviewService {
                 log.error("Error reading review image file", e);
             }
         }
-            return imageBytesList;
+        return imageBytesList;
+    }
+
+    @Override
+    public List<byte[]> getAllReviewImages() {
+        List<ReviewImage> reviewImages = reviewImageRepository.findAll();
+        List<byte[]> imageBytesList = new ArrayList<>();
+        for (ReviewImage reviewImage : reviewImages) {
+            try {
+                byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
+                imageBytesList.add(imageData);
+            } catch (IOException | java.io.IOException e) {
+                log.error("Error reading review image file", e);
+            }
         }
+        return imageBytesList;
+    }
 
 
     // 리뷰 조회

@@ -2,31 +2,33 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { useProductReviewListRead } from '@/(FSD)/entities/product/api/useProductReviewListRead';
-import { ReviewType } from '@/(FSD)/shareds/types/Review.type';
+import { fetchAllReviewImages } from '@/(FSD)/entities/product/api/useProductReviewListRead';
 import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
+import { useQuery } from '@tanstack/react-query';
 
 const ReviewsPage = () => {
-    const { data: reviews, isLoading, isError } = useProductReviewListRead();
+    const { data: reviewImages, isLoading, isError } = useQuery({
+        queryKey: ['reviewImages'],
+        queryFn: fetchAllReviewImages
+    });
 
     if (isLoading) return <div>리뷰 로딩 중...</div>;
     if (isError) return <div>리뷰를 불러오는 데 실패했습니다.</div>;
+    if (!reviewImages || reviewImages.length === 0) return <div>리뷰가 없습니다.</div>;
 
     return (
         <AppSection>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {reviews.map((review: ReviewType) => (
-                    review.reviewDetailImages.map((image: Uint8Array, index: number) => (
-                        <div key={`${review.reviewId}-${index}`} className="relative w-full pt-[100%]">
-                            <Image
-                                src={`data:image/jpeg;base64,${Buffer.from(image).toString('base64')}`}
-                                alt={`리뷰 이미지 ${index + 1}`}
-                                layout="fill"
-                                objectFit="cover"
-                                className="rounded-lg"
-                            />
-                        </div>
-                    ))
+            <div className="grid grid-cols-3 gap-4">
+                {reviewImages.map((image: string, index: number) => (
+                    <div key={index} className="aspect-square relative overflow-hidden">
+                        <Image
+                            src={`data:image/jpeg;base64,${image}`}
+                            alt={`리뷰 이미지 ${index + 1}`}
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-lg"
+                        />
+                    </div>
                 ))}
             </div>
         </AppSection>

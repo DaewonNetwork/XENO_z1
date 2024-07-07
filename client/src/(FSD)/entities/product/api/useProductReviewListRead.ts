@@ -1,18 +1,7 @@
-import { fetchData } from "@/(FSD)/shareds/fetch/fetchData"
-import { useQuery } from "@tanstack/react-query"
-
-export const useProductReviewListRead = () => {
-    return useQuery({
-        queryKey: ["product_review_list_read"],
-        queryFn: async () => {
-            const response = await fetch(`http://localhost:8090/reviews`);
-            console.log(response);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            
-            return await response.json();
-        },
-        placeholderData: null,
-    });
+export const fetchAllReviewImages = async () => {
+    const response = await fetch('http://localhost:8090/reviews/images');
+    if (!response.ok) {
+        throw new Error('모든 리뷰 이미지를 불러오는데 실패했습니다.');
+    }
+    return await response.json();
 };
