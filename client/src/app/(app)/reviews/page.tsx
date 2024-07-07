@@ -1,12 +1,15 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { fetchAllReviewImages } from '@/(FSD)/entities/product/api/useProductReviewListRead';
 import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
 import { useQuery } from '@tanstack/react-query';
+import ProductReviewCard from '@/(FSD)/entities/product/ui/ProductReviewCard';
+import { ReviewType } from '@/(FSD)/shareds/types/Review.type';
 
 const ReviewsPage = () => {
+    const [selectedReview, setSelectedReview] = useState<ReviewType | null>(null);
     const { data: reviewImages, isLoading, isError } = useQuery({
         queryKey: ['reviewImages'],
         queryFn: fetchAllReviewImages
@@ -16,13 +19,26 @@ const ReviewsPage = () => {
     if (isError) return <div>리뷰를 불러오는 데 실패했습니다.</div>;
     if (!reviewImages || reviewImages.length === 0) return <div>리뷰가 없습니다.</div>;
 
+    const handleImageClick = async (reviewId: number) => {
+        try {
+            const response = await fetch(`http://localhost:8090/reviews/${reviewId}`);
+            if (!response.ok) {
+                throw new Error('리뷰 상세 정보를 불러오는데 실패했습니다.');
+            }
+            const reviewDetails = await response.json();
+            setSelectedReview(reviewDetails);
+        } catch (error) {
+            console.error('리뷰 상세 정보를 불러오는 중 오류 발생:', error);
+        }
+    };
+
     return (
         <AppSection>
             <div className="grid grid-cols-3 gap-4">
-                {reviewImages.map((image: string, index: number) => (
-                    <div key={index} className="aspect-square relative overflow-hidden">
+                {reviewImages.map((review: { reviewId: number, image: string }, index: number) => (
+                    <div key={index} className="aspect-square relative overflow-hidden cursor-pointer" onClick={() => handleImageClick(review.reviewId)}>
                         <Image
-                            src={`data:image/jpeg;base64,${image}`}
+                            src={`data:image/jpeg;base64,${review.image}`}
                             alt={`리뷰 이미지 ${index + 1}`}
                             layout="fill"
                             objectFit="cover"
@@ -31,6 +47,9 @@ const ReviewsPage = () => {
                     </div>
                 ))}
             </div>
+            {selectedReview && (
+                <ProductReviewCard review={selectedReview} onClose={() => setSelectedReview(null)} />
+            )}
         </AppSection>
     );
 };

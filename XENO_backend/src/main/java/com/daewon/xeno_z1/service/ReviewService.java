@@ -7,6 +7,7 @@ import com.daewon.xeno_z1.dto.ReviewDTO;
 import java.io.IOException;
 import java.util.List;
 
+import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +21,8 @@ public interface ReviewService {
 
     List<byte[]> getAllProductReviewImages(Long productId);
 
-    List<byte[]> getAllReviewImages();
+    // List<byte[]> getAllReviewImages();
+    List<Map<String, Object>> getAllReviewImages();
 
     // 리뷰 조회
     ReviewDTO getReviewDetails(Long reviewId);

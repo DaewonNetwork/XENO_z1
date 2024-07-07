@@ -25,9 +25,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,7 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
         Path path = Paths.get(filePath);
         byte[] image = Files.readAllBytes(path);
         return image;
-    }    
+    }
 
     // 리뷰 이미지 총 갯수
     @Override
@@ -81,18 +83,21 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<byte[]> getAllReviewImages() {
+    public List<Map<String, Object>> getAllReviewImages() {
         List<ReviewImage> reviewImages = reviewImageRepository.findAll();
-        List<byte[]> imageBytesList = new ArrayList<>();
+        List<Map<String, Object>> imageList = new ArrayList<>();
         for (ReviewImage reviewImage : reviewImages) {
             try {
                 byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
-                imageBytesList.add(imageData);
+                Map<String, Object> imageMap = new HashMap<>();
+                imageMap.put("reviewId", reviewImage.getReview().getReviewId());
+                imageMap.put("image", imageData);
+                imageList.add(imageMap);
             } catch (IOException | java.io.IOException e) {
                 log.error("Error reading review image file", e);
             }
         }
-        return imageBytesList;
+        return imageList;
     }
 
 

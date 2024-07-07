@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -209,8 +210,8 @@ public class ReviewController {
 
     @GetMapping("/images")
     @Operation(summary = "모든 리뷰 이미지 가져오기")
-    public ResponseEntity<List<byte[]>> getAllReviewImages() {
-        List<byte[]> images = reviewService.getAllReviewImages();
+    public ResponseEntity<List<Map<String, Object>>> getAllReviewImages() {
+        List<Map<String, Object>> images = reviewService.getAllReviewImages();
         return ResponseEntity.ok(images);
     }
 
