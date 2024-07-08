@@ -16,7 +16,7 @@ public interface CartService {
 
     List<CartDTO> getCartItems(Long userId);
 
-    void updateCartItem(Long cartId, Long quantity, boolean selected);
+    void updateCartItem(Long cartId, Long quantity);
 
     boolean removeFromCart(Long cartId);
 

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,23 +29,6 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final ProductsColorSizeRepository productsColorSizeRepository;
     private final ProductsImageRepository productsImageRepository;
-
-//    @Override
-//    public void addToCart(Long userId, Long productColorSizeId, Long productImageId, Long quantity) {
-//        Users user = userRepository.findById(userId)
-//                .orElseThrow(() -> new UserNotFoundException("해당하는 유저를 찾을 수 없습니다."));
-//        ProductsColorSize productsColorSize = productsColorSizeRepository.findById(productColorSizeId)
-//                .orElseThrow(() -> new ProductNotFoundException("상품의 색상 또는 사이즈를 찾을 수 없습니다."));
-//        ProductsImage productsImage = productsImageRepository.findById(productImageId)
-//                .orElseThrow(() -> new RuntimeException("상품의 이미지를 찾을 수 없습니다."));
-//
-//        Products products = productsColorSize.getProductsColor().getProducts();
-//        Long price = products.getPrice() * quantity;
-//
-//        Cart cart = new Cart(user, productsColorSize, productsImage, quantity, price);
-//        cartRepository.save(cart);
-//    }
-
 
     @Override
     public void addToCart(List<AddToCartDTO> addToCartDTOList) {
@@ -92,11 +76,10 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateCartItem(Long cartId, Long quantity, boolean selected) {
+    public void updateCartItem(Long cartId, Long quantity) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new RuntimeException("장바구니 상품을 찾을 수 없습니다."));
         cart.setQuantity(quantity);
-        cart.setSelected(selected);
         cart.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPrice() * quantity);
         cartRepository.save(cart);
     }
@@ -114,12 +97,11 @@ public class CartServiceImpl implements CartService {
     public CartSummaryDTO getCartSummary(Long userId) {
         List<Cart> carts = cartRepository.findByUser(userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found")));
-        long totalPrice = carts.stream()
-                .filter(Cart::isSelected)
+
+        Long totalPrice = carts.stream()
                 .mapToLong(cart -> cart.getPrice())
                 .sum();
         int totalItems = carts.stream()
-                .filter(Cart::isSelected)
                 .mapToInt(cart -> cart.getQuantity().intValue())
                 .sum();
         return new CartSummaryDTO(totalItems, totalPrice);
@@ -134,7 +116,6 @@ public class CartServiceImpl implements CartService {
         cartDTO.setProductsImageId(cart.getProductsImage().getProductImageId());
         cartDTO.setQuantity(cart.getQuantity());
         cartDTO.setPrice(cart.getPrice());
-        cartDTO.setSelected(cart.isSelected());
         cartDTO.setBrandName(cart.getProductsColorSize().getProductsColor().getProducts().getBrandName());
         return cartDTO;
     }

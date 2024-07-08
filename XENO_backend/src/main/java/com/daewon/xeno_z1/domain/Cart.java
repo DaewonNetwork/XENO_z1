@@ -40,9 +40,9 @@ public class Cart {
     @Column(name = "price", nullable = false)
     private Long price;
 
-    @Builder.Default
-    @Column(name = "selected")
-    private boolean selected = true;   // 선택 여부
+//    @Builder.Default
+//    @Column(name = "selected")
+//    private boolean selected = true;   // 선택 여부
 
 //    public Cart(Users user, ProductsColorSize productsColorSize, ProductsImage productsImage, Long quantity, Long price) {
 //        this.user = user;

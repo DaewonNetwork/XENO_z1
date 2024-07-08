@@ -15,7 +15,6 @@ public class CartDTO {
     private Long productsImageId;
     private Long quantity;
     private Long price;
-    private boolean selected;
     private String brandName;
 
 }
