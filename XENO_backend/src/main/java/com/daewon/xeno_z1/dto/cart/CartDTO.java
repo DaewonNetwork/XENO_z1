@@ -16,5 +16,8 @@ public class CartDTO {
     private Long quantity;
     private Long price;
     private String brandName;
+    private String imageUuid;
+    private String imageFileName;
+    private byte[] imageData;
 
 }
