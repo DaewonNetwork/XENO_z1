@@ -30,13 +30,23 @@ public class Review extends BaseEntity {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Users users;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "productColorId", referencedColumnName = "productColorId")
+  private ProductsColor productsColor;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "productColorSizeId", referencedColumnName = "productColorSizeId")
+  private ProductsColorSize productsColorSize;
+
   private String text;
 
   private double star;
 
   private Long productImage;
-  
-  private Long size;
+
+  private String size;
+
+  private int replyIndex;
 
   public void setReview(String text,double star) {
     this.text = text;
@@ -56,8 +66,24 @@ public class Review extends BaseEntity {
     this.productImage = productImage;
   } 
 
-  public void setSize(Long size) {
+  public void setSize(String size) {
       this.size = size;
+  }
+
+  public void setProductsColor(ProductsColor productsColor) {
+    this.productsColor = productsColor;
+  }
+
+  public void setProductsColorSize(ProductsColorSize productsColorSize) {
+      this.productsColorSize = productsColorSize;
+  }
+
+  public int getReplyIndex() {
+    return replyIndex;
+  }
+
+  public void setReplyIndex(int replyIndex) {
+      this.replyIndex = replyIndex;
   }
 
 }
