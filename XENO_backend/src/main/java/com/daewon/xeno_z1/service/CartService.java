@@ -6,6 +6,7 @@ import com.daewon.xeno_z1.dto.cart.CartDTO;
 import com.daewon.xeno_z1.dto.cart.CartSummaryDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CartService {
 
@@ -16,7 +17,7 @@ public interface CartService {
 
     List<CartDTO> getCartItems(Long userId);
 
-    void updateCartItem(Long cartId, Long quantity);
+    void updateCartItem(Long userId, Long cartId, Long quantity);
 
     boolean removeFromCart(Long cartId);
 

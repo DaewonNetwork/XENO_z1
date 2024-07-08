@@ -1,8 +1,11 @@
 package com.daewon.xeno_z1.controller;
 
+import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.cart.AddToCartDTO;
 import com.daewon.xeno_z1.dto.cart.CartDTO;
 import com.daewon.xeno_z1.dto.cart.CartSummaryDTO;
+import com.daewon.xeno_z1.repository.UserRepository;
+import com.daewon.xeno_z1.security.filter.TokenCheckFilter;
 import com.daewon.xeno_z1.service.CartService;
 import com.daewon.xeno_z1.utils.JWTUtil;
 import io.jsonwebtoken.JwtException;
@@ -11,6 +14,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -29,6 +35,7 @@ public class CartController {
 
     private final CartService cartService;
     private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @Value("${org.daewon.upload.path}")
     private String uploadPath;
@@ -104,22 +111,30 @@ public class CartController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateCartItem(@RequestParam Long cartId, @RequestBody CartDTO cartDTO) {
-        cartService.updateCartItem(cartId, cartDTO.getQuantity());
-        return ResponseEntity.ok("장바구니 수량 및 선택 여부가 수정 되었습니다.");
-    }
+    public ResponseEntity<String> updateCartItem(@RequestBody CartDTO cartDTO) {
+        // SecurityContext에서 인증된 사용자 정보를 가져옵니다.
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증되지 않은 사용자입니다.");
+        }
 
-//    @DeleteMapping
-//    public ResponseEntity<String> removeFromCart(@RequestParam Long cartId) {
-//        boolean removed = cartService.removeFromCart(cartId);
-//        if (removed) {
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity
-//                    .status(HttpStatus.NOT_FOUND)
-//                    .body("장바구니 물건을 찾을 수 없습니다 with id: " + cartId);
-//        }
-//    }
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String email = userDetails.getUsername(); // JWT에서 사용한 email을 가져옵니다.
+
+        try {
+            Users user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+            cartService.updateCartItem(user.getUserId(), cartDTO.getCartId(), cartDTO.getQuantity());
+
+            if (cartDTO.getQuantity() <= 0) {
+                return ResponseEntity.ok("장바구니 아이템이 삭제되었습니다.");
+            }
+            return ResponseEntity.ok("장바구니 수량이 수정되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 
     @DeleteMapping
     public ResponseEntity<Map<String, String>> removeFromCart(@RequestParam Long cartId) {

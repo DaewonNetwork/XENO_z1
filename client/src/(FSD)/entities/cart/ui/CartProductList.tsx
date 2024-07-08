@@ -8,7 +8,7 @@ import { UserType } from '@/(FSD)/shareds/types/User.type'
 
 const CartProductList = () => {
     const user: UserType = useRecoilValue(userState);
-    if(!user) return <></>
+
     const { data: cartItems, isLoading: itemsLoading, error: itemsError } = useCartProductListRead(user.userId);
     const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary(user.userId);
 

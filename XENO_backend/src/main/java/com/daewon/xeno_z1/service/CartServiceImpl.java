@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -76,9 +77,16 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateCartItem(Long cartId, Long quantity) {
-        Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("장바구니 상품을 찾을 수 없습니다."));
+    public void updateCartItem(Long userId, Long cartId, Long quantity) {
+        Cart cart = cartRepository.findByCartIdAndUserUserId(cartId, userId)
+                .orElseThrow(() -> new RuntimeException("해당 사용자의 장바구니 상품을 찾을 수 없습니다."));
+
+        // 수량이 0이면 DB에서 해당하는 cart 삭제
+        if (quantity <= 0) {
+            cartRepository.delete(cart);
+            return;
+        }
+
         cart.setQuantity(quantity);
         cart.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPrice() * quantity);
         cartRepository.save(cart);

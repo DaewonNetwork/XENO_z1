@@ -5,8 +5,13 @@ export const useUpdateCartItem = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({ cartId, updates }: { cartId: number; updates: any }) =>
-            fetchData({ path: `/cart/${cartId}`, method: "PUT", body: updates, isAuthRequired: true }),
+        // mutationFn: ({ updates }: { updates: any }) =>
+        mutationFn: (updates: { quantity: number; isSelected: boolean; price: number; }) =>
+            fetchData({ 
+                path: "/cart", 
+                method: "PUT", 
+                body: updates, 
+                isAuthRequired: true }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["cart_items"] });
         },

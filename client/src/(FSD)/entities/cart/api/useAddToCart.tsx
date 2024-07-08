@@ -6,7 +6,11 @@ export const useAddToCart = () => {
 
     return useMutation({
         mutationFn: (newItem: { userId: number; productColorSizeId: number; productImageId: number; quantity: number }) =>
-            fetchData({ path: "/cart", method: "POST", body: newItem, isAuthRequired: true }),
+            fetchData({ 
+                path: "/cart", 
+                method: "POST", 
+                body: newItem, 
+                isAuthRequired: true }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["cart_items"] });
         },
