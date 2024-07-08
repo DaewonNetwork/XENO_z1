@@ -288,16 +288,17 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
         Cart cart = new Cart();
-
         for(AddToCartDTO addToCartDTO: addToCartDTOList) {
             cart = cartRepository.findByProductColorSizeIdAndUser(addToCartDTO.getProductColorSizeId(),users.getUserId()).orElse(null);
             ProductsColorSize productsColorSize = productsColorSizeRepository.findById(addToCartDTO.getProductColorSizeId()).orElse(null);
+            ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productsColorSize.getProductsColor().getProductColorId());
             if(cart == null) {
                 cart = Cart.builder()
                         .price(addToCartDTO.getPrice())
                         .productsColorSize(productsColorSize)
                         .quantity(addToCartDTO.getQuantity())
                         .users(users)
+                        .productsImage(productsImage)
                         .build();
                 cartRepository.save(cart);
             } else {

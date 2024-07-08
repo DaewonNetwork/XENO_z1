@@ -28,6 +28,11 @@ public class Cart {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductsColorSize productsColorSize;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ProductsImageId", referencedColumnName = "ProductImageId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ProductsImage productsImage;
+
     @Column(name = "quantity", nullable = false)
     private Long quantity;  // 수량
 
