@@ -15,7 +15,7 @@ public class CartRequestDTO {
 
     public CartRequestDTO(Cart cart) {
         this(
-                cart.getUser().getUserId(),
+                cart.getUsers().getUserId(),
                 cart.getQuantity()
         );
     }

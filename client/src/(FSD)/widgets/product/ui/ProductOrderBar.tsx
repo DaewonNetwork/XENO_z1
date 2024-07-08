@@ -8,6 +8,7 @@ import { Button } from "@nextui-org/button";
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
 import { orderInfoType, ProductOrderBarType } from "@/(FSD)/features/product/ui/ProductOrderContainer";
 import { useProductAddCart } from "@/(FSD)/features/product/api/useProductAddCart";
+import { useParams } from "next/navigation";
 
 type ProductList = {
     productColorSizeId: number;
@@ -24,7 +25,7 @@ type SizeAndStockType = {
 
 
 const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
-
+    const { productColorId } = useParams<{ productColorId: string }>();
     const [isOpen, setIsOpen] = useState(false);
     const [isSelectedColor, setIsSelectedColor] = useState(false);
     const [isSelectedSize, setIsSelectedSize] = useState(false);
@@ -73,7 +74,7 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
         setSizeAndStock(uniqueSizes);
     }, [color, orderBar.orderInfo]);
 
-    
+
     useEffect(() => {
         const totalProductCount = products.reduce((acc, curr) => acc + curr.quantity, 0);
         setCount(totalProductCount);
@@ -227,7 +228,7 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
                         <AppInner>
                             <div className={styles.order_inner}>
                                 <div className={styles.order_like_btn}>
-                                    <ProductLikeBtn isLike={orderBar?.like} isIndex={true} size={"md"} index={orderBar?.likeIndex} />
+                                    <ProductLikeBtn productColorId ={Number(productColorId)} isLike={orderBar?.like} isIndex={true} size={"md"} index={orderBar?.likeIndex} />
                                 </div>
                                 <div className={styles.order_btn}>
                                     <Button color="primary" fullWidth radius="sm" onClick={handleBuyClick}>

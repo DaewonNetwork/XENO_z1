@@ -1,13 +1,35 @@
+// export interface ProductType {
+//     productColorId: number;
+//     name: string;
+//     brandName: string;
+//     price: number;
+//     isSale: boolean;
+//     priceSale: number;
+//     productState: string;
+//     like: boolean;
+//     productImage: Uint8Array | null;
+//     category: "상의" | "하의" | "아우터";
+//     categorySub: "반팔" | "긴팔" | "청바지" | "반바지" | "면" | "나일론" | "후드집업" | "코트" | "바람막이" | "패딩" | "자켓";
+// }
+
+
 export interface ProductType {
-    productId: number;
-    productName: string;
-    productBrand: string;
+    productColorId: number;
+    brandName: string;
+    name: string;
+    category: "상의" | "하의" | "아우터";
+    categorySub: "반팔" | "긴팔" | "청바지" | "반바지" | "면" | "나일론" | "후드집업" | "코트" | "바람막이" | "패딩" | "자켓";
     price: number;
-    isSale: boolean;
-    sale: number;
+    priceSale: number;
+    sale: boolean;
+    like: boolean;
+    // likeIndex: number;
+    // starAvg: number;
     productState: string;
-    isLike: boolean;
     productImage: Uint8Array | null;
-    productCategory: "상의" | "하의" | "아우터";
-    productSubCategory: "반팔" | "긴팔" | "청바지" | "반바지" | "면" | "나일론" | "후드집업" | "코트" | "바람막이" | "패딩" | "자켓";
 }
+
+
+
+
+

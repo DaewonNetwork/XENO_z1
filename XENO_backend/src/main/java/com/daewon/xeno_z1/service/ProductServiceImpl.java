@@ -101,7 +101,7 @@ public class ProductServiceImpl implements ProductService {
         String email = "joohyeongzz@naver.com";
 
         Users users = userRepository.findByEmail(currentUserName)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
+                .orElse(null);
 
         if (users != null) {
             Long userId = users.getUserId();
@@ -305,7 +305,7 @@ public class ProductServiceImpl implements ProductService {
         log.info(currentUserName);
         String email = "joohyeongzz@naver.com";
 
-        Users users = userRepository.findByEmail(currentUserName)
+        Users users = userRepository.findByEmail(currentUserName == "anonymousUser" ? email : currentUserName  )
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
         Cart cart = new Cart();
@@ -331,9 +331,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId) {
-        String category = CategoryUtils.getCategoryFromCode(categoryId);
-        List<Products> productsList = productsRepository.findByCategory(category);
+    public List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId, String categorySubId) {
+        List<Products> productsList = new ArrayList<>();
+        if (categoryId.equals("000") && categorySubId.isEmpty()){
+            productsList = productsRepository.findAll();
+        } else if (categorySubId.isEmpty()) {
+            String category = CategoryUtils.getCategoryFromCode(categoryId);
+            productsList = productsRepository.findByCategory(category);
+        } else {
+            String category = CategoryUtils.getCategoryFromCode(categoryId);
+            String categorySub = CategoryUtils.getCategorySubFromCode(categorySubId);
+            productsList = productsRepository.findByCategorySub(category,categorySub);
+        }
+
         List<ProductsInfoByCategoryDTO> productsInfoByCategoryDTOList = new ArrayList<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -386,61 +396,116 @@ public class ProductServiceImpl implements ProductService {
         return productsInfoByCategoryDTOList;
     }
 
-    @Override
-    public List<ProductsInfoByCategoryDTO> getProductsInfoByCategorySub(String categoryIdSub) {
-        String categorySub = CategoryUtils.getCategorySubFromCode(categoryIdSub);
-        List<Products> productsList = productsRepository.findByCategorySub(categorySub);
-        List<ProductsInfoByCategoryDTO> productsInfoByCategoryDTOList = new ArrayList<>();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        String currentUserName = authentication.getName();
-
-        String email = "joohyeongzz@naver.com";
-
-        Users users = userRepository.findByEmail(currentUserName)
-                .orElse(null);
-
-        for (Products products : productsList) {
-            List<ProductsColor> productsColors = productsColorRepository.findByProductId(products.getProductId());
-            for (ProductsColor productsColor : productsColors) {
-                ProductsInfoByCategoryDTO dto = new ProductsInfoByCategoryDTO();
-                dto.setBrandName(products.getBrandName());
-                dto.setName(products.getName());
-                dto.setCategory(products.getCategory());
-                dto.setCategorySub(products.getCategorySub());
-                dto.setPrice(products.getPrice());
-                dto.setPriceSale(products.getPriceSale());
-                dto.setSale(products.isSale());
-                if (users != null) {
-                    Long userId = users.getUserId();
-                    LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productsColor.getProductColorId(),userId);
-                    dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
-                } else {
-                    dto.setLike(false);
-                }
-                ProductsLike productsLike = productsLikeRepository.findByProductColorId(productsColor.getProductColorId()).orElse(null);
-                ProductsStar productsStar = productsStarRepository.findByProductColorId(productsColor.getProductColorId()).orElse(null);
-                ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productsColor.getProductColorId());
-                if(productsImage != null) {
-                    try {
-                        byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
-                        dto.setProductImage(imageData);
-                    } catch (IOException e) {
-
-                    }
-                } else {
-                    dto.setProductImage(null);
-                }
-                dto.setProductColorId(productsColor.getProductColorId());
-                dto.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
-                dto.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);
-
-                productsInfoByCategoryDTOList.add(dto);
-            }
-        }
-
-        return productsInfoByCategoryDTOList;
-    }
+//    @Override
+//    public List<ProductsInfoByCategoryDTO> getProductsInfoByCategorySub(String categoryIdSub) {
+//        String categorySub = CategoryUtils.getCategorySubFromCode(categoryIdSub);
+//        List<Products> productsList = productsRepository.findByCategorySub(categorySub);
+//        List<ProductsInfoByCategoryDTO> productsInfoByCategoryDTOList = new ArrayList<>();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        String currentUserName = authentication.getName();
+//
+//        String email = "joohyeongzz@naver.com";
+//
+//        Users users = userRepository.findByEmail(currentUserName)
+//                .orElse(null);
+//
+//        for (Products products : productsList) {
+//            List<ProductsColor> productsColors = productsColorRepository.findByProductId(products.getProductId());
+//            for (ProductsColor productsColor : productsColors) {
+//                ProductsInfoByCategoryDTO dto = new ProductsInfoByCategoryDTO();
+//                dto.setBrandName(products.getBrandName());
+//                dto.setName(products.getName());
+//                dto.setCategory(products.getCategory());
+//                dto.setCategorySub(products.getCategorySub());
+//                dto.setPrice(products.getPrice());
+//                dto.setPriceSale(products.getPriceSale());
+//                dto.setSale(products.isSale());
+//                if (users != null) {
+//                    Long userId = users.getUserId();
+//                    LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productsColor.getProductColorId(),userId);
+//                    dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+//                } else {
+//                    dto.setLike(false);
+//                }
+//                ProductsLike productsLike = productsLikeRepository.findByProductColorId(productsColor.getProductColorId()).orElse(null);
+//                ProductsStar productsStar = productsStarRepository.findByProductColorId(productsColor.getProductColorId()).orElse(null);
+//                ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productsColor.getProductColorId());
+//                if(productsImage != null) {
+//                    try {
+//                        byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
+//                        dto.setProductImage(imageData);
+//                    } catch (IOException e) {
+//
+//                    }
+//                } else {
+//                    dto.setProductImage(null);
+//                }
+//                dto.setProductColorId(productsColor.getProductColorId());
+//                dto.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
+//                dto.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);
+//
+//                productsInfoByCategoryDTOList.add(dto);
+//            }
+//        }
+//
+//        return productsInfoByCategoryDTOList;
+//    }
+//
+//    @Override
+//    public List<ProductsInfoByCategoryDTO> getProductsInfoAll() {
+//        List<Products> productsList = productsRepository.findAll();
+//        List<ProductsInfoByCategoryDTO> productsInfoByCategoryDTOList = new ArrayList<>();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        String currentUserName = authentication.getName();
+//
+//        String email = "joohyeongzz@naver.com";
+//
+//        Users users = userRepository.findByEmail(currentUserName)
+//                .orElse(null);
+//
+//        for (Products products : productsList) {
+//            List<ProductsColor> productsColors = productsColorRepository.findByProductId(products.getProductId());
+//            for (ProductsColor productsColor : productsColors) {
+//                ProductsInfoByCategoryDTO dto = new ProductsInfoByCategoryDTO();
+//                dto.setBrandName(products.getBrandName());
+//                dto.setName(products.getName());
+//                dto.setCategory(products.getCategory());
+//                dto.setCategorySub(products.getCategorySub());
+//                dto.setPrice(products.getPrice());
+//                dto.setPriceSale(products.getPriceSale());
+//                dto.setSale(products.isSale());
+//                if (users != null) {
+//                    Long userId = users.getUserId();
+//                    LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productsColor.getProductColorId(),userId);
+//                    dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+//                } else {
+//                    dto.setLike(false);
+//                }
+//                ProductsLike productsLike = productsLikeRepository.findByProductColorId(productsColor.getProductColorId()).orElse(null);
+//                ProductsStar productsStar = productsStarRepository.findByProductColorId(productsColor.getProductColorId()).orElse(null);
+//                ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productsColor.getProductColorId());
+//                if(productsImage != null) {
+//                    try {
+//                        byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
+//                        dto.setProductImage(imageData);
+//                    } catch (IOException e) {
+//
+//                    }
+//                } else {
+//                    dto.setProductImage(null);
+//                }
+//                dto.setProductColorId(productsColor.getProductColorId());
+//                dto.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
+//                dto.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);
+//
+//                productsInfoByCategoryDTOList.add(dto);
+//            }
+//        }
+//
+//        return productsInfoByCategoryDTOList;
+//    }
 }
 
 

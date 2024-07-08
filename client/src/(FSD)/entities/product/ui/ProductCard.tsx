@@ -10,18 +10,45 @@ interface ProductCardType {
     rank?: number;
 }
 
+
+
 const ProductCard = ({ product, linkBtn, isRank = false, rank = 0 }: ProductCardType) => {
+
+    const handleImageClick = () => {
+        // 이미지 클릭 시 처리할 작업
+        window.location.href = `products/${product.productColorId}`;
+    };
+
+    const calculateDiscountPercent = (price: number, priceSale: number): number => {
+        return Math.round(((price - priceSale) / price) * 100);
+    };
+
+    const discountPercent = calculateDiscountPercent(product.price, product.priceSale);
+
     return (
         <div className={styles.product_card}>
             <div className={styles.card_top}>
                 {isRank && <div className={`bg-content2 ${styles.product_rank}`}>{rank}</div>}
-                {!product.productImage && <Skeleton className={styles.product_skeleton} />}
+                {!product.productImage ?
+                    (<Skeleton className={styles.product_skeleton} />)
+                    : (<img
+                        src={`data:image/jpeg;base64,${product.productImage}`}
+                        className={styles.product_image}
+                        onClick={handleImageClick}
+                    />)}
                 {linkBtn && <div className={styles.product_like_btn}>{linkBtn}</div>}
             </div>
             <div className={styles.card_btm}>
-                <p className={"font-medium"}>{product.productBrand}</p>
-                <p>{product.productName}</p>
-                <p className={"font-medium"}><span className={"text-primary"}>{product.isLike && `${product.sale}%`}</span> {product.price.toLocaleString()}원</p>
+                <p className={"font-medium"}>{product.brandName}</p>
+                <p>{product.name}</p>
+                <p className="font-medium">
+                    {product.sale && (
+                        <span className="text-primary">
+                            {`${discountPercent}% `}
+                        </span>
+                    )}
+                    {product.sale ? product.priceSale.toLocaleString() : product.price.toLocaleString()}원
+                </p>
             </div>
         </div>
     )

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export const useProductRead = (productColorId: number) => {
    
@@ -14,6 +14,6 @@ export const useProductRead = (productColorId: number) => {
             
             return await response.json();
         },
-        placeholderData: null, // Assuming you don't have initial placeholder data
+        placeholderData: keepPreviousData,
     });
 };
