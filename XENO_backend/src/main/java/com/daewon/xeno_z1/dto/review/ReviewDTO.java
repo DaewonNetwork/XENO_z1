@@ -1,4 +1,4 @@
-package com.daewon.xeno_z1.dto;
+package com.daewon.xeno_z1.dto.review;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

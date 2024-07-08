@@ -46,6 +46,8 @@ public class Review extends BaseEntity {
 
   private String size;
 
+  private int replyIndex;
+
   public void setReview(String text,double star) {
     this.text = text;
     this.star = star;
@@ -74,6 +76,14 @@ public class Review extends BaseEntity {
 
   public void setProductsColorSize(ProductsColorSize productsColorSize) {
       this.productsColorSize = productsColorSize;
+  }
+
+  public int getReplyIndex() {
+    return replyIndex;
+  }
+
+  public void setReplyIndex(int replyIndex) {
+      this.replyIndex = replyIndex;
   }
 
 }

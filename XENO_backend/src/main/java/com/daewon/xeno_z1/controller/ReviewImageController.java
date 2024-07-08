@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.domain.ReviewImage;
-import com.daewon.xeno_z1.dto.ReviewDTO;
-import com.daewon.xeno_z1.dto.ReviewImageDTO;
+import com.daewon.xeno_z1.dto.review.ReviewDTO;
+import com.daewon.xeno_z1.dto.review.ReviewImageDTO;
 import com.daewon.xeno_z1.service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
