@@ -1,8 +1,7 @@
 package com.daewon.xeno_z1.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -10,24 +9,28 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Setter
 @Table(name = "cart")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_id")
+    @Column(name = "cartId")
     private Long cartId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_color_size", nullable = false)
+    @JoinColumn(name = "productColorSizeId",  referencedColumnName = "productColorSizeId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductsColorSize productsColorSize;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_image_id")
+    @JoinColumn(name = "productImageId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductsImage productsImage;
 
@@ -37,19 +40,20 @@ public class Cart {
     @Column(name = "price", nullable = false)
     private Long price;
 
+    @Builder.Default
     @Column(name = "selected")
-    private boolean selected;   // 선택 여부
+    private boolean selected = true;   // 선택 여부
 
-    public Cart(Users user, ProductsColorSize productsColorSize, ProductsImage productsImage, Long quantity, Long price) {
-        this.user = user;
-        this.productsColorSize = productsColorSize;
-        this.productsImage = productsImage;
-        this.quantity = quantity;
-        this.price = price;
-        this.selected = true;   // 기본적으로 선택된 상태로 추가
-    }
+//    public Cart(Users user, ProductsColorSize productsColorSize, ProductsImage productsImage, Long quantity, Long price) {
+//        this.user = user;
+//        this.productsColorSize = productsColorSize;
+//        this.productsImage = productsImage;
+//        this.quantity = quantity;
+//        this.price = price;
+//        this.selected = true;   // 기본적으로 선택된 상태로 추가
+//    }
 
-    public Cart() {
-
-    }
+//    public Cart() {
+//
+//    }
 }

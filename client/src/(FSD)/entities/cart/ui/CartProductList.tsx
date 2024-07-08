@@ -4,11 +4,13 @@ import { useCartSummary } from '@/(FSD)/entities/cart/api/useCartSummary'
 import CartProductCard from './CartProductCard'
 import { useRecoilValue } from 'recoil'
 import { userState } from '@/(FSD)/shareds/stores/UserAtom'
+import { UserType } from '@/(FSD)/shareds/types/User.type'
 
 const CartProductList = () => {
-    const user = useRecoilValue(userState);
-    const { data: cartItems, isLoading: itemsLoading, error: itemsError } = useCartProductListRead(user?.id);
-    const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary(user?.id);
+    const user: UserType = useRecoilValue(userState);
+    if(!user) return <></>
+    const { data: cartItems, isLoading: itemsLoading, error: itemsError } = useCartProductListRead(user.userId);
+    const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary(user.userId);
 
     if (!user) {
         return <div>로그인이 필요합니다.</div>;
@@ -22,7 +24,11 @@ const CartProductList = () => {
             {cartItems?.map((item) => (
                 <CartProductCard
                     key={item.productId}
-                    product={item}
+                    product={{
+                        ...item,
+                        sale: item.sale ?? 0,
+                        isSale: item.sale !== undefined && item.sale > 0
+                    }}
                     quantity={item.quantity}
                     isSelected={item.selected}
                 />

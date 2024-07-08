@@ -5,9 +5,9 @@ import { useUpdateCartItem } from '../api/useUpdateCartItem';
 import { useRemoveFromCart } from '../api/useRemoveFromCart';
 
 interface CartProductCardProps {
-    product: Partial<ProductType> & { productId: number; productName: string; price: number; };
-    quantity: number;
-    isSelected: boolean;
+    product: Partial<ProductType> & { productId: number; productName: string; price: number; sale: number; isSale: boolean };
+    quantity?: number;
+    isSelected?: boolean;
 }
 
 const CartProductCard = ({ product, quantity: initialQuantity, isSelected: initialSelected }: CartProductCardProps) => {
