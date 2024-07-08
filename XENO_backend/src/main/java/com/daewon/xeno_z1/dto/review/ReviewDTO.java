@@ -1,4 +1,4 @@
-package com.daewon.xeno_z1.dto;
+package com.daewon.xeno_z1.dto.review;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,9 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
-import com.daewon.xeno_z1.domain.ProductsColor;
-import com.daewon.xeno_z1.domain.ProductsColorSize;
 
 @Data
 @NoArgsConstructor
