@@ -7,7 +7,7 @@ import com.daewon.xeno_z1.domain.ProductsImage;
 import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.domain.ReviewImage;
 import com.daewon.xeno_z1.domain.Users;
-import com.daewon.xeno_z1.dto.ReviewDTO;
+import com.daewon.xeno_z1.dto.review.ReviewDTO;
 import com.daewon.xeno_z1.repository.ProductsColorRepository;
 import com.daewon.xeno_z1.repository.ProductsColorSizeRepository;
 import com.daewon.xeno_z1.repository.ProductsImageRepository;

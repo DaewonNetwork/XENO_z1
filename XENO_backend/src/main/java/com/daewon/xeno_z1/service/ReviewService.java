@@ -1,8 +1,7 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Review;
-import com.daewon.xeno_z1.domain.ReviewImage;
-import com.daewon.xeno_z1.dto.ReviewDTO;
+import com.daewon.xeno_z1.dto.review.ReviewDTO;
 
 import java.io.IOException;
 import java.util.List;
