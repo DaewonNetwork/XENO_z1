@@ -1,11 +1,15 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Products;
+import com.daewon.xeno_z1.domain.ProductsColor;
+import com.daewon.xeno_z1.domain.ProductsColorSize;
 import com.daewon.xeno_z1.domain.ProductsImage;
 import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.domain.ReviewImage;
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.ReviewDTO;
+import com.daewon.xeno_z1.repository.ProductsColorRepository;
+import com.daewon.xeno_z1.repository.ProductsColorSizeRepository;
 import com.daewon.xeno_z1.repository.ProductsImageRepository;
 import com.daewon.xeno_z1.repository.ProductsRepository;
 import com.daewon.xeno_z1.repository.ReviewImageRepository;
@@ -21,10 +25,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +47,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewImageRepository reviewImageRepository;
     private final ProductsImageRepository productsImageRepository;
     private final ProductsRepository productsRepository;
+    private final ProductsColorRepository productsColorRepository;
+    private final ProductsColorSizeRepository productsColorSizeRepository;
 
     @Value("${uploadPath}")
     private String uploadPath;
@@ -52,7 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
         Path path = Paths.get(filePath);
         byte[] image = Files.readAllBytes(path);
         return image;
-    }    
+    }
 
     // 리뷰 이미지 총 갯수
     @Override
@@ -60,26 +67,60 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewImageRepository.countReviewImagesByProductId(productId);
     }
 
-    // 제품의 전체 후기 사진
     @Override
-    public List<ReviewImage> findAllReviewImagesByProductId(Long productId) {
-        return reviewImageRepository.findAllReviewImagesByProductId(productId);
+    public List<byte[]> getAllProductReviewImages(Long productId) {
+        List<ReviewImage> reviewImages = reviewImageRepository.findAllReviewImagesByProductId(productId);
+        List<byte[]> imageBytesList = new ArrayList<>();
+        for (ReviewImage reviewImage : reviewImages) {
+            try {
+                byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
+                imageBytesList.add(imageData);
+            } catch (IOException | java.io.IOException e) {
+                log.error("Error reading review image file", e);
+            }
+        }
+        return imageBytesList;
     }
+
+    @Override
+    public List<Map<String, Object>> getAllReviewImages() {
+        List<ReviewImage> reviewImages = reviewImageRepository.findAll();
+        List<Map<String, Object>> imageList = new ArrayList<>();
+        for (ReviewImage reviewImage : reviewImages) {
+            try {
+                byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
+                Map<String, Object> imageMap = new HashMap<>();
+                imageMap.put("reviewId", reviewImage.getReview().getReviewId());
+                imageMap.put("image", imageData);
+                imageList.add(imageMap);
+            } catch (IOException | java.io.IOException e) {
+                log.error("Error reading review image file", e);
+            }
+        }
+        return imageList;
+    }
+
 
     // 리뷰 조회
     @Override
     public ReviewDTO getReviewDetails(Long reviewId) {
+        log.info("Getting review details for reviewId: {}", reviewId);
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
+        log.info("Found review: {}", review);
         ReviewDTO dto = new ReviewDTO();
         dto.setReviewId(review.getReviewId());
         dto.setProductId(review.getProducts().getProductId());
         dto.setUserId(review.getUsers().getUserId());
         dto.setText(review.getText());
-        dto.setStar((int) review.getStar());
+        dto.setStar(review.getStar());
         dto.setReviewDate(review.getCreateAt() != null ? review.getCreateAt().toString() : null);
-        dto.setNickname(review.getUsers().getName());
-        dto.setSize(review.getSize().toString());
+        dto.setName(review.getUsers().getName());
+        dto.setSize(review.getSize());
+        dto.setColor(review.getProductsColor().getColor());
+        dto.setProductColorId(review.getProductsColor().getProductColorId());
+        dto.setProductColorSizeId(review.getProductsColorSize().getProductColorSizeId());
+
     
         List<ReviewImage> reviewImages = reviewImageRepository.findByReview(review);
         List<byte[]> reviewDetailImages = new ArrayList<>();
@@ -105,26 +146,47 @@ public class ReviewServiceImpl implements ReviewService {
             }
         }
         dto.setProductImages(productImageBytes);
-    
+        log.info("Converted ReviewDTO: {}", dto);
         return dto;
     }
-
 
     // 리뷰 생성
     @Override
     public Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images) {
         Products product = productsRepository.findById(reviewDTO.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-
+    
+        ProductsColor productsColor = productsColorRepository.findById(reviewDTO.getProductColorId())
+                .orElseThrow(() -> new RuntimeException("ProductColor not found"));
+        
+        ProductsColorSize productsColorSize = productsColorSizeRepository.findByProductsColor(productsColor)
+                .orElseThrow(() -> new RuntimeException("ProductColorSize not found for the given color"));
+            
+        // size에 따라 적절한 재고를 확인
+        long stock = switch (reviewDTO.getSize().toUpperCase()) {
+            case "S" -> productsColorSize.getStock_s();
+            case "M" -> productsColorSize.getStock_m();
+            case "L" -> productsColorSize.getStock_l();
+            case "XL" -> productsColorSize.getStock_xl();
+            default -> throw new RuntimeException("Invalid size");
+        };
+            
+        if (stock <= 0) {
+            throw new RuntimeException("Out of stock for the selected size");
+        }
+    
         Review review = Review.builder()
                 .text(reviewDTO.getText())
                 .star(reviewDTO.getStar())
+                .size(reviewDTO.getSize())
                 .products(product)
+                .productsColor(productsColor)
+                .productsColorSize(productsColorSize)
                 .users(Users.builder().userId(reviewDTO.getUserId()).build())
-                .size(Long.parseLong(reviewDTO.getSize()))
                 .build();
-
+    
         review = reviewRepository.save(review);
+    
 
         List<byte[]> reviewDetailImages = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
@@ -183,14 +245,22 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setProductId(review.getProducts().getProductId());
         dto.setUserId(review.getUsers().getUserId());
         dto.setText(review.getText());
-        dto.setStar((int) review.getStar());
+        dto.setStar(review.getStar());
         dto.setReviewDate(review.getCreateAt().toString());
-        dto.setNickname(usersRepository.findById(review.getUsers().getUserId()).get().getName());
-        dto.setSize(review.getSize().toString());
+        dto.setName(usersRepository.findById(review.getUsers().getUserId()).get().getName());
+        dto.setSize(review.getSize());
+        dto.setColor(review.getProductsColor().getColor());
     
+        // ProductsColor 관련 필드 설정
+        dto.setProductColorId(review.getProductsColor().getProductColorId());
+    
+        // ProductsColorSize 관련 필드 설정
+        dto.setProductColorSizeId(review.getProductsColorSize().getProductColorSizeId());
+
         // 리뷰 이미지 설정
         List<ReviewImage> reviewImages = reviewImageRepository.findByReview(review);
         List<byte[]> reviewDetailImages = new ArrayList<>();
+
         for (ReviewImage reviewImage : reviewImages) {
             try {
                 byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
@@ -200,7 +270,6 @@ public class ReviewServiceImpl implements ReviewService {
             }
         }
         dto.setReviewDetailImages(reviewDetailImages);
-    
         // 제품 이미지 설정
         List<ProductsImage> productImages = productsImageRepository.findByProductId(review.getProducts().getProductId());
         List<byte[]> productImageBytes = new ArrayList<>();
@@ -213,7 +282,7 @@ public class ReviewServiceImpl implements ReviewService {
             }
         }
         dto.setProductImages(productImageBytes);
-    
+
         return dto;
     }
 
@@ -225,7 +294,6 @@ public class ReviewServiceImpl implements ReviewService {
 
         review.setText(reviewDTO.getText());
         review.setStar(reviewDTO.getStar());
-        review.setSize(Long.parseLong(reviewDTO.getSize()));
 
         List<ReviewImage> oldImages = reviewImageRepository.findByReview(review);
         for (ReviewImage oldImage : oldImages) {
