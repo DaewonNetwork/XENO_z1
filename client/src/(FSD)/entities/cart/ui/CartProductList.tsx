@@ -17,17 +17,21 @@ export interface CartItemsProps {
     imageData: Uint8Array;
     priceSale: number | undefined;
     sale: boolean;
+    item: CartItemsProps;
 }
 
-
-
-const CartProductList = () => {
+const CartProductList = ({ item }: CartItemsProps) => {
     const { data, isLoading: itemsLoading, error: itemsError } = useCartProductListRead();
-    // const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary();
-    // const {user }= useRecoilValue(userState);
+    const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary();
+    const {user }= useRecoilValue(userState);
+    console.log(user);
+    console.log(cartSummary);
+    console.log(item);
     
     
-   console.log(data);
+    
+    
+   console.log("data" + data);
    
 
     const cartItems: CartItemsProps[] = data || [];
@@ -37,25 +41,25 @@ const CartProductList = () => {
     //     return <div>로그인이 필요합니다.</div>;
     // }
 
-    // if (itemsLoading || summaryLoading) return <div>Loading...</div>;
-    // if (itemsError || summaryError) return <div>Error loading cart data</div>;
+    if (itemsLoading || summaryLoading) return <div>Loading...</div>;
+    if (itemsError || summaryError) return <div>Error loading cart data</div>;
 
     return (
         <div>
-          {/*   {cartItems?.map((product) => (
-                <CartProductCard
+            {/* {{cartItems?.map((product) => (
+                <CartProductList
                     key={product.productsColorSizeId}
                     product={
                         product
                     }
                 />
-            ))} */}
-           {/*  {cartSummary && (
+            ))}} */}
+            {cartSummary && (
                 <div className="mt-4 p-4 bg-gray-100">
                     <p>총 상품 수: {cartSummary.totalItems}</p>
                     <p>총 금액: {cartSummary.totalPrice.toLocaleString()}원</p>
                 </div>
-            )} */}
+            )}
         </div>
     )
 }
