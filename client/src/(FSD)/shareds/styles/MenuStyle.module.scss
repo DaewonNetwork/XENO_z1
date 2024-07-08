@@ -1,0 +1,9 @@
+.product_category_select_bar {
+    gap: 10px;
+
+    & > div {
+        margin: 3px;
+    }
+    padding-top: 10px;
+    padding-bottom: 15px;
+}
