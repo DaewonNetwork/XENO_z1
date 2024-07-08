@@ -24,6 +24,7 @@ public class ProductsStar {
   @JoinColumn(name = "productColorId", referencedColumnName = "productColorId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private ProductsColor productsColor;
+
   private long starAvg;
 
   private long starTotal;

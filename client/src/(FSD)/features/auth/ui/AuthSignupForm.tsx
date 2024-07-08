@@ -61,7 +61,7 @@ const AuthSignupForm = () => {
         if ((!data.userName) || (!data.email) || (!data.password)) return;
 
         const user: UserType = {
-            userName: data.userName,
+            name: data.userName,
             email: data.email,
             password: data.password
         };

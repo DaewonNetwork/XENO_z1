@@ -13,7 +13,8 @@ const MainBanner = () => {
         slidesToScroll: 1,
         autoplay: true,
         infinite: true,
-        autoplaySpeed: 4000
+        autoplaySpeed: 4000,
+        arrows: false,
     };
 
     return (

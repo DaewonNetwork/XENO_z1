@@ -33,6 +33,7 @@
         "bcrypt": "^5.1.1",
         "classnames": "^2.5.1",
         "dayjs": "^1.11.10",
+        "es-hangul": "^1.4.2",
         "framer-motion": "^11.0.8",
         "i18next": "^23.10.1",
         "immer": "^10.0.3",

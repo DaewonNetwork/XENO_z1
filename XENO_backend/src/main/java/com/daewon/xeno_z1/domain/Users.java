@@ -34,10 +34,6 @@ public class Users extends BaseEntity {
 
   private String companyId;
 
-
-
-
-
   @ElementCollection(fetch = FetchType.LAZY)
   @Builder.Default
   private Set<UserRole> roleSet = new HashSet<>();
