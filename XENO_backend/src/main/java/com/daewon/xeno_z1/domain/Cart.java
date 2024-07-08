@@ -8,28 +8,29 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @Setter
+@Table(name = "cart")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_id")
+    @Column(name = "cartId")
     private Long cartId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users users;
+    @JoinColumn(name = "userId", nullable = false)
+    private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productColorSizeId", referencedColumnName = "productColorSizeId" ,nullable = false)
+    @JoinColumn(name = "productColorSizeId",  referencedColumnName = "productColorSizeId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductsColorSize productsColorSize;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ProductsImageId", referencedColumnName = "ProductImageId")
+    @JoinColumn(name = "productImageId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductsImage productsImage;
 
@@ -39,11 +40,20 @@ public class Cart {
     @Column(name = "price", nullable = false)
     private Long price;
 
-    public Cart(Users users, ProductsColorSize productsColorSize, Long quantity, Long price) {
-        this.users = users;
-        this.productsColorSize = productsColorSize;
-        this.quantity = quantity;
-        this.price = price;
-    }
+//    @Builder.Default
+//    @Column(name = "selected")
+//    private boolean selected = true;   // 선택 여부
 
+//    public Cart(Users user, ProductsColorSize productsColorSize, ProductsImage productsImage, Long quantity, Long price) {
+//        this.user = user;
+//        this.productsColorSize = productsColorSize;
+//        this.productsImage = productsImage;
+//        this.quantity = quantity;
+//        this.price = price;
+//        this.selected = true;   // 기본적으로 선택된 상태로 추가
+//    }
+
+//    public Cart() {
+//
+//    }
 }
