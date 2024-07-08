@@ -2,5 +2,8 @@ import { atom } from "recoil";
 
 export const cartTotalState = atom({
     key: 'cartTotalState',
-    default: 0
+    default: {
+        totalItems: 0,
+        totalPrice: 0,
+    },
 });
