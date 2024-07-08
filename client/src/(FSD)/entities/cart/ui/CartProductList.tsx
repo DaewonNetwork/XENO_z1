@@ -7,21 +7,23 @@ import { userState } from '@/(FSD)/shareds/stores/UserAtom'
 import { UserType } from '@/(FSD)/shareds/types/User.type'
 
 const CartProductList = () => {
-    const user: UserType = useRecoilValue(userState);
+    // const user: UserType = useRecoilValue(userState);
 
-    const { data: cartItems, isLoading: itemsLoading, error: itemsError } = useCartProductListRead(user.userId);
-    const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary(user.userId);
+    const { data, isLoading: itemsLoading, error: itemsError } = useCartProductListRead();
 
-    if (!user) {
-        return <div>로그인이 필요합니다.</div>;
-    }
+    console.log(data)
+    // const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary();
 
-    if (itemsLoading || summaryLoading) return <div>Loading...</div>;
-    if (itemsError || summaryError) return <div>Error loading cart data</div>;
+    // if (!user) {
+    //     return <div>로그인이 필요합니다.</div>;
+    // }
+
+    // if (itemsLoading || summaryLoading) return <div>Loading...</div>;
+    // if (itemsError || summaryError) return <div>Error loading cart data</div>;
 
     return (
         <div>
-            {cartItems?.map((item) => (
+            {/* {cartItems?.map((item) => (
                 <CartProductCard
                     key={item.productId}
                     product={{
@@ -38,7 +40,7 @@ const CartProductList = () => {
                     <p>총 상품 수: {cartSummary.totalItems}</p>
                     <p>총 금액: {cartSummary.totalPrice.toLocaleString()}원</p>
                 </div>
-            )}
+            )} */}
         </div>
     )
 }

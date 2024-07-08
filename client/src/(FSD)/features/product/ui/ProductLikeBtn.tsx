@@ -16,12 +16,12 @@ interface ProductLikeBtnType {
 const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = false, index }: ProductLikeBtnType) => {
 
 
-    const onSuccess = (data:any) => {
+    // const onSuccess = (data:any) => {
 
-    }
-    const { mutate } = useProductLikeToggle({ onSuccess });
+    // }
+    // const { mutate } = useProductLikeToggle({ onSuccess });
 
-    mutate(productColorId);
+    // mutate(productColorId);
 
 
     return (

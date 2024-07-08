@@ -318,7 +318,7 @@ public class ProductServiceImpl implements ProductService {
                         .price(addToCartDTO.getPrice())
                         .productsColorSize(productsColorSize)
                         .quantity(addToCartDTO.getQuantity())
-                        .users(users)
+                        .user(users)
                         .productsImage(productsImage)
                         .build();
                 cartRepository.save(cart);

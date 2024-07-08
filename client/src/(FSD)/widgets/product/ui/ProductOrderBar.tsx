@@ -126,7 +126,7 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
                     ...prevProducts,
                     { productColorSizeId, color, size, quantity: 1, price: orderBar.price }
                 ]);
-                setColor('');
+                setColor('');  
                 setSize('');
                 setIsSelectedColor(false);
                 setIsSelectedSize(false);
