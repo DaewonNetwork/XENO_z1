@@ -16,5 +16,9 @@ public interface ProductService {
 
     void addToCart(List<AddToCartDTO> addToCartDTO);
 
+    List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId);
+
+    List<ProductsInfoByCategoryDTO> getProductsInfoByCategorySub(String categorySubId);
+
 
 }

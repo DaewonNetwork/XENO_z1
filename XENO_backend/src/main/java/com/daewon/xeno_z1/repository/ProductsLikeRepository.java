@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface ProductsLikeRepository extends JpaRepository<ProductsLike, Long> {
 
     @Query("select p from ProductsLike p where p.productsColor.productColorId=:productColorId")
-    ProductsLike findByProductColorId(Long productColorId);
+    Optional<ProductsLike> findByProductColorId(Long productColorId);
 }

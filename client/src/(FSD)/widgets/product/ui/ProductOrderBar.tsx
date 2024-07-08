@@ -17,6 +17,11 @@ type ProductList = {
     price: number;
 };
 
+type SizeAndStockType = {
+    size: string;
+    stock: number;
+};
+
 
 const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
 
@@ -27,33 +32,48 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
     const [price, setPrice] = useState(0);
     const [color, setColor] = useState('');
     const [size, setSize] = useState('');
-    const [sizes, setSizes] = useState<string[]>([]);
+    const [sizeAndStock, setSizeAndStock] = useState<SizeAndStockType[]>([]);
     const [products, setProducts] = useState<ProductList[]>([]);
 
     const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
 
     const desiredOrder = ['S', 'M', 'L', 'XL'];
 
-    Object.keys(sizes).forEach(() => {
-        sizes.sort((a, b) => {
-            return desiredOrder.indexOf(a) - desiredOrder.indexOf(b);
-        });
-    });
+    // Object.keys(sizes).forEach(() => {
+    //     sizes.sort((a, b) => {
+    //         return desiredOrder.indexOf(a) - desiredOrder.indexOf(b);
+    //     });
+    // });
 
 
     useEffect(() => {
         if (color === '') {
-            setSizes([]);
+            setSizeAndStock([]);
             return;
         }
 
+        // color에 해당하는 size와 stock 필터링
         const filteredSizes = orderBar.orderInfo
             .filter(item => item.color === color)
-            .map(item => item.size);
+            .map(item => ({ size: item.size, stock: item.stock }));
 
-        setSizes(filteredSizes);
+        // 중복 사이즈 제거 및 정렬
+        const uniqueSizes = Array.from(new Set(filteredSizes.map(item => item.size)))
+            .map(size => {
+                const stock = filteredSizes
+                    .filter(item => item.size === size)
+                    .reduce((total, current) => total + current.stock, 0);
+                return { size, stock };
+            });
+
+        uniqueSizes.sort((a, b) => {
+            return desiredOrder.indexOf(a.size) - desiredOrder.indexOf(b.size);
+        });
+
+        setSizeAndStock(uniqueSizes);
     }, [color, orderBar.orderInfo]);
 
+    
     useEffect(() => {
         const totalProductCount = products.reduce((acc, curr) => acc + curr.quantity, 0);
         setCount(totalProductCount);
@@ -245,8 +265,14 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
                             <div className={styles.product_order_option_select}>
                                 <button className={styles.product_order_option_select_btn_after} onClick={handleSizeSelect}>사이즈 선택</button>
                                 <ul className={styles.product_order_option_color_list}>
-                                    {sizes.map((size, index) => (
-                                        <li className={styles.product_order_option_color_list_item} key={index} onClick={() => selectSize(size)}>{size}</li>
+                                    {sizeAndStock.map((item, index) => (
+                                        <li
+                                            className={styles.product_order_option_color_list_item}
+                                            key={index}
+                                            onClick={() => selectSize(item.size)}
+                                        >
+                                            {item.size} {item.stock <= 5 ? `(${item.stock}개 남음)` : ''}
+                                        </li>
                                     ))}
                                 </ul>
                             </div>
@@ -266,7 +292,7 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
                                             <input
                                                 className={styles.product_order_modal_product_list_item_quantity_input}
                                                 type="number"
-                                            
+
                                                 value={product.quantity}
 
                                                 onChange={(e) => handleQuantityChange(e, index)}
