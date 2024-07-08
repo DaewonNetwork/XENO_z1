@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 
 import { useCartProductListRead } from '@/(FSD)/entities/cart/api/useCartProductListRead'
 import CartProductCard from '@/(FSD)/entities/cart/ui/CartProductCard';
@@ -26,3 +26,4 @@ const CartProductList = () => {
 }
 
 export default CartProductList
+ */

@@ -12,12 +12,12 @@ public class CartDTO {
     private Long cartId;
     private Long userId;
     private Long productsColorSizeId;
-    private Long productsImageId;
     private Long quantity;
     private Long price;
     private String brandName;
-    private String imageUuid;
-    private String imageFileName;
+//    private String imageUuid;
+//    private String imageFileName;
     private byte[] imageData;
-
+    private Long priceSale;
+    private boolean isSale;
 }

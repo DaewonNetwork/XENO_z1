@@ -9,12 +9,17 @@ import com.daewon.xeno_z1.exception.UserNotFoundException;
 import com.daewon.xeno_z1.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +35,9 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final ProductsColorSizeRepository productsColorSizeRepository;
     private final ProductsImageRepository productsImageRepository;
+
+    @Value("${org.daewon.upload.path}")
+    private String uploadPath;
 
     @Override
     public void addToCart(List<AddToCartDTO> addToCartDTOList) {
@@ -121,17 +129,30 @@ public class CartServiceImpl implements CartService {
         cartDTO.setCartId(cart.getCartId());
         cartDTO.setUserId(cart.getUser().getUserId());
         cartDTO.setProductsColorSizeId(cart.getProductsColorSize().getProductColorSizeId());
-        cartDTO.setProductsImageId(cart.getProductsImage().getProductImageId());
         cartDTO.setQuantity(cart.getQuantity());
         cartDTO.setPrice(cart.getPrice());
         cartDTO.setBrandName(cart.getProductsColorSize().getProductsColor().getProducts().getBrandName());
+        cartDTO.setSale(cart.getProductsColorSize().getProductsColor().getProducts().isSale());
+        cartDTO.setPriceSale(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale());
 
         ProductsImage image = cart.getProductsImage();
         if (image != null) {
-            cartDTO.setImageUuid(image.getUuid());
-            cartDTO.setImageFileName(image.getFileName());
+            try {
+                byte[] imageData = getImage(image.getUuid(), image.getFileName());
+                cartDTO.setImageData(imageData);
+            } catch (IOException e) {
+                log.error("이미지 로딩 실패: " + e.getMessage());
+            }
         }
 
         return cartDTO;
+    }
+
+    public byte[] getImage(String uuid, String fileName) throws IOException {
+        String filePath = uploadPath + uuid + "_" + fileName;
+        // 파일을 바이트 배열로 읽기
+        Path path = Paths.get(filePath);
+        byte[] image = Files.readAllBytes(path);
+        return image;
     }
 }
