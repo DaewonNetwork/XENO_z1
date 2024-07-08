@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import com.daewon.xeno_z1.domain.ProductsColor;
+import com.daewon.xeno_z1.domain.ProductsColorSize;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
