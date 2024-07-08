@@ -90,17 +90,17 @@ public class CartController {
 
             List<CartDTO> cartList = cartService.getCartItems(userId);
 
-            // 이미지 데이터 로드
-            for (CartDTO cart : cartList) {
-                if (cart.getImageUuid() != null && cart.getImageFileName() != null) {
-                    try {
-                        byte[] imageData = getImage(cart.getImageUuid(), cart.getImageFileName());
-                        cart.setImageData(imageData);
-                    } catch (IOException e) {
-                        log.error("이미지 로딩 실패: " + e.getMessage());
-                    }
-                }
-            }
+//            // 이미지 데이터 로드
+//            for (CartDTO cart : cartList) {
+//                if (cart.getImageUuid() != null && cart.getImageFileName() != null) {
+//                    try {
+//                        byte[] imageData = getImage(cart.getImageUuid(), cart.getImageFileName());
+//                        cart.setImageData(imageData);
+//                    } catch (IOException e) {
+//                        log.error("이미지 로딩 실패: " + e.getMessage());
+//                    }
+//                }
+//            }
 
             log.info("장바구니 목록: " + cartList);
 
@@ -172,13 +172,13 @@ public class CartController {
         }
     }
 
-    public byte[] getImage(String uuid, String fileName) throws IOException {
-        String filePath = uploadPath + uuid + "_" + fileName;
-        // 파일을 바이트 배열로 읽기
-        Path path = Paths.get(filePath);
-        byte[] image = Files.readAllBytes(path);
-        return image;
-    }
+//    public byte[] getImage(String uuid, String fileName) throws IOException {
+//        String filePath = uploadPath + uuid + "_" + fileName;
+//        // 파일을 바이트 배열로 읽기
+//        Path path = Paths.get(filePath);
+//        byte[] image = Files.readAllBytes(path);
+//        return image;
+//    }
 }
 
 /*

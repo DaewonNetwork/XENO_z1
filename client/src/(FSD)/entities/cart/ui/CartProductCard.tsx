@@ -1,27 +1,30 @@
-import React, { useState } from 'react'
+/* import React, { useState } from 'react'
 import { useCartProductListRead } from '../api/useCartProductListRead'
 import { ProductType } from '@/(FSD)/shareds/types/product/Product.type';
 import { useUpdateCartItem } from '../api/useUpdateCartItem';
 import { useRemoveFromCart } from '../api/useRemoveFromCart';
+import { CartItemsProps } from './CartProductList';
 
 interface CartProductCardProps {
-    product: Partial<ProductType> & { productId: number; productName: string; price: number; sale: number; isSale: boolean };
-    quantity?: number;
-    isSelected?: boolean;
+    product: CartItemsProps;
 }
 
-const CartProductCard = ({ product, quantity: initialQuantity, isSelected: initialSelected }: CartProductCardProps) => {
-    const [quantity, setQuantity] = useState(initialQuantity);
-    const [isSelected, setIsSelected] = useState(initialSelected);
+const CartProductCard = ({ product}: CartProductCardProps) => {
+    const [products, setProducts] = useState(product);
+    const [quantity, setQuantity] = useState(product.quantity);
+    const [isSelected, setIsSelected] = useState(true);
     const updateCartItem = useUpdateCartItem();
     const removeFromCart = useRemoveFromCart();
+    
+    console.log();
+    
 
     const handleQuantityChange = async (change: number) => {
         const newQuantity= Math.max(1, quantity + change);
         setQuantity(newQuantity);
         try {
             await updateCartItem.mutateAsync({
-                cartId: product.productId,
+                
                 updates: { quantity: newQuantity },
             });
         } catch (error) {
@@ -100,3 +103,4 @@ const CartProductCard = ({ product, quantity: initialQuantity, isSelected: initi
 }
 
 export default CartProductCard
+ */
