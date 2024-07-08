@@ -39,4 +39,11 @@ public class Products {
 
   private String season;
 
+  public boolean getIsSale() {
+    return isSale;
+  }
+
+  public void setIsSale(boolean isSale) {
+      this.isSale = isSale;
+  }
 }

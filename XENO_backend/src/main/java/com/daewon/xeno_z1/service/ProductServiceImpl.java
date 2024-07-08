@@ -3,7 +3,7 @@ package com.daewon.xeno_z1.service;
 import com.daewon.xeno_z1.domain.*;
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
-
+import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
 import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,16 +14,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -31,8 +29,6 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductsRepository productsRepository;
-    private final UserRepository userRepository;
-    private final LikeRepository likeRepository;
     private final ProductsImageRepository productsImageRepository;
     private final ProductsDetailImageRepository productsDetailImageRepository;
     private final ProductsStarRepository productsStarRepository;
@@ -122,4 +118,84 @@ public class ProductServiceImpl implements ProductService {
         return productDetailImagesDTO;
     }
 
+    @Override
+    public Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank() {
+        List<String> categories = Arrays.asList("상의", "아우터", "하의");
+        Map<String, List<ProductsStarRankListDTO>> result = new HashMap<>();
+    
+        for (String category : categories) {
+            List<Products> top10Products = productsRepository.findTop10ProductsByCategory(category);
+            List<ProductsStarRankListDTO> dtoList = top10Products.stream()
+                .map(product -> {
+                    ProductsStar productsStar = productsStarRepository.findByProductId(product.getProductId()).orElse(null);
+                    ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                        .productId(product.getProductId())
+                        .productName(product.getName())
+                        .brandName(product.getBrandName())
+                        .price(product.getPrice())
+                        .priceSale(product.getPriceSale())
+                        .isSale(product.getIsSale())
+                        .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
+                        .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
+                        .category(product.getCategory())
+                        .categorySub(product.getCategorySub())
+                        .build();
+    
+                    // 상품 이미지 가져오기
+                    List<ProductsImage> productImages = productsImageRepository.findByProductId(product.getProductId());
+                    if (!productImages.isEmpty()) {
+                        try {
+                            byte[] imageData = getImage(productImages.get(0).getUuid(), productImages.get(0).getFileName());
+                            dto.setProductImage(imageData);
+                        } catch (IOException e) {
+                            log.error("Error loading product image", e);
+                        }
+                    }
+    
+                    return dto;
+                })
+                .sorted(Comparator.comparingDouble(ProductsStarRankListDTO::getStarAvg).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
+            result.put(category, dtoList);
+        }
+    
+        return result;
+    }
+    
+    @Override
+    public List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category) {
+        List<Products> top10Products = productsRepository.findTop10ProductsByCategory(category);
+        return top10Products.stream()
+            .map(product -> {
+                ProductsStar productsStar = productsStarRepository.findByProductId(product.getProductId()).orElse(null);
+                ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                    .productId(product.getProductId())
+                    .productName(product.getName())
+                    .brandName(product.getBrandName())
+                    .price(product.getPrice())
+                    .priceSale(product.getPriceSale())
+                    .isSale(product.getIsSale())
+                    .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
+                    .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
+                    .category(product.getCategory())
+                    .categorySub(product.getCategorySub())
+                    .build();
+    
+                List<ProductsImage> productImages = productsImageRepository.findByProductId(product.getProductId());
+                if (!productImages.isEmpty()) {
+                    try {
+                        byte[] imageData = getImage(productImages.get(0).getUuid(), productImages.get(0).getFileName());
+                        dto.setProductImage(imageData);
+                    } catch (IOException e) {
+                        log.error("Error loading product image", e);
+                    }
+                }
+    
+                return dto;
+            })
+            .sorted(Comparator.comparingDouble(ProductsStarRankListDTO::getStarAvg).reversed())
+            .limit(10)
+            .collect(Collectors.toList());
+    }
 }
