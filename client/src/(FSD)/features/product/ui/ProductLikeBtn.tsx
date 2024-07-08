@@ -16,17 +16,19 @@ interface ProductLikeBtnType {
 const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = false, index }: ProductLikeBtnType) => {
 
 
-    // const onSuccess = (data:any) => {
+    const onSuccess = (data: any) => {
+    
+    }
 
-    // }
-    // const { mutate } = useProductLikeToggle({ onSuccess });
+    // useProductAddCart 훅 사용
+    const { mutate } = useProductLikeToggle({ onSuccess });
 
-    // mutate(productColorId);
+
 
 
     return (
         <>
-            <Button className={`${styles.like_btn} ${isIndex ? styles.index_btn : ""} ${isLike && styles.active}`} variant={"light"} size={size} isIconOnly={!isIndex}>
+            <Button className={`${styles.like_btn} ${isIndex ? styles.index_btn : ""} ${isLike && styles.active}`} variant={"light"} size={size} isIconOnly={!isIndex} onClick={() => mutate(Number(productColorId))}>
                 <IconShared iconType={"like_active"} iconSize={"sm"} />
                 <TextSmallShared>{index}</TextSmallShared>
             </Button>
