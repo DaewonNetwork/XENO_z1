@@ -35,9 +35,17 @@ public class Products {
 
   private boolean isSale;
 
+  private long starAvg;
+
   private long productsNumber;
 
   private String season;
 
+  public boolean getIsSale() {
+    return isSale;
+  }
 
+  public void setIsSale(boolean isSale) {
+      this.isSale = isSale;
+  }
 }

@@ -32,8 +32,6 @@ import java.util.*;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductsRepository productsRepository;
-    private final UserRepository userRepository;
-    private final LikeRepository likeRepository;
     private final ProductsImageRepository productsImageRepository;
     private final ProductsDetailImageRepository productsDetailImageRepository;
     private final ProductsStarRepository productsStarRepository;

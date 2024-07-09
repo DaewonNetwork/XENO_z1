@@ -23,4 +23,12 @@ public interface ProductService {
 //    List<ProductsInfoByCategoryDTO> getProductsInfoByCategorySub(String categorySubId);
 
 
+    Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();
+
+    List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category);
+
+    List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
+
+    // Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
+
 }
