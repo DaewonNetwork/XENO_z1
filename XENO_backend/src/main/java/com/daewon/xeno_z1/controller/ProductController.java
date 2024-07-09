@@ -9,18 +9,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
-@RestController
+//@RestController
 @Controller
 @Log4j2
 @RequiredArgsConstructor
@@ -35,7 +40,7 @@ public class ProductController {
 
 
     @GetMapping("/read")
-    public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productId) {
+    public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productId) throws IOException {
         ProductInfoDTO productInfoDTO = productService.getProductInfo(productId);
     log.info(productId);
         return ResponseEntity.ok(productInfoDTO);
@@ -59,23 +64,8 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/top10-by-category")
-    public ResponseEntity<Map<String, List<ProductsStarRankListDTO>>> getTop10ProductsByCategoryRank() {
-        Map<String, List<ProductsStarRankListDTO>> result = productService.getTop10ProductsByCategoryRank();
-        return ResponseEntity.ok(result);
-    }
 
-    @GetMapping("/top10-by-category/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(@PathVariable String category) {
-        List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
-        return ResponseEntity.ok(result);
-    }
 
-    @GetMapping("/rank/page/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
-        List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
-        return ResponseEntity.ok(result);
-    }
 
     // @GetMapping("/rank/page/{category}")
     // public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
