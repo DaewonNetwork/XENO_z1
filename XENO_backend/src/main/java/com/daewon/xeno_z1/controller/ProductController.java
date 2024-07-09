@@ -71,5 +71,10 @@ public class ProductController {
         return ResponseEntity.ok(result);
     }
 
-
+    @GetMapping("/rank/page/{category}")
+    public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
+        return ResponseEntity.ok(result);
+    }
+    
 }

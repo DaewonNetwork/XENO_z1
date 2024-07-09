@@ -118,6 +118,8 @@ public class ProductServiceImpl implements ProductService {
         return productDetailImagesDTO;
     }
 
+
+    // 모든 카테고리 랭크 10
     @Override
     public Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank() {
         List<String> categories = Arrays.asList("상의", "아우터", "하의");
@@ -162,7 +164,8 @@ public class ProductServiceImpl implements ProductService {
     
         return result;
     }
-    
+
+    // 카테고리 별 랭크 10개 
     @Override
     public List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category) {
         List<Products> top10Products = productsRepository.findTop10ProductsByCategory(category);
@@ -198,4 +201,42 @@ public class ProductServiceImpl implements ProductService {
             .limit(10)
             .collect(Collectors.toList());
     }
+
+    // 랭크 50개
+    @Override
+    public List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category) {
+        List<Products> top50Products = productsRepository.findTop50ProductsByCategory(category);
+        return top50Products.stream()
+            .map(product -> {
+                ProductsStar productsStar = productsStarRepository.findByProductId(product.getProductId()).orElse(null);
+                ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                    .productId(product.getProductId())
+                    .productName(product.getName())
+                    .brandName(product.getBrandName())
+                    .price(product.getPrice())
+                    .priceSale(product.getPriceSale())
+                    .isSale(product.getIsSale())
+                    .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
+                    .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
+                    .category(product.getCategory())
+                    .categorySub(product.getCategorySub())
+                    .build();
+
+                List<ProductsImage> productImages = productsImageRepository.findByProductId(product.getProductId());
+                if (!productImages.isEmpty()) {
+                    try {
+                        byte[] imageData = getImage(productImages.get(0).getUuid(), productImages.get(0).getFileName());
+                        dto.setProductImage(imageData);
+                    } catch (IOException e) {
+                        log.error("Error loading product image", e);
+                    }
+                }
+
+                return dto;
+            })
+            .sorted(Comparator.comparingDouble(ProductsStarRankListDTO::getStarAvg).reversed())
+            .limit(50)
+            .collect(Collectors.toList());
+    }
+
 }
