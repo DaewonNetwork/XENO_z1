@@ -2,8 +2,9 @@ package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
+import com.daewon.xeno_z1.dto.ProductregisterDTO;
 import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
-import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -22,4 +23,5 @@ public interface ProductService {
 
     // Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
 
+    void registerProduct(ProductregisterDTO productRegisterDTO, List<MultipartFile> productImage, List<MultipartFile> productDetailImages);
 }

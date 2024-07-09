@@ -3,9 +3,11 @@ package com.daewon.xeno_z1.service;
 import com.daewon.xeno_z1.domain.*;
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
+import com.daewon.xeno_z1.dto.ProductregisterDTO;
 import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
 import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -14,8 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,6 +39,7 @@ public class ProductServiceImpl implements ProductService {
     private final ReviewRepository reviewRepository;
     private final ModelMapper modelMapper;
     private final ProductsColorRepository productsColorRepository;
+private final ProductsColorSizeRepository productsColorSizeRepository;
 
     @Value("${uploadPath}")
     private String uploadPath;
@@ -274,4 +277,79 @@ public class ProductServiceImpl implements ProductService {
     //     });
     // }
 
+    @Override
+    public void registerProduct(ProductregisterDTO productRegisterDTO, List<MultipartFile> productImage, List<MultipartFile> productDetailImages) {
+        Products product = Products.builder()
+                .brandName(productRegisterDTO.getBrand_name())
+                .name(productRegisterDTO.getName())
+                .category(productRegisterDTO.getCategory())
+                .categorySub(productRegisterDTO.getCategory_sub())
+                .price(productRegisterDTO.getPrice())
+                .priceSale(productRegisterDTO.getPrice_sale())
+                .isSale(productRegisterDTO.is_sale())
+                .productsNumber(Long.parseLong(productRegisterDTO.getProducts_number()))
+                .season(productRegisterDTO.getSeason())
+                .build();
+
+        productsRepository.save(product);
+
+        // ProductsColor 저장
+        ProductsColor productsColor = ProductsColor.builder()
+                .products(product)
+                .color(productRegisterDTO.getColor())
+                .build();
+        productsColorRepository.save(productsColor);
+
+        // ProductsColorSize 저장
+        ProductsColorSize productsColorSize = ProductsColorSize.builder()
+                .productsColor(productsColor)
+                .stock_s(productRegisterDTO.getStock_s())
+                .stock_m(productRegisterDTO.getStock_m())
+                .stock_l(productRegisterDTO.getStock_l())
+                .stock_xl(productRegisterDTO.getStock_xl())
+                .build();
+        productsColorSizeRepository.save(productsColorSize);
+
+        // ProductsImage 저장
+        if (productImage != null && !productImage.isEmpty()) {
+            for (MultipartFile image : productImage) {
+                String uuid = UUID.randomUUID().toString();
+                String fileName = "product_" + product.getProductId() + "_" + uuid + ".jpg";
+                saveImage(image, uuid, fileName);
+
+                ProductsImage productsImage = ProductsImage.builder()
+                        .productsColor(productsColor)
+                        .uuid(uuid)
+                        .fileName(fileName)
+                        .build();
+                productsImageRepository.save(productsImage);
+            }
+        }
+
+        // ProductsDetailImage 저장
+        if (productDetailImages != null && !productDetailImages.isEmpty()) {
+            for (int i = 0; i < productDetailImages.size(); i++) {
+                String uuid = UUID.randomUUID().toString();
+                String fileName = "product_detail_" + product.getProductId() + "_" + i + ".jpg";
+                saveImage(productDetailImages.get(i), uuid, fileName);
+
+                ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
+                        .productsColor(productsColor)
+                        .uuid(uuid)
+                        .fileName(fileName)
+                        .build();
+                productsDetailImageRepository.save(productsDetailImage);
+            }
+        }
+    }
+
+    private void saveImage(MultipartFile file, String uuid, String fileName) {
+        try {
+            Path path = Paths.get(uploadPath + uuid + "_" + fileName);
+            Files.write(path, file.getBytes());
+        } catch (IOException e) {
+            log.error("이미지 파일 저장 중 오류 발생", e);
+            throw new RuntimeException("이미지 파일 저장 실패", e);
+        }
+    }
 }
