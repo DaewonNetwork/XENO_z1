@@ -12,9 +12,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductsColorSizeRepository extends JpaRepository<ProductsColorSize, Long> {
     @Query("SELECT p FROM ProductsColorSize p WHERE p.productsColor.productColorId = :productColorId")
     List<ProductsColorSize> findByProductColorId(@Param("productColorId") Long productColorId);
+
+    Optional<ProductsColorSize> findByProductsColor(ProductsColor productsColor);
 
 }
