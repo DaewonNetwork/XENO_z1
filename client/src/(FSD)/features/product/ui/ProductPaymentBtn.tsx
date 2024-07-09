@@ -27,6 +27,10 @@ export interface ProductOrderType {
 }
 
 const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
+    const { user } = useRecoilValue(userState);
+    const {req,address,phoneNumber} = useRecoilValue(orderInfoState);
+
+    if (!user) return <></>
     const generateRandomId = () => {
         const length = Math.floor(Math.random() * (32 - 16 + 1)) + 16;
         const array = new Uint8Array(length);
@@ -35,20 +39,11 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
         return Array.from(array, (byte) => ("0" + byte.toString(16)).slice(-2)).join("");
     };
 
-    const { user } = useRecoilValue(userState);
-    
-
-    if (!user) return <></>
-
-
-
     const onSuccess = (data: any) => {
         console.log("성공");
     }
-
     const { mutate } = useProductOrder({ onSuccess });
-
-
+    
     const orderId = generateRandomId();
 
     const orderName: string =
@@ -58,23 +53,15 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
 
     const totalPrice = productList.reduce((accumulator, product) => accumulator + product.price, 0);
 
-    const productOrderList: ProductOrderType[] = [];
-
-    const orderInfo = useRecoilValue(orderInfoState);
-    
-    productList.forEach((product) => {
-        const productOrder: ProductOrderType = {
-            orderPayId: orderId,
-            productColorSizeId: product.productColorSizeId,
-            req:orderInfo.req,
-            quantity: product.quantity,
-            price: product.price,
-            address: orderInfo.address,
-            phoneNumber: orderInfo.phoneNumber
-        };
-
-        productOrderList.push(productOrder); // ProductOrderList에 데이터 추가
-    });
+    const productOrderList: ProductOrderType[] = productList.map(product => ({
+        orderPayId: orderId,
+        productColorSizeId: product.productColorSizeId,
+        req: req,
+        quantity: product.quantity,
+        price: product.price,
+        address: address,
+        phoneNumber: phoneNumber
+    }));
 
 
     const handleClick = async () => {
