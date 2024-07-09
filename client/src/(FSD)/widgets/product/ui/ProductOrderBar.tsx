@@ -6,17 +6,25 @@ import AppContainer from "../../app/ui/AppContainer";
 import AppInner from "../../app/ui/AppInner";
 import { Button } from "@nextui-org/button";
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
-import { ProductOrderBarType } from "@/(FSD)/features/product/ui/ProductOrderContainer";
+
 import { useProductAddCart } from "@/(FSD)/features/product/api/useProductAddCart";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { imageState, nameState, productsState } from "@/(FSD)/shareds/stores/ProductAtom";
+import { ProductImages } from "@/(FSD)/entities/product/ui/RelatedColorProducts";
+import { ProductOrderBarType } from "@/(FSD)/entities/product/ui/ProductOrderBarContainer";
 
 
-type ProductList = {
+export type ProductList = {
     productColorSizeId: number;
+    productColorId?: number;
     color: string;
     size: string;
     quantity: number;
     price: number;
+    name?: string;
+    image?: Uint8Array | null
 };
 
 type SizeAndStockType = {
@@ -25,9 +33,9 @@ type SizeAndStockType = {
 };
 
 
-const ProductOrderBar = ({ orderBar,parentRefetch }: { orderBar: ProductOrderBarType,parentRefetch?:any}) => {
+const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBarType, parentRefetch?: any }) => {
     const { productColorId } = useParams<{ productColorId: string }>();
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpenOrder, setisOpenOrder] = useState(false);
     const [isSelectedColor, setIsSelectedColor] = useState(false);
     const [isSelectedSize, setIsSelectedSize] = useState(false);
     const [count, setCount] = useState(0);
@@ -36,17 +44,14 @@ const ProductOrderBar = ({ orderBar,parentRefetch }: { orderBar: ProductOrderBar
     const [size, setSize] = useState('');
     const [sizeAndStock, setSizeAndStock] = useState<SizeAndStockType[]>([]);
     const [products, setProducts] = useState<ProductList[]>([]);
+    const name = useRecoilValue(nameState);
+    const images: ProductImages[] = useRecoilValue(imageState)
+    const [newProducts, setNewProducts] = useRecoilState<ProductList[]>(productsState)
 
+    console.log("이미지스" + images)
     const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
 
     const desiredOrder = ['S', 'M', 'L', 'XL'];
-
-    // Object.keys(sizes).forEach(() => {
-    //     sizes.sort((a, b) => {
-    //         return desiredOrder.indexOf(a) - desiredOrder.indexOf(b);
-    //     });
-    // });
-
 
     useEffect(() => {
         if (color === '') {
@@ -89,8 +94,13 @@ const ProductOrderBar = ({ orderBar,parentRefetch }: { orderBar: ProductOrderBar
         return orderItem?.productColorSizeId;
     };
 
+    const getProductColorId = (color: string): number | undefined => {
+        const orderItem = orderBar.orderInfo.find(item => item.color === color);
+        return orderItem?.productColorId;
+    };
+
     const handleBuyClick = () => {
-        setIsOpen(true);
+        setisOpenOrder(true);
     };
 
     const handleColorSelect = () => {
@@ -115,6 +125,7 @@ const ProductOrderBar = ({ orderBar,parentRefetch }: { orderBar: ProductOrderBar
         setSize(size);
         setIsSelectedSize(false);
         const productColorSizeId = getProductColorSizeId(color, size);
+        const productColorId = getProductColorId(color)
 
         if (productColorSizeId !== undefined) {
             // 제품 정보를 products 배열에 추가하기 전에 중복 체크
@@ -125,9 +136,9 @@ const ProductOrderBar = ({ orderBar,parentRefetch }: { orderBar: ProductOrderBar
             } else {
                 setProducts(prevProducts => [
                     ...prevProducts,
-                    { productColorSizeId, color, size, quantity: 1, price: orderBar.price }
+                    { productColorSizeId, color, size, quantity: 1, price: orderBar.price, productColorId: productColorId }
                 ]);
-                setColor('');  
+                setColor('');
                 setSize('');
                 setIsSelectedColor(false);
                 setIsSelectedSize(false);
@@ -159,9 +170,20 @@ const ProductOrderBar = ({ orderBar,parentRefetch }: { orderBar: ProductOrderBar
     };
 
 
+
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+
     const onSuccess = (data: any) => {
-        console.log("성공")
-        setProducts([])
+        console.log("성공");
+
+        setProducts([]);
+        onOpen();
+
+        setTimeout(() => {
+            onClose();
+        }, 3000);
+
     }
 
     // useProductAddCart 훅 사용
@@ -175,29 +197,61 @@ const ProductOrderBar = ({ orderBar,parentRefetch }: { orderBar: ProductOrderBar
             // color와 size를 제외한 새로운 배열 생성
             const newProducts = products.map(({ color, size, ...rest }) => rest);
             console.log(newProducts);
-            setIsOpen(false)
+            setisOpenOrder(false)
             setIsSelectedColor(false);
             setIsSelectedSize(false);
-
             mutate(newProducts);
         }
     };
 
+    const router = useRouter();
+
+    const linkToCart = () => {
+        router.push(`/cart`)
+    }
+
 
     const handlePurchase = () => {
-        if (!isSelectedColor || !isSelectedSize) {
+        if (products.length == 0) {
             alert("상품 옵션을 선택해주세요.");
         } else {
             // 구매 로직
-            setIsOpen(false);
+            setisOpenOrder(false);
             setIsSelectedColor(false);
             setIsSelectedSize(false);
-            // 구매 페이지로 이동하는 로직 (예: window.location.href = "/purchase")
+            const newProducts1: ProductList[] = products.map(product => {
+
+                const matchingImage = images.find(image => image.productColorId === product.productColorId);
+
+
+                const productImage = matchingImage ? matchingImage.productColorImage : null;
+
+
+                return {
+                    ...product,
+                    name: name,
+                    image: productImage
+                };
+            });
+
+            console.log(newProducts1)
+
+            setNewProducts(newProducts1)
+
+            console.log(newProducts)
+
+            setProducts([])
+
+
+            if (newProducts1.length > 0) {
+                localStorage.setItem('newProducts', JSON.stringify(newProducts1));
+                router.push('/order');
+            }
         }
     };
 
     const handleExit = () => {
-        setIsOpen(false);
+        setisOpenOrder(false);
         setIsSelectedColor(false);
         setIsSelectedSize(false);
         setProducts([])
@@ -222,16 +276,39 @@ const ProductOrderBar = ({ orderBar,parentRefetch }: { orderBar: ProductOrderBar
     };
 
 
+    const handleBuyClick1 = () => {
+        onOpen();
+        // 5초 후에 Modal이 자동으로 닫히도록 설정
+        setTimeout(() => {
+            onClose();
+        }, 2500); // 5000 밀리초 = 5초
+    };
+
     return (
         <>
-            {!isOpen ? (
+            <Modal size={"xs"} isOpen={isOpen} onClose={onClose} >
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1">장바구니 추가 완료</ModalHeader>
+                    <ModalBody>
+                        <p>
+                            장바구니에 상품이 담겼습니다.
+                        </p>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={linkToCart}>
+                            장바구니로 가기
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+            {!isOpenOrder ? (
                 <div className={styles.product_order_bar}>
                     <AppContainer>
                         <AppInner>
                             <div className={styles.order_inner}>
                                 <div className={styles.order_like_btn}>
-                                    <ProductLikeBtn productColorId ={Number(productColorId)} isLike={orderBar?.like} isIndex={true} size={"md"} index={orderBar?.likeIndex} 
-                                    parentRefetch={parentRefetch}/>
+                                    <ProductLikeBtn productColorId={Number(productColorId)} isLike={orderBar?.like} isIndex={true} size={"md"} index={orderBar?.likeIndex}
+                                        parentRefetch={parentRefetch} />
                                 </div>
                                 <div className={styles.order_btn}>
                                     <Button color="primary" fullWidth radius="sm" onClick={handleBuyClick}>

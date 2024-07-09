@@ -1,6 +1,7 @@
 'use client'
 
-import ProductOrderContainer from "@/(FSD)/features/product/ui/ProductOrderContainer";
+
+import ProductOrderBarContainer from "@/(FSD)/entities/product/ui/ProductOrderBarContainer";
 import AppFixedBtmBar from "@/(FSD)/widgets/app/ui/AppFixedBtmBar";
 import AppFixedTopBar from "@/(FSD)/widgets/app/ui/AppFixedTopBar";
 import ProductHeader from "@/(FSD)/widgets/product/ui/ProductHeader";
@@ -17,7 +18,7 @@ const Layout = ({ children, }: { children: React.ReactNode }) => {
             </AppFixedTopBar>
             {children}
             <AppFixedBtmBar>
-                <ProductOrderContainer />
+                <ProductOrderBarContainer />
             </AppFixedBtmBar>
         </>
     );

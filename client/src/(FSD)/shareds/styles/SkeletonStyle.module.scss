@@ -1,0 +1,35 @@
+.product {
+    display: block;
+
+    .product_img {
+        width: 240px;
+        height: 240px;
+        margin-bottom: 5px;
+    }
+
+    .product_brand {
+        width: 120px;
+        height: 21px;
+        margin-bottom: 5px;
+    }
+
+    .product_name {
+        width: 150px;
+        height: 18px;
+        margin-bottom: 5px;
+    }
+
+    .product_sale {
+        width: 32px;
+        height: 18px;
+        margin-right: 5px;
+    }
+    
+    .product_price {
+        width: 56px;
+        height: 18px;
+    }
+
+   
+  
+}

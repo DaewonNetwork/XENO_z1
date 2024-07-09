@@ -20,7 +20,7 @@ export interface ProductOrderBarType {
     price: number;
 }
 
-const ProductOrderContainer = () => {
+const ProductOrderBarContainer = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
     const { data, isError, error, isPending, refetch } = useProductOrderBarRead(Number(productColorId));
 
@@ -41,4 +41,4 @@ const ProductOrderContainer = () => {
     );
 };
 
-export default ProductOrderContainer;
+export default ProductOrderBarContainer;

@@ -1,3 +1,4 @@
+import AppFixedTopBar from "@/(FSD)/widgets/app/ui/AppFixedTopBar";
 import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
 import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
 import { productRankList } from "@/(FSD)/widgets/product/consts/productRankList";
@@ -10,7 +11,9 @@ const Page = () => {
     return (
         <AppSection>
             <AppInner>
+           
                 <ProductCategorySelectBar />
+           
                 <ProductCardListByCategory column={2} />
             </AppInner>
         </AppSection>

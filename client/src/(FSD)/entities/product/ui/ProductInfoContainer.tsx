@@ -8,14 +8,18 @@ import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
 import ProductImagesSlideList from "@/(FSD)/widgets/product/ui/ProductImagesSlideList";
 import RelatedColorProducts from "./RelatedColorProducts";
 import ProductDetailImages from "./ProductDetailImages";
+import { useSetRecoilState } from "recoil";
+import { nameState } from "@/(FSD)/shareds/stores/ProductAtom";
 
 const ProductInfoContainer = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
     const { data, isError, error, isPending, refetch } = useProductRead(Number(productColorId));
 
-
-
+    const setName = useSetRecoilState(nameState)
+    
     const product:ProductInfoType = data || []
+
+    setName(product.name);
 
     
 

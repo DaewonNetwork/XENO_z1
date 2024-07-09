@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import { useProductFirstImegesRead } from "../api/useProductFirstImegesRead";
 import { useParams } from "next/navigation";
 import Slider from "react-slick";
+import { useSetRecoilState } from "recoil";
+import { imageState } from "@/(FSD)/shareds/stores/ProductAtom";
 
-interface ProductImages {
+export interface ProductImages {
     productColorId: number;          // 상품 색상 ID (숫자)
     productColorImage: Uint8Array;   // 상품 색상 이미지 (Uint8Array)
 }
@@ -16,6 +18,15 @@ const RelatedColorProducts = () => {
     const { data, isError, error, isPending, refetch } = useProductFirstImegesRead(Number(productColorId));
 
     const productImages: ProductImages[] = data || [];
+
+    const setImages = useSetRecoilState(imageState);
+
+    useEffect(() => {
+        if (productImages) {
+            // productImages를 Recoil의 imageState에 설정
+            setImages(productImages);
+        }
+    }, [productImages, setImages]);
 
     const [currentSlide, setCurrentSlide] = useState<number>(0);
     const sliderSettings = {

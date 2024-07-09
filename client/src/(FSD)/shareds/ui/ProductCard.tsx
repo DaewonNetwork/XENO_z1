@@ -8,13 +8,10 @@ interface ProductCardType {
     linkBtn: ReactNode;
     isRank?: boolean;
     rank?: number;
-    isError?: boolean;
-    isLoading?: boolean;
+
 }
 
-
-
-const ProductCard = ({ product, linkBtn, isRank = false, rank = 0 , isError, isLoading }: ProductCardType) => {
+const ProductCard = ({ product, linkBtn, isRank = false, rank = 0  }: ProductCardType) => {
 
     const handleImageClick = () => {
         // 이미지 클릭 시 처리할 작업

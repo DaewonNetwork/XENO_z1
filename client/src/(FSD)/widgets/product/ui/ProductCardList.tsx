@@ -2,8 +2,9 @@ import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import React from "react";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import classNames from "classnames/bind";
-import ProductCard from "@/(FSD)/entities/product/ui/ProductCard";
+
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
+import ProductCard from "@/(FSD)/shareds/ui/ProductCard";
 
 interface ProductCardListType {
     productList: ProductType[];
