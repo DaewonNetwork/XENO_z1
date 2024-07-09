@@ -296,7 +296,7 @@ private final ProductsColorSizeRepository productsColorSizeRepository;
         // ProductsColor 저장
         ProductsColor productsColor = ProductsColor.builder()
                 .products(product)
-                .color(productRegisterDTO.getColor())
+                .color(productRegisterDTO.getColors())
                 .build();
         productsColorRepository.save(productsColor);
 

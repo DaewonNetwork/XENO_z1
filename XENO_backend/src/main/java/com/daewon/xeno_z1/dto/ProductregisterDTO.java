@@ -33,7 +33,7 @@ public class ProductregisterDTO {
 
     private String season;
 
-    private String color; // 색상
+    private String colors; // 색상
 
 //    private List<String> size; // size 리스트
 
