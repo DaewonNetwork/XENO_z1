@@ -61,6 +61,46 @@ public class ReviewController {
     @Value("${uploadPath}")
     private String uploadPath;
 
+    @GetMapping
+    public ResponseEntity<Page<ReviewDTO>> getReviews(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<ReviewDTO> reviews = reviewService.getReviews(page, size);
+        return ResponseEntity.ok(reviews);
+    }
+    @PostMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(summary = "리뷰 생성")
+    public ResponseEntity<?> createReview(
+            @RequestPart(name = "reviewDTO") String reviewDTOStr,
+            @RequestPart(name = "images", required = false) List<MultipartFile> images) {
+        log.info("Received reviewDTO: {}", reviewDTOStr);
+        log.info("Images: " + images);
+
+        ReviewDTO reviewDTO;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            String decodedReviewDTO = URLDecoder.decode(reviewDTOStr, StandardCharsets.UTF_8.name());
+            reviewDTO = objectMapper.readValue(decodedReviewDTO, ReviewDTO.class);
+            log.info("Parsed ReviewDTO: {}", reviewDTO);
+        } catch (IOException e) {
+            log.error("Error parsing reviewDTO", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
+        }
+
+        try {
+            Review createdReview = reviewService. createReview(reviewDTO, images);
+            ReviewDTO responseDTO = convertToDTO(createdReview);
+            return ResponseEntity.ok(responseDTO);
+        } catch (RuntimeException e) {
+            log.error("Error creating review", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request", e);
+        }
+    }
+
 
 
     @Operation(summary = "리뷰 조회")
@@ -77,50 +117,9 @@ public class ReviewController {
         }
     }
 
-
-    @GetMapping
-    public ResponseEntity<Page<ReviewDTO>> getReviews(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<ReviewDTO> reviews = reviewService.getReviews(page, size);
-        return ResponseEntity.ok(reviews);
-    }
-    @PostMapping(
-        consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-        )
-        @Operation(summary = "리뷰 생성")
-        public ResponseEntity<?> createReview(
-            @RequestPart(name = "reviewDTO") String reviewDTOStr,
-            @RequestPart(name = "images", required = false) List<MultipartFile> images) {
-            log.info("Received reviewDTO: {}", reviewDTOStr);
-            log.info("Images: " + images);
-        
-            ReviewDTO reviewDTO;
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                String decodedReviewDTO = URLDecoder.decode(reviewDTOStr, StandardCharsets.UTF_8.name());
-                reviewDTO = objectMapper.readValue(decodedReviewDTO, ReviewDTO.class);
-                log.info("Parsed ReviewDTO: {}", reviewDTO);
-            } catch (IOException e) {
-                log.error("Error parsing reviewDTO", e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
-            }
-        
-            try {
-                Review createdReview = reviewService. createReview(reviewDTO, images);
-                ReviewDTO responseDTO = convertToDTO(createdReview);
-                return ResponseEntity.ok(responseDTO);
-            } catch (RuntimeException e) {
-                log.error("Error creating review", e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request", e);
-            }
-        }
-
-        @PutMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-        @Operation(summary = "리뷰 수정")
-        public ResponseEntity<?> updateReview(
+    @PutMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "리뷰 수정")
+    public ResponseEntity<?> updateReview(
                 @PathVariable Long reviewId,
                 @RequestPart(name = "reviewDTO") String reviewDTOStr,
                 @RequestPart(name = "images", required = false) List<MultipartFile> images) {
@@ -143,7 +142,7 @@ public class ReviewController {
                 log.error("Error updating review", e);
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating review", e);
             }
-        }
+    }
 
         private ReviewDTO convertToDTO(Review review) {
             ReviewDTO dto = new ReviewDTO();
