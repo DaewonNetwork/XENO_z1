@@ -85,7 +85,16 @@ public class OrdersController {
 }
 
 /*
-    1. updateDeliveryInfo
+    1. createOrder
+    http://localhost:8090/api/orders (POST)
+    {
+        "productColorSizeId": 해당하는 제품의 productColorSizeId 값,
+        "req": "고객 요청사항",
+        "quantity": 상품 총 수량,
+        "amount": 상품총액
+    }
+
+    2. updateDeliveryInfo
     http://localhost:8090/api/orders/delivery (POST)
     {
         "address" : "user address"
