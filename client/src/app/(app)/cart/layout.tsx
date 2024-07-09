@@ -10,7 +10,7 @@ const Layout = ({ children, }: { children: React.ReactNode }) => {
     return (
         <>
             <AppFixedTopBar>
-                <AppTitleHeader title={"장바구니"} right={<LinkBtnShared href={"/"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"md"} iconType={"search"} />} />} />
+                <AppTitleHeader title={"장바구니"} right={<LinkBtnShared href={"/search"} size={"sm"} isIconOnly endContent={<IconShared iconSize={"md"} iconType={"search"} />} />} />
             </AppFixedTopBar>
             {children}
             <AppFixedBtmBar>

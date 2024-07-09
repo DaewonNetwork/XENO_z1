@@ -2,7 +2,7 @@ package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
-
+import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
 import com.daewon.xeno_z1.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,13 +14,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 import java.util.List;
+import java.util.Map;
 
-//@RestController
+@RestController
 @Controller
 @Log4j2
 @RequiredArgsConstructor
@@ -59,7 +62,17 @@ public class ProductsController {
         }
     }
 
+    @GetMapping("/top10-by-category")
+    public ResponseEntity<Map<String, List<ProductsStarRankListDTO>>> getTop10ProductsByCategoryRank() {
+        Map<String, List<ProductsStarRankListDTO>> result = productService.getTop10ProductsByCategoryRank();
+        return ResponseEntity.ok(result);
+    }
 
+    @GetMapping("/top10-by-category/{category}")
+    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(@PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
+        return ResponseEntity.ok(result);
+    }
 
 
 }

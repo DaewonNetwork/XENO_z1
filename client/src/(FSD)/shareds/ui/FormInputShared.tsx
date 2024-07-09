@@ -5,7 +5,7 @@ import { Input } from "@nextui-org/input";
 import IconShared from "./IconShared";
 import { FormInputType } from "../types/FormInput.type";
 
-const FormInputShared = ({ name, control, endContent, ...props }: FormInputType) => {
+const FormInputShared = ({ name, control, endContent, startContent, radius, ...props }: FormInputType) => {
     return (
         <Controller
             name={name}
@@ -32,11 +32,13 @@ const FormInputShared = ({ name, control, endContent, ...props }: FormInputType)
                             onBlur();
                         }}
 
+                        startContent={startContent && startContent}
+
                         endContent={
                             endContent ? endContent :
-                            <button className={"focus:outline-none"} type={"button"} onClick={() => { onChange(""); }}>
-                                <IconShared iconType={"close"} />
-                            </button>
+                                <button className={"focus:outline-none"} type={"button"} onClick={() => { onChange(""); }}>
+                                    <IconShared iconType={"close"} />
+                                </button>
                         }
                     />
                 )
