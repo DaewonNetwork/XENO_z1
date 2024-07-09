@@ -7,12 +7,14 @@ import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { ProductList } from "@/(FSD)/widgets/product/ui/ProductOrderBar";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/(FSD)/shareds/stores/UserAtom";
-import { reqState } from "@/(FSD)/shareds/stores/ProductAtom";
+
 import { useProductOrder } from "../api/useProductAddOrder";
+import { orderInfoState } from "@/(FSD)/shareds/stores/ProductAtom";
 
 interface ProductPaymentBtnType {
     productList: ProductList[];
 }
+
 
 export interface ProductOrderType {
     orderPayId: string;
@@ -34,9 +36,11 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     };
 
     const { user } = useRecoilValue(userState);
-    const req = useRecoilValue(reqState);
+    
 
     if (!user) return <></>
+
+
 
     const onSuccess = (data: any) => {
         console.log("성공");
@@ -56,15 +60,17 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
 
     const productOrderList: ProductOrderType[] = [];
 
+    const orderInfo = useRecoilValue(orderInfoState);
+    
     productList.forEach((product) => {
         const productOrder: ProductOrderType = {
             orderPayId: orderId,
             productColorSizeId: product.productColorSizeId,
-            req: req,
+            req:orderInfo.req,
             quantity: product.quantity,
             price: product.price,
-            address: '',
-            phoneNumber: ''
+            address: orderInfo.address,
+            phoneNumber: orderInfo.phoneNumber
         };
 
         productOrderList.push(productOrder); // ProductOrderList에 데이터 추가
