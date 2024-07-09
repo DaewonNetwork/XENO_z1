@@ -16,7 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,14 +56,14 @@ public class OrdersServiceImpl implements OrdersService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
         Orders orders = Orders.builder()
-                .orderPayId(generateOrderPayId())
+                .orderPayId(generateOrderPayId(ordersDTO.getOrderPayId()))
                 .orderNumber(generateOrderNumber())
                 .productsColorSize(findProductColorSize(ordersDTO.getProductColorSizeId()))
                 .userId(users)
                 .status("결제완료")
                 .req(ordersDTO.getReq())
                 .quantity(ordersDTO.getQuantity())
-                .totalPrice(ordersDTO.getTotalPrice())
+                .amount(ordersDTO.getAmount())
                 .build();
 
         Hibernate.initialize(orders.getProductsColorSize().getProductsColor().getProducts());
@@ -97,7 +96,7 @@ public class OrdersServiceImpl implements OrdersService {
         ordersListDTO.setOrderDate(orders.getCreateAt());
         ordersListDTO.setBrandName(orders.getProductsColorSize().getProductsColor().getProducts().getBrandName());
         ordersListDTO.setStatus(orders.getStatus());
-        ordersListDTO.setTotalPrice(orders.getTotalPrice());
+        ordersListDTO.setAmount(orders.getAmount());
         ordersListDTO.setQuantity(orders.getQuantity());
 
         // GetOneDTO 리스트 생성 및 설정
@@ -123,7 +122,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     // 영문 대소문자, 숫자, 특수문자 -, _, =로 이루어진 6자 이상 64자 이하의 문자열 이어야함.
     // 위 조건에 해당하는 랜덤 orderPayId값 생성
-    private String generateOrderPayId() {
+    private String generateOrderPayId(String ord) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=";
         String specialChars = "-_=";
         StringBuilder stringBuilder = new StringBuilder(specialChars);

@@ -9,11 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrdersDTO {
 
+    private String orderPayId;
     private Long productColorSizeId;
     private String req;
     private String address;
     private String phoneNumber;
 
     private int quantity;
-    private Long totalPrice;
+    private Long amount;
 }

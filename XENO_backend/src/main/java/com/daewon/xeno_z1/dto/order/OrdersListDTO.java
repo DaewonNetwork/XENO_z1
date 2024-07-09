@@ -19,7 +19,7 @@ public class OrdersListDTO {
     private LocalDateTime orderDate;
     private String brandName;
     private String status;
-    private Long totalPrice;
+    private Long amount;
     private int quantity;
 
     private List<GetOneDTO> getOne;
