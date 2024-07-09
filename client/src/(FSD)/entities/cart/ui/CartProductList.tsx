@@ -20,16 +20,12 @@ export interface CartItemsProps {
     item: CartItemsProps;
 }
 
-const CartProductList = ({ item }: CartItemsProps) => {
+const CartProductList = () => {
     const { data, isLoading: itemsLoading, error: itemsError } = useCartProductListRead();
     const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary();
     const {user }= useRecoilValue(userState);
     console.log(user);
     console.log(cartSummary);
-    console.log(item);
-    
-    
-    
     
    console.log("data" + data);
    
@@ -46,14 +42,12 @@ const CartProductList = ({ item }: CartItemsProps) => {
 
     return (
         <div>
-            {/* {{cartItems?.map((product) => (
+            {/* {{{cartItems?.map((product) => (
                 <CartProductList
                     key={product.productsColorSizeId}
-                    product={
-                        product
-                    }
+                    
                 />
-            ))}} */}
+            ))}}} */}
             {cartSummary && (
                 <div className="mt-4 p-4 bg-gray-100">
                     <p>총 상품 수: {cartSummary.totalItems}</p>
