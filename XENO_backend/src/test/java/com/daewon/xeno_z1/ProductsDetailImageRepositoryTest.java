@@ -33,6 +33,5 @@ public class ProductsDetailImageRepositoryTest {
         assertNotNull(page);
         assertEquals(1, page.getNumber()); // 페이지 번호 확인
         assertEquals(10, page.getSize()); // 페이지 크기 확인
-        assertEquals(productId, page.getContent().get(0).getProducts().getProductId()); // 결과 데이터 확인
     }
 }

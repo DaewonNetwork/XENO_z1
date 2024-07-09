@@ -1,31 +1,31 @@
 "use client";
 
-import { useRecoilValue } from 'recoil';
-import { userState } from '../stores/UserAtom';
-import { FetchType } from '../types/FetchData.type';
+import { useRecoilValue } from "recoil";
+import { userState } from "../stores/UserAtom";
+import { FetchType } from "../types/FetchData.type";
 
 const useFetchData = () => {
     const { isLoggedIn, accessToken } = useRecoilValue(userState);
 
-    const fetchData = async ({ path, method = 'GET', contentType = 'application/json', isAuthRequired = false, isNotAuthRequired = false, body }: FetchType) => {
+    const fetchData = async ({ path, method = "GET", contentType = "application/json", isAuthRequired = false, isNotAuthRequired = false, body }: FetchType) => {
         let response = null;
 
         if ((!isNotAuthRequired && isLoggedIn) || (isAuthRequired && isLoggedIn)) {
             response = await fetch(`http://localhost:8090/api${path}`, {
                 method: method,
                 headers: {
-                    'Content-Type': contentType,
-                    'Authorization': `Bearer ${accessToken}`,
+                    "Content-Type": contentType,
+                    "Authorization": `Bearer ${accessToken}`,
                 },
-                body: body
+                body: JSON.stringify(body)
             });
         } else {
             response = await fetch(`http://localhost:8090${path}`, {
                 method: method,
                 headers: {
-                    'Content-Type': contentType,
+                    "Content-Type": contentType,
                 },
-                body: body
+                body: JSON.stringify(body)
             });
         }
 
