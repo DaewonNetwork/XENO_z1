@@ -14,7 +14,7 @@ const AppNav = () => {
             <AppContainer>
                 <AppInner>
                     <div className={styles.inner}>
-                        <LinkBtnShared href={"/"} data-hover={false} disableAnimation>
+                        <LinkBtnShared href={"/menu"} data-hover={false} disableAnimation>
                             <IconShared iconType={"menu"} />
                             <TextXSmallShared> 카테고리</TextXSmallShared>
                         </LinkBtnShared>

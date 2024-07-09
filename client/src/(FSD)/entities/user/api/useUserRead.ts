@@ -3,13 +3,13 @@
 import { useQuery } from "@tanstack/react-query";
 
 const userReadFetch = async () => {
-    const accessToken = localStorage.getItem("access_token");
+    const accessToken = localStorage.getItem("access_token")!;
 
     const response = await fetch("http://localhost:8090/api/user", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken || ""}`
+            Authorization: `Bearer ${accessToken}`
         },
     });
 
