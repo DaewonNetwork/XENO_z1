@@ -97,7 +97,7 @@ public class OrdersController {
     2. updateDeliveryInfo
     http://localhost:8090/api/orders/delivery (POST)
     {
-        "address" : "user address"
+        "address" : "user address",
         "phoneNumber" : "user phoneNumber"
     }
  */
