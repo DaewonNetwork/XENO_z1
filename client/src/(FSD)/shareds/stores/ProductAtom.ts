@@ -27,3 +27,8 @@ export const priceState = atom<number>({
     key: "priceState", // 고유한 키 값으로, 다른 atom과 구분짓는 역할을 합니다.
     default: 0, // 초기값 설정
 })
+
+export const reqState = atom<string>({
+    key: "reqState", // 고유한 키 값으로, 다른 atom과 구분짓는 역할을 합니다.
+    default: '요청사항 없음', // 초기값 설정
+})

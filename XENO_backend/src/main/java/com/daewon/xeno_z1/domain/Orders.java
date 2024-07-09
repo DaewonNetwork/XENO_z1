@@ -33,7 +33,7 @@ public class Orders extends BaseEntity {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Users users;
 
-  private long orderNumber;
+  private String orderNumber;
 
   private String status;
 

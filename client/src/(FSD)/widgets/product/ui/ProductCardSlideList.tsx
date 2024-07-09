@@ -1,11 +1,12 @@
 "use client";
 
-import ProductCard from "@/(FSD)/entities/product/ui/ProductCard";
+
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import React from "react";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import Slider from "react-slick";
+import ProductCard from "@/(FSD)/shareds/ui/ProductCard";
 
 interface ProductCardSlideListType {
     productList: ProductType[];

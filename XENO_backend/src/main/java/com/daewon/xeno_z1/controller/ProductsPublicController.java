@@ -89,35 +89,6 @@ public class ProductsPublicController {
     }
 
 
-
-//    @Operation(summary = "카테고리 서브")
-//    @GetMapping("/read/categorySub")
-//    public ResponseEntity<List<ProductsInfoByCategoryDTO>> readProductsListByCategorySub(@RequestParam String categorySubId) {
-//
-//        try {
-//            List<ProductsInfoByCategoryDTO> products = productService.getProductsInfoByCategorySub(categorySubId);
-//            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
-//            return ResponseEntity.ok(products);
-//        } catch (Exception e) {
-//            // 예외 처리
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
-//
-//    @Operation(summary = "카테고리 서브")
-//    @GetMapping("/read/all")
-//    public ResponseEntity<List<ProductsInfoByCategoryDTO>> readProductsAllList() {
-//
-//        try {
-//            List<ProductsInfoByCategoryDTO> products = productService.getProductsInfoAll();
-//            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
-//            return ResponseEntity.ok(products);
-//        } catch (Exception e) {
-//            // 예외 처리
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
-
     @GetMapping("/readOrderBar")
     public ResponseEntity<ProductOrderBarDTO> readOrderBar(@RequestParam Long productColorId) {
 
