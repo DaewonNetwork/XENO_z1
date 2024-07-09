@@ -8,7 +8,6 @@ import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 
 const ProductCreateForm = () => {
     const schema = z.object({
-
     });
 
     const { control, handleSubmit, formState: { errors, isValid, submitCount } } = useForm({
