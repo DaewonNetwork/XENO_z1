@@ -169,7 +169,7 @@ public class ReviewController {
             }
             dto.setReviewDetailImages(reviewDetailImages);
         
-            List<ProductsImage> productImages = productsImageRepository.findByProductId(review.getProducts().getProductId());
+            List<ProductsImage> productImages = productsImageRepository.findByProductColorId(review.getProducts().getProductId());
             List<byte[]> productImageBytes = new ArrayList<>();
             for (ProductsImage productImage : productImages) {
                 try {
