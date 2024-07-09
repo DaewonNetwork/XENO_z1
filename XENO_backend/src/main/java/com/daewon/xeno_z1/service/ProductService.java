@@ -18,6 +18,8 @@ public interface ProductService {
 
     List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category);
 
-    Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
+    List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
+
+    // Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
 
 }

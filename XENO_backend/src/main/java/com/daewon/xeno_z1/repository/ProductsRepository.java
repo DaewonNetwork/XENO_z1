@@ -17,10 +17,10 @@ public interface ProductsRepository extends JpaRepository<Products, Long>{
     @Query("SELECT p FROM Products p JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
     List<Products> findTop10ProductsByCategory(@Param("category") String category);
 
-//    @Query("SELECT p FROM Products p JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
-//    List<Products> findTop50ProductsByCategory(@Param("category") String category);
+   @Query("SELECT p FROM Products p JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
+   List<Products> findTop50ProductsByCategory(@Param("category") String category);
 
-    @Query("SELECT p FROM Products p LEFT JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
-    Page<Products> findByCategoryOrderByStarAvgDesc(String category, Pageable pageable);
+    // @Query("SELECT p FROM Products p LEFT JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
+    // Page<Products> findByCategoryOrderByStarAvgDesc(String category, Pageable pageable);
 
 }

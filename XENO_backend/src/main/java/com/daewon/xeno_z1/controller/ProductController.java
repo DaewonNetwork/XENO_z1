@@ -72,19 +72,19 @@ public class ProductController {
         return ResponseEntity.ok(result);
     }
 
-    // @GetMapping("/rank/page/{category}")
-    // public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
-    //     List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
-    //     return ResponseEntity.ok(result);
-    // }
-
     @GetMapping("/rank/page/{category}")
-    public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @PathVariable String category) {
-        Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
+    public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
         return ResponseEntity.ok(result);
     }
+
+    // @GetMapping("/rank/page/{category}")
+    // public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
+    //         @RequestParam(defaultValue = "0") int page,
+    //         @RequestParam(defaultValue = "20") int size,
+    //         @PathVariable String category) {
+    //     Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
+    //     return ResponseEntity.ok(result);
+    // }
     
 }

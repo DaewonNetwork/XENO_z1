@@ -204,74 +204,74 @@ public class ProductServiceImpl implements ProductService {
     }
 
     // 랭크 50개
-    // @Override
-    // public List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category) {
-    //     List<Products> top50Products = productsRepository.findTop50ProductsByCategory(category);
-    //     return top50Products.stream()
-    //         .map(product -> {
-    //             ProductsStar productsStar = productsStarRepository.findByProductId(product.getProductId()).orElse(null);
-    //             ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
-    //                 .productId(product.getProductId())
-    //                 .productName(product.getName())
-    //                 .brandName(product.getBrandName())
-    //                 .price(product.getPrice())
-    //                 .priceSale(product.getPriceSale())
-    //                 .isSale(product.getIsSale())
-    //                 .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
-    //                 .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
-    //                 .category(product.getCategory())
-    //                 .categorySub(product.getCategorySub())
-    //                 .build();
-
-    //             List<ProductsImage> productImages = productsImageRepository.findByProductId(product.getProductId());
-    //             if (!productImages.isEmpty()) {
-    //                 try {
-    //                     byte[] imageData = getImage(productImages.get(0).getUuid(), productImages.get(0).getFileName());
-    //                     dto.setProductImage(imageData);
-    //                 } catch (IOException e) {
-    //                     log.error("Error loading product image", e);
-    //                 }
-    //             }
-
-    //             return dto;
-    //         })
-    //         .sorted(Comparator.comparingDouble(ProductsStarRankListDTO::getStarAvg).reversed())
-    //         .limit(50)
-    //         .collect(Collectors.toList());
-    // }
-    
     @Override
-    public Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("starAvg").descending());
-        Page<Products> productsPage = productsRepository.findByCategoryOrderByStarAvgDesc(category, pageable);
-        
-        return productsPage.map(product -> {
-            ProductsStar productsStar = productsStarRepository.findByProductId(product.getProductId()).orElse(null);
-            ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
-                .productId(product.getProductId())
-                .productName(product.getName())
-                .brandName(product.getBrandName())
-                .price(product.getPrice())
-                .priceSale(product.getPriceSale())
-                .isSale(product.getIsSale())
-                .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
-                .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
-                .category(product.getCategory())
-                .categorySub(product.getCategorySub())
-                .build();
+    public List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category) {
+        List<Products> top50Products = productsRepository.findTop50ProductsByCategory(category);
+        return top50Products.stream()
+            .map(product -> {
+                ProductsStar productsStar = productsStarRepository.findByProductId(product.getProductId()).orElse(null);
+                ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                    .productId(product.getProductId())
+                    .productName(product.getName())
+                    .brandName(product.getBrandName())
+                    .price(product.getPrice())
+                    .priceSale(product.getPriceSale())
+                    .isSale(product.getIsSale())
+                    .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
+                    .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
+                    .category(product.getCategory())
+                    .categorySub(product.getCategorySub())
+                    .build();
 
-            List<ProductsImage> productImages = productsImageRepository.findByProductId(product.getProductId());
-            if (!productImages.isEmpty()) {
-                try {
-                    byte[] imageData = getImage(productImages.get(0).getUuid(), productImages.get(0).getFileName());
-                    dto.setProductImage(imageData);
-                } catch (IOException e) {
-                    log.error("Error loading product image", e);
+                List<ProductsImage> productImages = productsImageRepository.findByProductId(product.getProductId());
+                if (!productImages.isEmpty()) {
+                    try {
+                        byte[] imageData = getImage(productImages.get(0).getUuid(), productImages.get(0).getFileName());
+                        dto.setProductImage(imageData);
+                    } catch (IOException e) {
+                        log.error("Error loading product image", e);
+                    }
                 }
-            }
 
-            return dto;
-        });
+                return dto;
+            })
+            .sorted(Comparator.comparingDouble(ProductsStarRankListDTO::getStarAvg).reversed())
+            .limit(50)
+            .collect(Collectors.toList());
     }
+    
+    // @Override
+    // public Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size) {
+    //     Pageable pageable = PageRequest.of(page, size, Sort.by("starAvg").descending());
+    //     Page<Products> productsPage = productsRepository.findByCategoryOrderByStarAvgDesc(category, pageable);
+        
+    //     return productsPage.map(product -> {
+    //         ProductsStar productsStar = productsStarRepository.findByProductId(product.getProductId()).orElse(null);
+    //         ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+    //             .productId(product.getProductId())
+    //             .productName(product.getName())
+    //             .brandName(product.getBrandName())
+    //             .price(product.getPrice())
+    //             .priceSale(product.getPriceSale())
+    //             .isSale(product.getIsSale())
+    //             .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
+    //             .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
+    //             .category(product.getCategory())
+    //             .categorySub(product.getCategorySub())
+    //             .build();
+
+    //         List<ProductsImage> productImages = productsImageRepository.findByProductId(product.getProductId());
+    //         if (!productImages.isEmpty()) {
+    //             try {
+    //                 byte[] imageData = getImage(productImages.get(0).getUuid(), productImages.get(0).getFileName());
+    //                 dto.setProductImage(imageData);
+    //             } catch (IOException e) {
+    //                 log.error("Error loading product image", e);
+    //             }
+    //         }
+
+    //         return dto;
+    //     });
+    // }
 
 }
