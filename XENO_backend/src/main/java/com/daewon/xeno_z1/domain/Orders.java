@@ -29,11 +29,6 @@ public class Orders extends BaseEntity {
   private ProductsColorSize productsColorSize;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productImageId", referencedColumnName = "productImageId")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private ProductsImage productsImage;
-
-  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "userId", referencedColumnName = "userId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Users users;
@@ -45,6 +40,7 @@ public class Orders extends BaseEntity {
   // 고객의 요청사항
   private String req;
 
-  private long count;
+  private int quantity;
+  private Long price;
 
 }

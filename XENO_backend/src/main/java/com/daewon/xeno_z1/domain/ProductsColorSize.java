@@ -6,6 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -14,8 +17,10 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor
 @ToString
 public class ProductsColorSize {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment와 같은
+
     private long productColorSizeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,12 +28,9 @@ public class ProductsColorSize {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductsColor productsColor;
 
-    private long stock_s;
+    @Enumerated(EnumType.STRING)
+    private Size size;
 
-    private long stock_m;
 
-    private long stock_l;
-
-    private long stock_xl; 
 }
 

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductsColorRepository extends JpaRepository<ProductsColor, Long> {
-    @Query("SELECT p FROM ProductsColor p WHERE p.products = :productId")
+    @Query("SELECT p FROM ProductsColor p WHERE p.products.productId = :productId")
     List<ProductsColor> findByProductId(@Param("productId") Long productId);
 
     Optional<ProductsColor> findFirstByProducts(Products product);

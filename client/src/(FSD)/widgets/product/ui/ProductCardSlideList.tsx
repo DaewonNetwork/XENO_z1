@@ -27,8 +27,8 @@ const ProductCardSlideList = ({ productList, isRank = false }: ProductCardSlideL
             <Slider {...settings}>
                 {
                     productList.map((product, index) => (
-                        <React.Fragment key={product.productId}>
-                            <ProductCard product={product} linkBtn={<ProductLikeBtn isLike={product.isLike} productId={product.productId} />} isRank={isRank} rank={index + 1} />
+                        <React.Fragment key={product.productColorId}>
+                            <ProductCard product={product} linkBtn={<ProductLikeBtn isLike={product.like} productColorId={product.productColorId} />} isRank={isRank} rank={index + 1} />
                         </React.Fragment>
                     ))
                 }
