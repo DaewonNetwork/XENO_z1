@@ -7,6 +7,7 @@ import com.daewon.xeno_z1.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -71,9 +72,18 @@ public class ProductController {
         return ResponseEntity.ok(result);
     }
 
+    // @GetMapping("/rank/page/{category}")
+    // public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
+    //     List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
+    //     return ResponseEntity.ok(result);
+    // }
+
     @GetMapping("/rank/page/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
-        List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
+    public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @PathVariable String category) {
+        Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
         return ResponseEntity.ok(result);
     }
     
