@@ -37,6 +37,8 @@ public class ProductregisterDTO {
 
 //    private List<String> size; // size 리스트
 
+    private long starAvg;
+
     private long stock_s;
 
     private long stock_m;
