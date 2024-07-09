@@ -21,7 +21,7 @@ const ProductCard = ({ product, linkBtn, isRank = false, rank = 0 }: ProductCard
             <div className={styles.card_btm}>
                 <p className={"font-medium"}>{product.productBrand}</p>
                 <p>{product.productName}</p>
-                <p className={"font-medium"}><span className={"text-primary"}>{product.isLike && `${product.sale}%`}</span> {product.price}원</p>
+                <p className={"font-medium"}><span className={"text-primary"}>{product.isLike && `${product.sale}%`}</span> {product.price.toLocaleString()}원</p>
             </div>
         </div>
     )

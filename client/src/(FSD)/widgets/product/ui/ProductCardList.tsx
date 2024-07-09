@@ -7,24 +7,25 @@ import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
 
 interface ProductCardListType {
     productList: ProductType[];
-    columns?: number;
+    column?: number;
+    isRank?: boolean;
 };
 
 const cn = classNames.bind(styles);
 
-const ProductCardList = ({ productList, columns = 3 }: ProductCardListType) => {
+const ProductCardList = ({ productList, column = 3, isRank = false }: ProductCardListType) => {
     const productCardListClassNames = cn({
-        "columns_one": columns === 1,
-        "columns_two": columns === 2,
-        "columns_three": columns === 3,
+        "column_one": column === 1,
+        "column_two": column === 2,
+        "column_three": column === 3,
     });
 
     return (
         <div className={`${styles.product_card_list} ${productCardListClassNames}`}>
             {
-                productList.map((prodcut) => (
+                productList.map((prodcut, index) => (
                     <React.Fragment key={prodcut.productId}>
-                        <ProductCard product={prodcut} linkBtn={<ProductLikeBtn productId={prodcut.productId} isLike={prodcut.isLike} />} />
+                        <ProductCard product={prodcut} isRank={isRank} rank={index + 1} linkBtn={<ProductLikeBtn productId={prodcut.productId} isLike={prodcut.isLike} />} />
                     </React.Fragment>
                 ))
             }

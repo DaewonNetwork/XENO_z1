@@ -1,7 +1,10 @@
-import { fetchData } from "@/(FSD)/shareds/fetch/fetchData";
+
+import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { useQuery } from "@tanstack/react-query";
 
 export const useCartSummary = () => {
+    const fetchData = useFetchData();
+    
     return useQuery({
         queryKey: ["cart_summary"],
         queryFn: () => fetchData({ 

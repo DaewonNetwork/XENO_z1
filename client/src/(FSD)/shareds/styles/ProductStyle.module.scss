@@ -67,7 +67,7 @@
 .product_card_list {
     display: grid;
 
-    &.columns_one {
+    &.column_one {
         grid-template-columns: 1fr;
         row-gap: 15px;
 
@@ -81,7 +81,7 @@
         }
     }
 
-    &.columns_two {
+    &.column_two {
         grid-template-columns: 1fr 1fr;
         column-gap: 10px;
         row-gap: 15px;
@@ -93,7 +93,7 @@
         }
     }
     
-    &.columns_three {
+    &.column_three {
         grid-template-columns: 1fr 1fr 1fr;
         column-gap: 10px;
         row-gap: 15px;
