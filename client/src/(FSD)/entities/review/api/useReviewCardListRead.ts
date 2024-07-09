@@ -6,6 +6,6 @@ export const useReviewCardListRead = () => {
 
     return useQuery({
         queryKey: ["review_card_list_read"],
-        queryFn: () => fetchData({ path: "/reviews" }),
+        queryFn: () => fetchData({ path: "/review/page/card" }),
     });
 };
