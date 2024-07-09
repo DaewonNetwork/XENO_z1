@@ -6,8 +6,6 @@ export const fetchData = async ({ path, method = "GET", contentType = "applicati
 
     const isLoggedIn: boolean = !!localStorage.getItem("access_token");
 
-
-
     if ((!isNotAuthRequired && isLoggedIn) || isAuthRequired) {
        
         response = await fetch(`http://localhost:8090/api${path}`, {
@@ -18,6 +16,7 @@ export const fetchData = async ({ path, method = "GET", contentType = "applicati
             },
             body: body
         });
+
     } else {
        
         response = await fetch(`http://localhost:8090${path}`, {

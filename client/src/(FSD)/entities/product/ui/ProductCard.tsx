@@ -8,11 +8,13 @@ interface ProductCardType {
     linkBtn: ReactNode;
     isRank?: boolean;
     rank?: number;
+    isError?: boolean;
+    isLoading?: boolean;
 }
 
 
 
-const ProductCard = ({ product, linkBtn, isRank = false, rank = 0 }: ProductCardType) => {
+const ProductCard = ({ product, linkBtn, isRank = false, rank = 0 , isError, isLoading }: ProductCardType) => {
 
     const handleImageClick = () => {
         // 이미지 클릭 시 처리할 작업
@@ -40,7 +42,7 @@ const ProductCard = ({ product, linkBtn, isRank = false, rank = 0 }: ProductCard
             </div>
             <div className={styles.card_btm}>
                 <p className={"font-medium"}>{product.brandName}</p>
-                <p>{product.name}</p>
+                <p><a href={`/products/${product.productColorId}`}>{product.name}</a></p>
                 <p className="font-medium">
                     {product.sale && (
                         <span className="text-primary">

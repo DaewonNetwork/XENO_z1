@@ -37,7 +37,7 @@ const ProductOrderContainer = () => {
     console.log(orderInfo);
 
     return (
-        <ProductOrderBar orderBar={orderBar}/>
+        <ProductOrderBar orderBar={orderBar} parentRefetch={refetch}/>
     );
 };
 

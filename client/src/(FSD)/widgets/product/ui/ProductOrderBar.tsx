@@ -6,9 +6,10 @@ import AppContainer from "../../app/ui/AppContainer";
 import AppInner from "../../app/ui/AppInner";
 import { Button } from "@nextui-org/button";
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
-import { orderInfoType, ProductOrderBarType } from "@/(FSD)/features/product/ui/ProductOrderContainer";
+import { ProductOrderBarType } from "@/(FSD)/features/product/ui/ProductOrderContainer";
 import { useProductAddCart } from "@/(FSD)/features/product/api/useProductAddCart";
 import { useParams } from "next/navigation";
+
 
 type ProductList = {
     productColorSizeId: number;
@@ -24,7 +25,7 @@ type SizeAndStockType = {
 };
 
 
-const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
+const ProductOrderBar = ({ orderBar,parentRefetch }: { orderBar: ProductOrderBarType,parentRefetch?:any}) => {
     const { productColorId } = useParams<{ productColorId: string }>();
     const [isOpen, setIsOpen] = useState(false);
     const [isSelectedColor, setIsSelectedColor] = useState(false);
@@ -220,6 +221,7 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
         setProducts(updatedProducts);
     };
 
+
     return (
         <>
             {!isOpen ? (
@@ -228,7 +230,8 @@ const ProductOrderBar = ({ orderBar }: { orderBar: ProductOrderBarType }) => {
                         <AppInner>
                             <div className={styles.order_inner}>
                                 <div className={styles.order_like_btn}>
-                                    <ProductLikeBtn productColorId ={Number(productColorId)} isLike={orderBar?.like} isIndex={true} size={"md"} index={orderBar?.likeIndex} />
+                                    <ProductLikeBtn productColorId ={Number(productColorId)} isLike={orderBar?.like} isIndex={true} size={"md"} index={orderBar?.likeIndex} 
+                                    parentRefetch={parentRefetch}/>
                                 </div>
                                 <div className={styles.order_btn}>
                                     <Button color="primary" fullWidth radius="sm" onClick={handleBuyClick}>

@@ -30,14 +30,12 @@ const ProductCardListByCategory = ({column = 3, isRank = false }: ProductCardLis
     const categorySubId = useRecoilValue(categorySubIdState);
 
 
-    const { data } = useProductReadByCategory(categoryId,categorySubId);
+    const { data,isError,isLoading,refetch } = useProductReadByCategory(categoryId,categorySubId);
     
     const productList:ProductType[] = data;
 
     console.log(productList)
     
-   
-    if(!productList) return <></>
    
 
     return (
@@ -45,7 +43,9 @@ const ProductCardListByCategory = ({column = 3, isRank = false }: ProductCardLis
             {
                 productList.map((product, index) => (
                     <React.Fragment key={product.productColorId}>
-                        <ProductCard product={product} isRank={isRank} rank={index + 1} linkBtn={<ProductLikeBtn  productColorId={product.productColorId} isLike={product.like} />} />
+                        <ProductCard product={product} isRank={isRank} isError={isError} isLoading={isLoading}
+
+                        rank={index + 1} linkBtn={<ProductLikeBtn  productColorId={product.productColorId} isLike={product.like} parentRefetch={refetch}/>} />
                     </React.Fragment>
                 ))
             }

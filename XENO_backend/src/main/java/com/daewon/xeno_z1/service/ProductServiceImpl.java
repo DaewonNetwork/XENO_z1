@@ -279,6 +279,7 @@ public class ProductServiceImpl implements ProductService {
             log.info("이름:" + currentUserName);
             Users users = userRepository.findByEmail(currentUserName)
                     .orElse(null); // 유저 객체 생성
+
             if (users != null) { // 로그인한 경우
                 Long userId = users.getUserId();
                 LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId,userId);

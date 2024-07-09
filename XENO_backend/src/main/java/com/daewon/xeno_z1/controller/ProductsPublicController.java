@@ -88,6 +88,8 @@ public class ProductsPublicController {
         }
     }
 
+
+
 //    @Operation(summary = "카테고리 서브")
 //    @GetMapping("/read/categorySub")
 //    public ResponseEntity<List<ProductsInfoByCategoryDTO>> readProductsListByCategorySub(@RequestParam String categorySubId) {
@@ -128,6 +130,7 @@ public class ProductsPublicController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @Operation(summary = "카트 추가")
     @PostMapping(value = "/addToCart", produces = "application/json")
