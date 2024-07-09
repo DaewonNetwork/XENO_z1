@@ -40,5 +40,7 @@ public class Orders extends BaseEntity {
   // 고객의 요청사항
   private String req;
 
+  private int quantity;
+  private Long price;
 
 }
