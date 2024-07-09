@@ -23,28 +23,26 @@ public class Orders extends BaseEntity {
   @Column(length = 64, nullable = false, unique = true)
   private String orderPayId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne()  // fetch = FetchType.LAZY
   @JoinColumn(name = "productColorSizeId", referencedColumnName = "productColorSizeId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private ProductsColorSize productsColorSize;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productImageId", referencedColumnName = "productImageId")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private ProductsImage productsImage;
-
-  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "userId", referencedColumnName = "userId")
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private Users users;
+  private Users userId;
 
-  private long orderNumber;
+  @Column(nullable = false, unique = true)
+  private Long orderNumber;
 
   private String status;
 
   // 고객의 요청사항
   private String req;
 
-  private long count;
+  private int quantity;
+
+  private Long totalPrice;
 
 }
