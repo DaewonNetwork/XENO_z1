@@ -45,7 +45,7 @@ public class ProductregisterDTO {
 
     private long stock_xl; 
 
-    private byte[] productImage;
+    private List<byte[]> productImage;
     
     private List<byte[]> productDetailImages;
 
