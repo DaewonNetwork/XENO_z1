@@ -2,21 +2,20 @@ package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
+import com.daewon.xeno_z1.dto.ProductregisterDTO;
 import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
 import com.daewon.xeno_z1.service.ProductService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -86,5 +85,21 @@ public class ProductController {
     //     Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
     //     return ResponseEntity.ok(result);
     // }
+
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> registerProduct(
+            @RequestPart("productData") String productDataString,
+            @RequestPart("productImage") List<MultipartFile> productImage,
+            @RequestPart("productDetailImages") List<MultipartFile> productDetailImages) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            ProductregisterDTO productRegisterDTO = objectMapper.readValue(productDataString, ProductregisterDTO.class);
+            productService.registerProduct(productRegisterDTO, productImage, productDetailImages);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            log.error("상품 등록 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     
 }
