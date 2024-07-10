@@ -6,6 +6,7 @@ import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
 import com.daewon.xeno_z1.dto.ProductOrderBarDTO;
 import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
+import com.daewon.xeno_z1.dto.ProductregisterDTO;
 import com.daewon.xeno_z1.dto.ProductsInfoCardDTO;
 import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
 import com.daewon.xeno_z1.dto.review.ReviewDTO;
