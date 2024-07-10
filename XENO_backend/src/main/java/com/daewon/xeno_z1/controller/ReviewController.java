@@ -133,7 +133,7 @@ public class ReviewController {
                 log.error("Error parsing reviewDTO", e);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
             }
-        
+
             try {
                 Review updatedReview = reviewService.updateReview(reviewId, reviewDTO, images);
                 ReviewDTO responseDTO = convertToDTO(updatedReview);
@@ -147,15 +147,15 @@ public class ReviewController {
         private ReviewDTO convertToDTO(Review review) {
             ReviewDTO dto = new ReviewDTO();
             dto.setReviewId(review.getReviewId());
-            dto.setProductId(review.getProducts().getProductId());
+//            dto.setProductId(review.getProducts().getProductId());
             dto.setUserId(review.getUsers().getUserId());
             dto.setText(review.getText());
             dto.setStar(Math.round(review.getStar() * 10.0) / 10.0);
             dto.setReviewDate(review.getCreateAt() != null ? review.getCreateAt().toString() : null);
             dto.setName(userRepository.findById(review.getUsers().getUserId()).map(Users::getName).orElse(null));
             dto.setSize(review.getSize());
-            dto.setColor(review.getProductsColor().getColor());
-        
+//            dto.setColor(review.getProductsColor().getColor());/
+
             List<ReviewImage> reviewImages = reviewImageRepository.findByReview(review);
             List<byte[]> reviewDetailImages = new ArrayList<>();
             for (ReviewImage reviewImage : reviewImages) {
@@ -167,19 +167,6 @@ public class ReviewController {
                 }
             }
             dto.setReviewDetailImages(reviewDetailImages);
-        
-            List<ProductsImage> productImages = productsImageRepository.findByProductColorId(review.getProducts().getProductId());
-            List<byte[]> productImageBytes = new ArrayList<>();
-            for (ProductsImage productImage : productImages) {
-                try {
-                    byte[] imageData = getImage(productImage.getUuid(), productImage.getFileName());
-                    productImageBytes.add(imageData);
-                } catch (IOException e) {
-                    log.error("Error reading product image file", e);
-                }
-            }
-            dto.setProductImages(productImageBytes);
-        
             return dto;
         }
 

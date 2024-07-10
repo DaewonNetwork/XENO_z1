@@ -123,7 +123,7 @@ public class ProductServiceImpl implements ProductService {
 
         // 약국정보의 총 리뷰 수를 Review 테이블에서 productId를 통해 Select, Count 반환, 없을경우 0
         productInfoDTO.setReviewIndex(
-                reviewRepository.countByProductsProductId(productColorId) != 0 ? reviewRepository.countByProductsProductId(productColorId) : 0);
+                reviewRepository.countReviewImagesByProductId(productColorId) != 0 ? reviewRepository.countReviewImagesByProductId(productColorId) : 0);
 
 
         List<ProductsImage> productImages = productsImageRepository.findByProductColorId(products.getProductColorId());
@@ -417,7 +417,7 @@ public class ProductServiceImpl implements ProductService {
                                 .priceSale(product.getPriceSale())
                                 .isSale(product.getIsSale())
                                 .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
-                                .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
+                                .reviewCount(reviewRepository.countReviewImagesByProductId(product.getProductId()))
                                 .category(product.getCategory())
                                 .categorySub(product.getCategorySub())
                                 .build();
@@ -459,7 +459,7 @@ public class ProductServiceImpl implements ProductService {
                             .priceSale(product.getPriceSale())
                             .isSale(product.getIsSale())
                             .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
-                            .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
+                            .reviewCount(reviewRepository.countReviewImagesByProductId(product.getProductId()))
                             .category(product.getCategory())
                             .categorySub(product.getCategorySub())
                             .build();
@@ -496,7 +496,7 @@ public class ProductServiceImpl implements ProductService {
                      .priceSale(product.getPriceSale())
                      .isSale(product.getIsSale())
                      .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
-                     .reviewCount(reviewRepository.countByProductsProductId(product.getProductId()))
+                     .reviewCount(reviewRepository.countReviewImagesByProductId(product.getProductId()))
                      .category(product.getCategory())
                      .categorySub(product.getCategorySub())
                      .build();

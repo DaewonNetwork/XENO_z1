@@ -21,61 +21,61 @@ public class Review extends BaseEntity {
   private long reviewId;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "userId", referencedColumnName = "userId")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Users users;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "productId", referencedColumnName = "productId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Products products;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", referencedColumnName = "userId")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private Users users;
+  @JoinColumn(name = "productColorSizeId", referencedColumnName = "productColorSizeId")
+  private ProductsColorSize productsColorSize;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "productColorId", referencedColumnName = "productColorId")
   private ProductsColor productsColor;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productColorSizeId", referencedColumnName = "productColorSizeId")
-  private ProductsColorSize productsColorSize;
+  @JoinColumn(name = "productImageId")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private ProductsImage productsImage;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "orderId", referencedColumnName = "orderId")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Orders order;
 
   private String text;
 
   private double star;
 
-  private Long productImage;
-
   private String size;
 
   private int replyIndex;
-
-  public void setReview(String text,double star) {
-    this.text = text;
-    this.star = star;
-  }
-
-  // pharmacy 값 설정 -> phId를 받아서 생성
-  public void setProducts(Long productId) {
-    this.products = Products.builder().productId(productId).build();
-  }
 
   public void setUsers(Long userId) {
     this.users = Users.builder().userId(userId).build();
   }
 
-  public void setProductImage(Long productImage) {
-    this.productImage = productImage;
-  } 
-
   public void setSize(String size) {
       this.size = size;
   }
 
-  public void setProductsColor(ProductsColor productsColor) {
-    this.productsColor = productsColor;
-  }
-
   public void setProductsColorSize(ProductsColorSize productsColorSize) {
       this.productsColorSize = productsColorSize;
+  }
+
+      // Products 정보를 얻기 위한 메서드
+  public Products getProducts() {
+      return this.productsColorSize.getProductsColor().getProducts();
+  }
+
+    // ProductsColor 정보를 얻기 위한 메서드
+  public ProductsColor getProductsColor() {
+      return this.productsColorSize.getProductsColor();
   }
 
   public int getReplyIndex() {

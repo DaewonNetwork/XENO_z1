@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -14,6 +15,6 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long>{
 
-
-    long countByProductsProductId(Long productId); // 리뷰 작성한 수
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.productsColorSize.productsColor.products.productId = :productId")
+    long countReviewImagesByProductId(@Param("productId") Long productId); // 작성한 리뷰 수
 }
