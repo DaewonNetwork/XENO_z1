@@ -3,11 +3,28 @@
 }
 
 .review_card_list {
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 10px;
+    row-gap: 20px;
 }
 
 .review_card {
     display: block;
+
+    .review_image {
+        display: block;
+        width: 100%;
+        height: 160px;
+        overflow: hidden;
+
+        .review_skeleton {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    }
+
 }
 
 .review_info {
