@@ -12,7 +12,7 @@ const useFetchData = () => {
         let response = null;
 
      
-        if ((!isNotAuthRequired && isLoggedIn) || isAuthRequired) {
+        if ((!isNotAuthRequired && isLoggedIn) || (isAuthRequired && isLoggedIn)) {
             response = await fetch(`http://localhost:8090/api${path}`, {
                 method: method,
                 headers: {

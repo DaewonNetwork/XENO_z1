@@ -38,17 +38,14 @@ import java.util.Map;
 @RequestMapping("/api/product")
 public class ProductController {
 
-
     private final ProductService productService;
 
-//    @PreAuthorize("hasRole('USER')")
-
-
+    // @PreAuthorize("hasRole('USER')")
 
     @GetMapping("/read")
     public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productColorId) throws IOException {
         ProductInfoDTO productInfoDTO = productService.getProductInfo(productColorId);
-    log.info(productColorId);
+        log.info(productColorId);
         return ResponseEntity.ok(productInfoDTO);
     }
 
@@ -57,11 +54,12 @@ public class ProductController {
             @RequestParam Long productColorId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "2") int size) {
-        
+
         try {
             // ProductService를 통해 페이징 처리된 상품의 상세 이미지 가져오기
-            ProductDetailImagesDTO productDetailImagesDTO = productService.getProductDetailImages(productColorId, page,size);
-            
+            ProductDetailImagesDTO productDetailImagesDTO = productService.getProductDetailImages(productColorId, page,
+                    size);
+
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(productDetailImagesDTO);
         } catch (Exception e) {
@@ -77,7 +75,8 @@ public class ProductController {
     }
 
     @GetMapping("/top10-by-category/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(@PathVariable String category) {
+    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(
+            @PathVariable String category) {
         List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
         return ResponseEntity.ok(result);
     }
@@ -86,7 +85,8 @@ public class ProductController {
     public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
 
         try {
-            List<ProductOtherColorImagesDTO> firstProductImages = productService.getRelatedColorProductsImages(productColorId);
+            List<ProductOtherColorImagesDTO> firstProductImages = productService
+                    .getRelatedColorProductsImages(productColorId);
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(firstProductImages);
         } catch (Exception e) {
@@ -97,10 +97,11 @@ public class ProductController {
 
     @Operation(summary = "카테고리")
     @GetMapping("/read/category")
-    public ResponseEntity<List<ProductsInfoCardDTO>> readProductsListByCategory(@RequestParam String categoryId, @RequestParam(required = false, defaultValue = "") String categorySubId) {
+    public ResponseEntity<List<ProductsInfoCardDTO>> readProductsListByCategory(@RequestParam String categoryId,
+            @RequestParam(required = false, defaultValue = "") String categorySubId) {
 
         try {
-            List<ProductsInfoCardDTO> products = productService.getProductsInfoByCategory(categoryId,categorySubId);
+            List<ProductsInfoCardDTO> products = productService.getProductsInfoByCategory(categoryId, categorySubId);
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(products);
         } catch (Exception e) {
@@ -121,6 +122,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @Operation(summary = "좋아요한 상품")
     @GetMapping("/read/like")
     public ResponseEntity<List<ProductsInfoCardDTO>> readLikedProductList() {
@@ -133,21 +135,21 @@ public class ProductController {
             // 예외 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }  
-    
-    
+    }
+
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Products> registerProduct(
             @RequestPart("productregisterDTO") ProductregisterDTO productregisterDTO,
             @RequestPart("productImage") List<MultipartFile> productImage,
             @RequestPart("productDetailimage") List<MultipartFile> productDetailimage) {
         try {
-            Products createdProduct = productService.createProduct(productregisterDTO, productImage, productDetailimage);
+            Products createdProduct = productService.createProduct(productregisterDTO, productImage,
+                    productDetailimage);
             return ResponseEntity.ok(createdProduct);
         } catch (Exception e) {
             log.error("상품 등록 중 오류 발생: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
 }
