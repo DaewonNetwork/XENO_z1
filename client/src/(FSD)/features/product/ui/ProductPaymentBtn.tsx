@@ -21,7 +21,7 @@ export interface ProductOrderType {
     productColorSizeId: number;
     req: string;
     quantity: number;
-    price: number;
+    amount: number;
     address: string;
     phoneNumber: string;
 }
@@ -40,7 +40,7 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     };
 
     const onSuccess = (data: any) => {
-        console.log("성공");
+        console.log("post 성공");
     }
     const { mutate } = useProductOrder({ onSuccess });
     
@@ -58,7 +58,7 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
         productColorSizeId: product.productColorSizeId,
         req: req,
         quantity: product.quantity,
-        price: product.price,
+        amount: product.price,
         address: address,
         phoneNumber: phoneNumber
     }));
