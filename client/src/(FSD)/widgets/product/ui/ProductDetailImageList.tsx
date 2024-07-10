@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { useProductDetailRead } from "../../../entities/product/api/useProductDetailRead";
+import { useProductDetailImageListRead } from "../../../entities/product/api/useProductDetailImageListRead";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import ProductImageSkeleton from "@/(FSD)/shareds/ui/ProductImageSkeleton";
 import { Button } from "@nextui-org/button";
@@ -14,7 +14,7 @@ const ProductDetailImageList = ({ productColorId }: Props) => {
     const [size, setSize] = useState(2);
     const [isOpen, setIsOpen] = useState(false);
     const [loaded, setLoaded] = useState(false);
-    const { data, isError, error, isPending, refetch } = useProductDetailRead(Number(productColorId), size);
+    const { data, isError, error, isPending, refetch } = useProductDetailImageListRead(Number(productColorId), size);
 
     useEffect(() => {
         refetch();

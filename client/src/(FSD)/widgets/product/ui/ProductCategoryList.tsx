@@ -3,11 +3,12 @@
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import React from "react";
 import { categoryIdState, categorySubIdState } from "@/(FSD)/shareds/stores/CategoryAtom";
-import { useProductReadByCategory } from "@/(FSD)/entities/product/api/useProductReadByCategory";
+
 import { useRecoilValue } from "recoil";
 import ProductCardSkeletonShared from "@/(FSD)/shareds/ui/ProductCardSkeletonShared";
 
 import ProductCardList from "./ProductCardList";
+import { useProductListByCategoryRead } from "@/(FSD)/entities/product/api/useProductListByCategoryRead";
 
 
 const ProductCategoryList = ( ) => {
@@ -16,7 +17,7 @@ const ProductCategoryList = ( ) => {
     const categorySubId = useRecoilValue(categorySubIdState);
 
 
-    const { data, isLoading, refetch } = useProductReadByCategory(categoryId, categorySubId);
+    const { data, isLoading, refetch } = useProductListByCategoryRead(categoryId, categorySubId);
 
     const productList: ProductType[] = data;
 

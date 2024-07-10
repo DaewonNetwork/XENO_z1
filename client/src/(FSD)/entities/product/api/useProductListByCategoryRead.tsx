@@ -2,7 +2,7 @@
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-export const useProductReadByCategory = (categoryId: string,categorySubId:string) => {
+export const useProductListByCategoryRead = (categoryId: string,categorySubId:string) => {
    
     const fetchData = useFetchData();
     return useQuery({

@@ -1,12 +1,9 @@
 package com.daewon.xeno_z1.service;
 
-import com.daewon.xeno_z1.domain.Cart;
 import com.daewon.xeno_z1.dto.*;
 
 import java.io.IOException;
 import java.util.List;
-
-import org.hibernate.mapping.Map;
 
 public interface ProductService {
 
@@ -16,11 +13,11 @@ public interface ProductService {
 
     ProductOrderBarDTO getProductOrderBar(Long productColorId);
 
-    void addToCart(List<AddToCartDTO> addToCartDTO);
 
 
-    List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId,String categorySubId);
 
+    List<ProductsInfoCardDTO> getProductsInfoByCategory(String categoryId, String categorySubId);
+    List<ProductsInfoCardDTO> getLikedProductsInfo();
 
 
     // Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();

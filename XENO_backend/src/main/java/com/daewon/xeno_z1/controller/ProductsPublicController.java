@@ -1,7 +1,5 @@
 package com.daewon.xeno_z1.controller;
 
-import com.daewon.xeno_z1.domain.Cart;
-import com.daewon.xeno_z1.domain.ProductsColorSize;
 import com.daewon.xeno_z1.dto.*;
 
 import com.daewon.xeno_z1.repository.ProductsColorSizeRepository;
@@ -14,7 +12,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -76,10 +73,10 @@ public class ProductsPublicController {
 
     @Operation(summary = "카테고리")
     @GetMapping("/read/category")
-    public ResponseEntity<List<ProductsInfoByCategoryDTO>> readProductsListByCategory(@RequestParam String categoryId, @RequestParam(required = false, defaultValue = "") String categorySubId) {
+    public ResponseEntity<List<ProductsInfoCardDTO>> readProductsListByCategory(@RequestParam String categoryId, @RequestParam(required = false, defaultValue = "") String categorySubId) {
 
         try {
-            List<ProductsInfoByCategoryDTO> products = productService.getProductsInfoByCategory(categoryId,categorySubId);
+            List<ProductsInfoCardDTO> products = productService.getProductsInfoByCategory(categoryId,categorySubId);
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(products);
         } catch (Exception e) {
@@ -101,26 +98,6 @@ public class ProductsPublicController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-
-    @Operation(summary = "카트 추가")
-    @PostMapping(value = "/addToCart", produces = "application/json")
-    public ResponseEntity<String> addToCart(@RequestBody List<AddToCartDTO> addToCartDTO) {
-        try {
-            // addToCartDTO를 이용한 비즈니스 로직 처리 (예: productService.addToCart(addToCartDTO);)
-            productService.addToCart(addToCartDTO);
-            // 성공적으로 처리된 경우
-            return ResponseEntity.ok("\"Successfully added to cart\"");
-
-        } catch (Exception e) {
-            // 오류 발생 시
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("\"Failed to add to cart\"");
-        }
-    }
-
-
-
-
 
 
 }

@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
-import { useProductFirstImegesRead } from "../../../entities/product/api/useProductFirstImegesRead";
+import { useProductFirstImegeListRead } from "../../../entities/product/api/useProductFirstImegeListRead";
 import { useParams } from "next/navigation";
 import Slider from "react-slick";
 import { useSetRecoilState } from "recoil";
@@ -15,7 +15,7 @@ export interface ProductImages {
 
 const ProductOtherColorImageList = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
-    const { data, isError, error, isPending, refetch } = useProductFirstImegesRead(Number(productColorId));
+    const { data, isError, error, isPending, refetch } = useProductFirstImegeListRead(Number(productColorId));
 
     const productImages: ProductImages[] = data || [];
 
