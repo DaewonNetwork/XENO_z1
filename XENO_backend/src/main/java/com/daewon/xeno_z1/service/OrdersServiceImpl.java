@@ -14,14 +14,9 @@ import com.daewon.xeno_z1.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.aspectj.weaver.ast.Or;
-import org.hibernate.Hibernate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,19 +41,26 @@ public class OrdersServiceImpl implements OrdersService {
         return orders.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public List<OrdersDTO> createOrders(List<OrdersDTO> ordersDTO, String email) {
+        log.info("ordersDTO : " + ordersDTO);
 
         Users users = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
         Orders orders = new Orders();
+        String orderPayId = ordersDTO.get(0).getOrderPayId();
+        log.info("orderPayId : " + orderPayId);
 
         Long orderNumber = generateOrderNumber();
 
+        List<Orders> savedOrders = new ArrayList<>();
+
         for(OrdersDTO dto : ordersDTO) {
+
             orders = Orders.builder()
-                .orderPayId(dto.getOrderPayId())
+                .orderPayId(orderPayId)
                 .orderNumber(orderNumber)
                 .productsColorSize(findProductColorSize(dto.getProductColorSizeId()))
                 .userId(users)
@@ -67,11 +69,15 @@ public class OrdersServiceImpl implements OrdersService {
                 .quantity(dto.getQuantity())
                 .amount(dto.getAmount())
                 .build();
-            ordersRepository.save(orders);
+            log.info("order: " + orders);
 
+            savedOrders.add(ordersRepository.save(orders));
         }
 
-        return ordersDTO;
+        // 저장된 주문들을 DTO로 변환하여 반환
+        return savedOrders.stream()
+                .map(this::convertToDT1)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -105,10 +111,12 @@ public class OrdersServiceImpl implements OrdersService {
 
         return new OrdersConfirmDTO(
                 orders.getOrderId(),
+                orders.getOrderPayId(),
                 String.valueOf(orders.getOrderNumber()),
                 orders.getUserId().getName(),
                 orders.getUserId().getAddress(),
-                String.valueOf(orders.getAmount())
+                orders.getAmount(),
+                orders.getQuantity()
         );
     }
 
@@ -175,5 +183,15 @@ public class OrdersServiceImpl implements OrdersService {
     private ProductsColorSize findProductColorSize(Long productColorSizeId) {
         return productsColorSizeRepository.findById(productColorSizeId)
                 .orElseThrow(() -> new EntityNotFoundException("ProductsColorSize not found with id: " + productColorSizeId));
+    }
+
+    private OrdersDTO convertToDT1(Orders order) {
+        return new OrdersDTO(
+                order.getOrderPayId(),
+                order.getProductsColorSize().getProductColorSizeId(),
+                order.getReq(),
+                order.getQuantity(),
+                order.getAmount()
+        );
     }
 }
