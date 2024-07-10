@@ -137,6 +137,12 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/rank/page/{category}")
+    public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Products> registerProduct(
             @RequestPart("productregisterDTO") ProductregisterDTO productregisterDTO,

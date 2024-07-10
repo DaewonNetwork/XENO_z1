@@ -71,6 +71,12 @@ public class ProductPublicController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/rank/page/{category}")
+    public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/readFirstImages")
     public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
 
