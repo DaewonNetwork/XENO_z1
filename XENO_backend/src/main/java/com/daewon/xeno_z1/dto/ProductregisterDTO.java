@@ -21,11 +21,11 @@ public class ProductregisterDTO {
 
     private String category_sub;
 
-    private boolean is_sale;
-
     private String name;
-
+    
     private Long price;
+
+    private boolean is_sale;
 
     private Long price_sale;
 
@@ -33,17 +33,9 @@ public class ProductregisterDTO {
 
     private String season;
 
-    private String color; // 색상
+    private List<String> colors; // 색상
 
-//    private List<String> size; // size 리스트
-
-    private long stock_s;
-
-    private long stock_m;
-
-    private long stock_l;
-
-    private long stock_xl; 
+    private List<String> size; // size 리스트
 
     private List<byte[]> productImage;
     

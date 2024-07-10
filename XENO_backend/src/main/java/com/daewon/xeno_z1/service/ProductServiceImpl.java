@@ -1,6 +1,9 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
+import com.daewon.xeno_z1.repository.*;
+import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
+
 import com.daewon.xeno_z1.dto.*;
 
 import com.daewon.xeno_z1.repository.*;
@@ -19,11 +22,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,6 +60,97 @@ public class ProductServiceImpl implements ProductService {
         Path path = Paths.get(filePath);
         byte[] image = Files.readAllBytes(path);
         return image;
+    }
+
+    @Override
+    public Products createProduct(ProductregisterDTO dto, List<MultipartFile> productImage, List<MultipartFile> productDetailimage) {
+        // 1. Products 엔티티 생성 및 저장
+        Products product = Products.builder()
+                .brandName(dto.getBrand_name())
+                .name(dto.getName())
+                .category(dto.getCategory())
+                .categorySub(dto.getCategory_sub())
+                .price(dto.getPrice())
+                .priceSale(dto.getPrice_sale())
+                .isSale(dto.is_sale())
+                .productsNumber(Long.parseLong(dto.getProducts_number()))
+                .season(dto.getSeason())
+                .build();
+        product = productsRepository.save(product);
+
+        // 2. ProductsColor 엔티티 생성 및 저장
+        for (String color : dto.getColors()) {
+            ProductsColor productsColor = ProductsColor.builder()
+                    .products(product)
+                    .color(color)
+                    .build();
+            productsColor = productsColorRepository.save(productsColor);
+
+            // 3. ProductsColorSize 엔티티 생성 및 저장
+            // ProductsColorSize productsColorSize = ProductsColorSize.builder()
+            //         .productsColor(productsColor)
+            //         .stockS(0L)
+            //         .stockM(0L)
+            //         .stockL(0L)
+            //         .stockXL(0L)
+            //         .build();
+
+            // for (String size : dto.getSize()) {
+            //     switch (Size.valueOf(size.toUpperCase())) {
+            //         case S:
+            //             productsColorSize.setStockS(100L); // 초기 재고값 설정
+            //             break;
+            //         case M:
+            //             productsColorSize.setStockM(100L);
+            //             break;
+            //         case L:
+            //             productsColorSize.setStockL(100L);
+            //             break;
+            //         case XL:
+            //             productsColorSize.setStockXL(100L);
+            //             break;
+            //     }
+            // }
+            // productsColorSizeRepository.save(productsColorSize);
+
+            // 4. ProductsImage 엔티티 생성 및 저장
+            if (productImage != null && !productImage.isEmpty()) {
+                for (MultipartFile image : productImage) {
+                    String fileName = saveImage(image);
+                    ProductsImage productsImage = ProductsImage.builder()
+                            .productsColor(productsColor)
+                            .fileName(fileName)
+                            .build();
+                    productsImageRepository.save(productsImage);
+                }
+            }
+
+            // 5. ProductsDetailImage 엔티티 생성 및 저장
+            if (productDetailimage != null && !productDetailimage.isEmpty()) {
+                for (MultipartFile image : productDetailimage) {
+                    String fileName = saveImage(image);
+                    ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
+                            .productsColor(productsColor)
+                            .fileName(fileName)
+                            .build();
+                    productsDetailImageRepository.save(productsDetailImage);
+                }
+            }
+        }
+        return product;
+    }
+
+    private String saveImage(MultipartFile image) {
+        String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
+        Path filePath = Paths.get(uploadPath, fileName);
+        
+        try {
+            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            log.error("이미지 저장 중 오류 발생: " + e.getMessage());
+            throw new RuntimeException("이미지 저장 실패", e);
+        }
+        return fileName;
     }
 
     @Override
@@ -629,9 +725,3 @@ public class ProductServiceImpl implements ProductService {
 //        return productsInfoByCategoryDTOList;
 //    }
 }
-
-
-
-
-
-
