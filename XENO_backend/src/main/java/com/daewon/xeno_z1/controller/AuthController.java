@@ -8,6 +8,7 @@ import com.daewon.xeno_z1.security.UsersDetailsService;
 import com.daewon.xeno_z1.service.AuthService;
 import com.daewon.xeno_z1.utils.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -42,21 +43,21 @@ public class AuthController {
 
     @Operation(summary = "회원가입 처리", description = "회원가입 요청을 처리합니다.")
     @PostMapping("/signup")
-    public Users signup(@RequestBody AuthSignupDTO authSignupDTO) {
+    public ResponseEntity<?> signup(@RequestBody @Valid AuthSignupDTO authSignupDTO) {
         log.info("signup post.....");
         log.info(authSignupDTO);
 
         try {
             Users user = authService.signup(authSignupDTO);
-
             log.info(user);
-
-            return user;
+            return ResponseEntity.ok("회원가입이 성공적으로 완료되었습니다.");
         } catch (AuthService.UserEmailExistException e) {
             log.error("Email already exists: " + authSignupDTO.getEmail(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 이메일입니다.");
+        } catch (Exception e) {
+            log.error("회원가입 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 처리 중 오류가 발생했습니다.");
         }
-
-        return null;
     }
 
     @Operation(summary = "판매자 회원가입 처리", description = "판매자 회원가입 요청을 처리합니다.")

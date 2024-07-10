@@ -1,8 +1,13 @@
 package com.daewon.xeno_z1.controller;
 
-import com.daewon.xeno_z1.dto.*;
-
+import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
+import com.daewon.xeno_z1.dto.ProductInfoDTO;
+import com.daewon.xeno_z1.dto.ProductOrderBarDTO;
+import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
+import com.daewon.xeno_z1.dto.ProductsInfoCardDTO;
+import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
 import com.daewon.xeno_z1.service.ProductService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,12 +21,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 //@Controller
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/api/product")
+@RequestMapping("/product")
 public class ProductController {
 
 
@@ -56,6 +62,17 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/top10-by-category")
+    public ResponseEntity<Map<String, List<ProductsStarRankListDTO>>> getTop10ProductsByCategoryRank() {
+        Map<String, List<ProductsStarRankListDTO>> result = productService.getTop10ProductsByCategoryRank();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/top10-by-category/{category}")
+    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(@PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
+        return ResponseEntity.ok(result);
+    }
     @GetMapping("/readFirstImages")
     public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
 
@@ -96,18 +113,11 @@ public class ProductController {
         }
     }
 
-    @Operation(summary = "좋아요한 상품")
-    @GetMapping("/read/like")
-    public ResponseEntity<List<ProductsInfoCardDTO>> readLikedProductList() {
 
-        try {
-            List<ProductsInfoCardDTO> products = productService.getLikedProductsInfo();
-            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            // 예외 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+
+
+
+
+
 
 }

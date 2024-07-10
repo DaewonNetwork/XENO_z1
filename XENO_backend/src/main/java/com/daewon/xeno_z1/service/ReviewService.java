@@ -16,12 +16,8 @@ public interface ReviewService {
     // 리뷰 이미지 총 갯수
     Long countReviewImagesByProductId(Long productId);
 
-    // 제품의 전체 후기 사진
-    // List<ReviewImage> findAllReviewImagesByProductId(Long productId);
-
     List<byte[]> getAllProductReviewImages(Long productId);
 
-    // List<byte[]> getAllReviewImages();
     List<Map<String, Object>> getAllReviewImages();
 
     // 리뷰 조회
