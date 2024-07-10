@@ -12,18 +12,14 @@ import { useParams, useRouter } from "next/navigation";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { imageState, nameState, productsState } from "@/(FSD)/shareds/stores/ProductAtom";
-
 import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
 import { ProductOrderBarType } from "./ProductOrderBarContainer";
 import { ProductImages } from "./ProductOtherColorImageList";
-
-
 
 type SizeAndStockType = {
     size: string;
     stock: number;
 };
-
 
 const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBarType, parentRefetch?: any }) => {
     const { productColorId } = useParams<{ productColorId: string }>();

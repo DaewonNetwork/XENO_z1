@@ -7,6 +7,8 @@ import Link from "next/link";
 import TextSmallShared from "@/(FSD)/shareds/ui/TextSmallShared";
 
 const ProductRankTopList = async () => {
+
+
     return (
         <div className={styles.product_rank_container}>
             <div className={styles.rank_box}>

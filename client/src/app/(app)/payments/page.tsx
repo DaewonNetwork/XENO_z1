@@ -23,7 +23,8 @@ const Page = () => {
     return (
         <>
             <AppSection>
-                <ProductPaymentBtn product={product} />
+                {/* <ProductPaymentBtn product={product} /> */}
+                asd
             </AppSection>
         </>
     );

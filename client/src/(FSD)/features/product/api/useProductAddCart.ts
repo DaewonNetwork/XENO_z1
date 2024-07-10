@@ -16,10 +16,10 @@ export const useProductAddCart = ({ onSuccess, onError }: MutationType) => {
     return useMutation({
         mutationFn: (newProducts: newProductsType[]) => {
             return fetchData({
-                path: "/product/addToCart",
+                path: "/cart",
                 method: "POST",
                 body: newProducts,
-                isNotAuthRequired: true
+                isAuthRequired: true
             });
         },
         onSuccess: (data:any) => {

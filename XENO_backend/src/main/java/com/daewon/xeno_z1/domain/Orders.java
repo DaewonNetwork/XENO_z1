@@ -20,7 +20,7 @@ public class Orders extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long orderId;
 
-  @Column(length = 64, nullable = false, unique = true)
+  @Column(length = 64, nullable = false)
   private String orderPayId;
 
   @ManyToOne()  // fetch = FetchType.LAZY
