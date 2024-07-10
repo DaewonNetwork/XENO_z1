@@ -24,6 +24,9 @@ const ProductCategoryList = ( ) => {
 
     const productList: ProductType[] = data;
 
+    useEffect(() => {
+        refetch();
+    }, [productList, refetch]);
 
     console.log(productList)
 

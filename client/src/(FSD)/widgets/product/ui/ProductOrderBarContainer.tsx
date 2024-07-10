@@ -35,7 +35,7 @@ const ProductOrderBarContainer = () => {
     
     useEffect(() => {
         refetch();
-    }, [productColorId, refetch]);
+    }, [productColorId, orderBar, refetch]);
 
     console.log(orderBar.like)
 
