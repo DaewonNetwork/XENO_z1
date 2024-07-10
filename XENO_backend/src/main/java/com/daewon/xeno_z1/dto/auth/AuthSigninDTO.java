@@ -16,7 +16,6 @@ public class AuthSigninDTO implements UserDetails {
 
     private Long userId;
 
-    @Column(unique = true)
     private String email;
 
     private String password;

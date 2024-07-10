@@ -35,7 +35,7 @@ public class CartServiceImpl implements CartService {
     private final ProductsColorSizeRepository productsColorSizeRepository;
     private final ProductsImageRepository productsImageRepository;
 
-    @Value("${org.daewon.upload.path}")
+    @Value("${uploadPath}")
     private String uploadPath;
 
     @Override

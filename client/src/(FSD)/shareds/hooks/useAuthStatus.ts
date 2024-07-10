@@ -49,7 +49,7 @@ const useAuthStatus = () => {
         refetch();
     }, [localStorage.getItem("access_token")]);
 
-    return { isPending };
+    return { data,isPending };
 };
 
 export default useAuthStatus;

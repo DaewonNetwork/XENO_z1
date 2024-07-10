@@ -7,20 +7,19 @@ import ProductImageSkeleton from "@/(FSD)/shareds/ui/ProductImageSkeleton";
 import { Button } from "@nextui-org/button";
 
 interface Props {
-    productId: string;
+    productColorId: string;
 }
 
-const ProductDetailImages = ({ productId }: Props) => {
+const ProductDetailImages = ({ productColorId }: Props) => {
     const [size, setSize] = useState(2);
     const [isOpen, setIsOpen] = useState(false);
-    const [loaded, setLoaded] = useState(false); // 이미지 추가로 로드됐는지 여부 상태 추가
-    const { data, isError, error, isPending, refetch } = useProductDetailRead(Number(productId), size);
+    const [loaded, setLoaded] = useState(false);
+    const { data, isError, error, isPending, refetch } = useProductDetailRead(Number(productColorId), size);
 
     useEffect(() => {
         refetch();
-        console.log("불러오기")
+        console.log("불러오기");
     }, [size]);
-
 
     if (isError) {
         return <div>Error: {error.message}</div>;
@@ -30,7 +29,7 @@ const ProductDetailImages = ({ productId }: Props) => {
         return (
             <div className={style.product_detail_images}>
                 <div className={style.product_detail_slide_list}>
-                    {[...Array(size)].map((_, index) => ( 
+                    {[...Array(size)].map((_, index) => (
                         <ProductImageSkeleton key={index} />
                     ))}
                 </div>
@@ -43,45 +42,41 @@ const ProductDetailImages = ({ productId }: Props) => {
 
     const handleLoadMore = () => {
         if (!isOpen) {
-            setIsOpen(true); // isOpen 상태를 열린 상태로 변경
+            setIsOpen(true);
             if (!loaded) {
                 setSize(totalImagesCount);
-                setLoaded(true); 
+                setLoaded(true);
             }
         } else {
-            setIsOpen(false); 
-            setSize(2); 
-            setLoaded(false); 
+            setIsOpen(false);
+            setSize(2);
+            setLoaded(false);
         }
     };
 
     return (
         <div>
-        <div className={style.product_detail_images_list}>
-            {images.map((image, index) => (
-                <div className={style.image_block} key={index}>
-                    {/* 두 번째 이미지에만 높이 제한을 적용 */}
-                    <img
-                        src={`data:image/jpeg;base64,${image}`}
-                        alt={`제품 이미지 ${index + 1}`}
-                        className={index === 1 && !isOpen ? `${style.detail_image} ${style.image_with_gradient}` : style.detail_image}
-                    />
-                    {/* 두 번째 이미지 아래에 그라데이션 오버레이 추가 */}
-                    {index === 1 && !isOpen && (
-                        <div className={style.gradient_overlay}></div>
-                    )}
-                </div>
-            ))}
+            <div className={`${style.product_detail_images_list} ${isOpen ? style.expanded : style.collapsed}`}>
+                {images.map((image, index) => (
+                    <div className={style.image_block} key={index}>
+                        <img
+                            src={`data:image/jpeg;base64,${image}`}
+                            alt={`제품 이미지 ${index + 1}`}
+                            className={style.detail_image}
+                        />
+                    </div>
+                ))}
+            </div>
+            <div className={style.gradient_overlay_block}>
+            {!isOpen && <div className={style.gradient_overlay}></div>}
+            </div>
+            <div className={style.product_load_more}>
+                <Button className={style.load_more_button} onClick={handleLoadMore}>
+                    {isOpen ? '접기' : '더 보기'}
+                </Button>
+            </div>
+            <div className={style.block} />
         </div>
-        <div className={style.product_load_more}>
-            <Button className={style.load_more_button} onClick={handleLoadMore}>
-                {isOpen ? '접기' : '더 보기'}
-            </Button>
-        </div>
-        <div className={style.block}/>
-    </div>
-    
-    
     );
 };
 
