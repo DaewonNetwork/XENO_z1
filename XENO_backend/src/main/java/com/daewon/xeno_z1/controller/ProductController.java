@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-//@RestController
-@Controller
+@RestController
+//@Controller
 @Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/api/product")

@@ -1,18 +1,17 @@
+
+
+import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export const useProductListByLikedRead = () => {
 
+    const fetchData = useFetchData();
     return useQuery({
         queryKey: ["product_list_liked__read"],
-        queryFn: async () => {
-            const response = await fetch(`http://localhost:8090/product/read/like`);
-            console.log(response);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            
-            return await response.json();
-        },
-        placeholderData: keepPreviousData,
+        queryFn: () => fetchData({ 
+            path: `/product/read/like`,
+            isAuthRequired: true, 
+          }),
+        
     });
 };

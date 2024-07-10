@@ -319,6 +319,8 @@ public class ProductServiceImpl implements ProductService {
         Users users = userRepository.findByEmail(currentUserName)
                 .orElse(null);
 
+        log.info(users);
+
         for (Products products : productsList) {
             List<ProductsColor> productsColors = productsColorRepository.findByProductId(products.getProductId());
             for (ProductsColor productsColor : productsColors) {
@@ -368,42 +370,61 @@ public class ProductServiceImpl implements ProductService {
 
         String currentUserName = authentication.getName();
 
-
         Users users = userRepository.findByEmail(currentUserName)
                 .orElse(null);
 
+        log.info(users);
         List<LikeProducts> likeProductsList = likeRepository.findByUserId(users.getUserId());
+        log.info(likeProductsList);
         List<ProductsInfoCardDTO> productsInfoCardDTOList = new ArrayList<>();
 
         for(LikeProducts likeProducts: likeProductsList) {
             ProductsInfoCardDTO dto = new ProductsInfoCardDTO();
             ProductsLike productsLike = productsLikeRepository.findById(likeProducts.getProductsLike().getProductLikeId()).orElse(null);
-            ProductsColor productsColor = productsColorRepository.findById(productsLike.getProductsColor().getProductColorId()).orElse(null);
-            Products products = productsRepository.findById(productsColor.getProducts().getProductId()).orElse(null);
+//            log.info(productsLike);
+            ProductsColor productsColor = productsLike.getProductsColor();
+            log.info(productsColor);
+            Products products = productsColor.getProducts();
+            log.info(products);
             ProductsStar productsStar = productsStarRepository.findByProductColorId(productsColor.getProductColorId()).orElse(null);
+            log.info(productsStar);
+
+            dto.setBrandName(products.getBrandName());
+            log.info(dto);
+            dto.setName(products.getName());
+            log.info(dto);
+            dto.setCategory(products.getCategory());
+            log.info(dto);
+            dto.setCategorySub(products.getCategorySub());
+            log.info(dto);
+            dto.setPrice(products.getPrice());
+            log.info(dto);
+            dto.setPriceSale(products.getPriceSale());
+            log.info(dto);
+            dto.setSale(products.getIsSale());
+            log.info(dto);
+            dto.setLike(likeProducts.isLike());
+            log.info(dto);
+            dto.setProductColorId(productsColor.getProductColorId());
+            dto.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
+            dto.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);
             ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productsColor.getProductColorId());
+            log.info(productsImage);
             if(productsImage != null) {
                 try {
                     byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
                     dto.setProductImage(imageData);
+                    log.info("성공");
                 } catch (IOException e) {
-
+                    log.info(e.getMessage());
                 }
             } else {
-                log.info
+                log.info("널입니다");
                 dto.setProductImage(null);
             }
-            dto.setBrandName(products.getBrandName());
-            dto.setName(products.getName());
-            dto.setCategory(products.getCategory());
-            dto.setCategorySub(products.getCategorySub());
-            dto.setPrice(products.getPrice());
-            dto.setPriceSale(products.getPriceSale());
-            dto.setSale(products.getIsSale());
-            dto.setLike(likeProducts.isLike());
-            dto.setLikeIndex(productsLike.getLikeIndex());
-            dto.setStarAvg(productsStar.getStarAvg());
             productsInfoCardDTOList.add(dto);
+            log.info(productsInfoCardDTOList);
+            log.info(dto);
         }
 
 

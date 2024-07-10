@@ -43,7 +43,7 @@ const ProductCategoryList = ( ) => {
    
 
     return (
-        <ProductCardList column={2} productList={productList}/>
+        <ProductCardList column={2} productList={productList} parentRefetch={refetch}/>
     );
 };
 
