@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -58,22 +59,19 @@ public class ProductPublicController {
         }
     }
 
-    @GetMapping("/top10-by-category")
-    public ResponseEntity<Map<String, List<ProductsStarRankListDTO>>> getTop10ProductsByCategoryRank() {
-        Map<String, List<ProductsStarRankListDTO>> result = productService.getTop10ProductsByCategoryRank();
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/top10-by-category/{category}")
+    @GetMapping("read/rank/{category}")
     public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(
             @PathVariable String category) {
         List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/rank/page/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
-        List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
+    @GetMapping("read/rank/page/{category}")
+    public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @PathVariable String category) {
+        Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
         return ResponseEntity.ok(result);
     }
 
