@@ -76,15 +76,15 @@ public class AuthController {
         return null;
     }
 
-    @GetMapping("/signin")
-    public void signinGET(String error, String logout) {
-        log.info("signin get..................");
-        log.info("logout : "+logout);
-
-        if(logout != null) {
-            log.info("user logout....");
-        }
-    }
+//    @GetMapping("/signin")
+//    public void signinGET(String error, String logout) {
+//        log.info("signin get..................");
+//        log.info("logout : "+logout);
+//
+//        if(logout != null) {
+//            log.info("user logout....");
+//        }
+//    }
 
     @Operation(summary = "로그인 처리", description = "로그인 요청을 처리합니다.")
     @RequestMapping(value = "/signin", method = RequestMethod.POST)

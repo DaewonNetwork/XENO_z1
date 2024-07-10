@@ -4,11 +4,16 @@ package com.daewon.xeno_z1.repository;
 
 
 import com.daewon.xeno_z1.domain.LikeProducts;
+import com.daewon.xeno_z1.domain.ProductsColor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 
 public interface LikeRepository extends JpaRepository<LikeProducts, Long> {
-    @Query(value = "SELECT * from like_products where product_id=:productId and user_id=:userId",nativeQuery = true)
-    LikeProducts findByProductAndUsers(Long productId, Long userId); // phId, userId를 통해 EnjoyPh(약국 즐겨찾기) 내 검색
+
+    @Query("SELECT l FROM LikeProducts l WHERE l.productsLike.productsColor.productColorId = :productColorId and l.users.userId = :userId")
+    LikeProducts findByProductColorIdAndUserId(@Param("productColorId") Long productColorId, Long userId);
 }
