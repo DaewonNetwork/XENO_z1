@@ -1,11 +1,17 @@
 package com.daewon.xeno_z1.controller;
 
+import com.daewon.xeno_z1.domain.Products;
+import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
 import com.daewon.xeno_z1.dto.ProductregisterDTO;
 
 import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
+import com.daewon.xeno_z1.dto.review.ReviewDTO;
 import com.daewon.xeno_z1.service.ProductService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -13,15 +19,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -90,5 +97,19 @@ public class ProductController {
     //     Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
     //     return ResponseEntity.ok(result);
     // }
+
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Products> registerProduct(
+            @RequestPart("productregisterDTO") ProductregisterDTO productregisterDTO,
+            @RequestPart("productImage") List<MultipartFile> productImage,
+            @RequestPart("productDetailimage") List<MultipartFile> productDetailimage) {
+        try {
+            Products createdProduct = productService.createProduct(productregisterDTO, productImage, productDetailimage);
+            return ResponseEntity.ok(createdProduct);
+        } catch (Exception e) {
+            log.error("상품 등록 중 오류 발생: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     
 }
