@@ -7,53 +7,23 @@ import com.daewon.xeno_z1.repository.ProductsImageRepository;
 import com.daewon.xeno_z1.repository.ReviewImageRepository;
 import com.daewon.xeno_z1.repository.ReviewRepository;
 import com.daewon.xeno_z1.repository.UserRepository;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.daewon.xeno_z1.domain.ProductsImage;
-import com.daewon.xeno_z1.domain.Review;
-import com.daewon.xeno_z1.domain.ReviewImage;
-import com.daewon.xeno_z1.domain.Users;
-import com.daewon.xeno_z1.dto.review.ReviewDTO;
 import com.daewon.xeno_z1.service.ReviewService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.web.bind.annotation.PutMapping;
 
 
-@RestController
+@Controller
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/api/review")
-public class ReviewController {
+@RequestMapping("/review")
+public class ReviewPublicController {
 
     private final ReviewService reviewService;
     private final ReviewImageRepository reviewImageRepository;

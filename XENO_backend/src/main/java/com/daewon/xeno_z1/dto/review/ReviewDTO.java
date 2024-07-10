@@ -41,7 +41,7 @@ public class ReviewDTO {
 
     private List<byte[]> productImages;
 
-    private List<byte[]> reviewDetailImages;
+    private byte[] reviewImage;
 
     private Long productColorId; // ProductsColor 관련 필드
 

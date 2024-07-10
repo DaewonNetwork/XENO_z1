@@ -44,7 +44,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductsColorRepository productsColorRepository;
     private final ProductsColorSizeRepository productsColorSizeRepository;
     private final ProductsStockRepository productsStockRepository;
-    private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
@@ -238,7 +237,7 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductsDetailImage> productDetailImages = productsDetailImageRepository
                 .findByProductColorId(productColorId, pageable);
         long count = productDetailImages.getTotalElements();
-        // ProductsDetailImage를 byte[]로 변환하여 새로운 Page 객체 생성
+
         Page<byte[]> detailImageBytesPage = productDetailImages.map(productsImage -> {
             try {
                 byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());

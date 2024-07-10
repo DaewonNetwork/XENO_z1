@@ -22,11 +22,11 @@ public class ReviewImageController {
 
     private final ReviewService reviewService;
 
-    @Operation(summary = "전체 이미지 총 갯수")
-    @GetMapping("/images/count")
-    public ResponseEntity<Long> getReviewImageCount(@PathVariable Long productId) {
-        Long count = reviewService.countReviewImagesByProductId(productId);
-        return ResponseEntity.ok(count);
-    }
+//    @Operation(summary = "전체 이미지 총 갯수")
+//    @GetMapping("/images/count")
+//    public ResponseEntity<Long> getReviewImageCount(@PathVariable Long productId) {
+//        Long count = reviewService.countReviewImagesByProductId(productId);
+//        return ResponseEntity.ok(count);
+//    }
 
 }

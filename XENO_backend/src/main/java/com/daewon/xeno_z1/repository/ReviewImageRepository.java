@@ -13,14 +13,14 @@ import java.util.List;
 @Repository
 public interface ReviewImageRepository extends JpaRepository<ReviewImage, Long> {
 
-    // 제품 상세 페이지 이미지 총 갯수
-    @Query("SELECT COUNT(rie) FROM ReviewImage rie WHERE rie.review.productsColorSize.productColorSizeId = :productId")
-    Long countReviewImagesByProductId(@Param("productId") Long productId);
+//    // 제품 상세 페이지 이미지 총 갯수
+//    @Query("SELECT COUNT(rie) FROM ReviewImage rie WHERE rie.review.productsColorSize.productColorSizeId = :productId")
+//    Long countReviewImagesByProductId(@Param("productId") Long productId);
+//
+//    // 제품의 전체 후기 사진
+//    @Query("SELECT rie FROM ReviewImage rie WHERE rie.review.productsColorSize.productColorSizeId = :productId")
+//    List<ReviewImage> findAllReviewImagesByProductId(@Param("productId") Long productId);
 
-    // 제품의 전체 후기 사진
-    @Query("SELECT rie FROM ReviewImage rie WHERE rie.review.productsColorSize.productColorSizeId = :productId")
-    List<ReviewImage> findAllReviewImagesByProductId(@Param("productId") Long productId);
-
-    List<ReviewImage> findByReview(Review review);
+    ReviewImage findByReview(Review review);
 
 }

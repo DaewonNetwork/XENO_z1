@@ -12,6 +12,7 @@ import { useSetRecoilState } from "recoil";
 import { nameState } from "@/(FSD)/shareds/stores/ProductAtom";
 import ProductDetailImageList from "./ProductDetailImageList";
 import ProductOtherColorImageList from "./ProductOtherColorImageList";
+import ReviewCardList from "../../review/ui/ReviewCardList";
 
 const ProductInfoContainer = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
@@ -55,6 +56,7 @@ const ProductInfoContainer = () => {
             <ProductInfo product={product} />
             <ProductOtherColorImageList/>
             <ProductDetailImageList productColorId={productColorId} />
+            
         </>
     );
 };

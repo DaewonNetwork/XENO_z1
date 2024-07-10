@@ -72,7 +72,6 @@ public class ReplyServiceImpl implements ReplyService {
                 .build();
 
         Reply savedReply = replyRepository.save(reply);
-        review.setReplyIndex(review.getReplyIndex() + 1);
         reviewRepository.save(review);
 
         return savedReply.getReplyId();
@@ -131,7 +130,6 @@ public class ReplyServiceImpl implements ReplyService {
         }
 
         Review review = reply.getReview();
-        review.setReplyIndex(review.getReplyIndex() - 1);
 
         replyRepository.deleteById(replyId);
     }
