@@ -4,6 +4,7 @@ import com.daewon.xeno_z1.domain.Orders;
 import com.daewon.xeno_z1.domain.ProductsColorSize;
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.auth.GetOneDTO;
+import com.daewon.xeno_z1.dto.order.OrdersConfirmDTO;
 import com.daewon.xeno_z1.dto.order.OrdersDTO;
 import com.daewon.xeno_z1.dto.order.OrdersListDTO;
 import com.daewon.xeno_z1.exception.UserNotFoundException;
@@ -13,6 +14,7 @@ import com.daewon.xeno_z1.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.aspectj.weaver.ast.Or;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -85,6 +87,19 @@ public class OrdersServiceImpl implements OrdersService {
 
         userRepository.save(users);
     }
+
+//    @Override
+//    public OrdersConfirmDTO confirmOrder(Long orderId) {
+//
+//        Orders orders = ordersRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found"));
+//        return new OrdersConfirmDTO(
+//                String.valueOf(order.getOrderId()),
+//                String.valueOf(order.getOrderNumber()),
+//                order.getUserId().getName(),
+//                order.getUserId().getAddress(),
+//                String.valueOf(order.getAmount())
+//        );
+//    }
 
     @Override
     public OrdersListDTO convertToDTO(Orders orders) {
