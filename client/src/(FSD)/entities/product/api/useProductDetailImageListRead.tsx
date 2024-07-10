@@ -9,7 +9,6 @@ export const useProductDetailImageListRead = (productColorId: number, size:numbe
         queryKey: ["product_detail_image_read", productColorId],
         queryFn: () => fetchData({ 
             path: `/product/readImages?productColorId=${productColorId}`,
-            isAuthRequired: true, 
           }),
             
     });

@@ -11,7 +11,7 @@ export const useProductFirstImegeListRead = (productColorId: number) => {
         queryKey: ["product_first_image_read", productColorId],
         queryFn: () => fetchData({ 
             path: `/product/readFirstImages?productColorId=${productColorId}`,
-            isAuthRequired: true, 
+         
           }),
             
     });

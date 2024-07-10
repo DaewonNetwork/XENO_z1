@@ -12,7 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ProductSeller {
+public class ProductsSeller {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment와 같은

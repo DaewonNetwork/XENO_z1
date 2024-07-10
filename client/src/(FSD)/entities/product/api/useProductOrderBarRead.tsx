@@ -10,7 +10,6 @@ export const useProductOrderBarRead = (productColorId: number) => {
         queryKey: ["product_order_bar_read", productColorId],
         queryFn: () => fetchData({ 
             path: `/product/readOrderBar?productColorId=${productColorId}`,
-            isAuthRequired: true, 
           }),
             
     });

@@ -9,7 +9,6 @@ export const useProductRead = (productColorId: number) => {
         queryKey: ["product_read", productColorId],
         queryFn: () => fetchData({ 
             path: `/product/read?productColorId=${productColorId}`,
-            isAuthRequired: true, 
           }),
             
     });
