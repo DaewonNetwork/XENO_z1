@@ -12,7 +12,12 @@ const ReviewCard = ({ review }: ReviewCardProps) => {
     const router = useRouter();
 
     return (
-        <div className={styles.review_card}>
+        <div 
+        onClick={_ => {
+            router.push(`/reviews/info/${review.reviewId}`);
+        }}
+        className={styles.review_card}
+        >
             <div className={`rounded-medium ${styles.review_image}`}>
                 <Skeleton className={styles.review_skeleton} />
             </div>
