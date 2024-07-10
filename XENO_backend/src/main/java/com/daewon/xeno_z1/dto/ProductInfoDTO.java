@@ -15,6 +15,8 @@ public class ProductInfoDTO {
 
     private long productId;
 
+    private long productColorId;
+
     private String brandName;
 
     private String name;
@@ -39,9 +41,17 @@ public class ProductInfoDTO {
 
     private long reviewIndex;
 
-    private boolean isColor;
+    private boolean booleanColor;
+
+    private boolean isLike;
+
+    private String color;
+
+    private List<String> colorType;
 
     private List<byte[]> productImages;
+
+
 
 
 

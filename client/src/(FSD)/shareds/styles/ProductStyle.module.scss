@@ -23,6 +23,10 @@
     padding-top: 20px;
 }
 
+.product_create_form {
+    display: block;
+}
+
 .product_order_bar {
     display: block;
     height: 60px;
@@ -104,13 +108,18 @@
     display: block;
 
     .card_top {
-        display: block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         height: 146px;
         position: relative;
 
         .product_image {
             display: block;
-            height: 100%;
+            height: 70%;
+            max-width: 100%;
+            max-height: 100%;
+            cursor: pointer;
         }
 
         .product_rank {
@@ -253,12 +262,25 @@
 }
 
 .product_star {
+    display: inline-block;
+    width: 100px;
+    /* 별점 하나의 너비 */
+    height: 20px;
+    /* 별점 높이 */
+
+    background-size: 100px 20px;
+    /* 이미지 크기 */
     overflow: hidden;
-    display: block;
-    width: 89px;
-    height: 19px;
-    background: url(https://static.msscdn.net/skin/m_musinsa/images/icon_star_score3.png) 1px 0px / 88px 216px no-repeat;
+    /* 넘치는 부분 숨김 */
+
+    &.half-star {
+        width: 50px;
+        /* 반 별점의 너비 */
+        background-size: 50px 20px;
+        /* 반 별점 이미지 크기 */
+    }
 }
+
 .product_star_avg {
     margin-left: 5px;
     font-size: 14px;
@@ -335,43 +357,52 @@
 
 
 .product_detail_images_list {
-    max-height: inherit;
     padding: 20px 15px 10px;
     overflow: hidden;
     box-sizing: border-box;
-    
 
-    .image_block {
-    position: relative;
+}
+
+.product_detail_images_list.collapsed {
+    max-height: 1300px; // 원하는 최대 높이로 설정
+}
+
+
+
+.product_detail_images_list.expanded {
+    max-height: inherit;
+}
+
+
+.image_block {
     margin: 0px;
     padding: 0px;
-    margin-bottom: 10px;
-    }
-    
-    .detail_image {
-    width: 450px;
-    max-height: 600px;
-    height: 100%;
-    margin: 0px auto;
-    object-fit: cover;
-    }
-    
-    .image_with_gradient {
-        /* 높이 제한을 가진 이미지 스타일 */
-        max-height: 300px; /* 최대 높이 설정 */
-    }
-    
-    .gradient_overlay {
-        /* 그라데이션 오버레이 스타일 */
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 50px; /* 원하는 그라데이션 높이 설정 */
-        background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1)); /* 투명에서 흰색으로 그라데이션 설정 */
-    }
-  
 }
+
+.detail_image {
+    max-width: 100% !important;
+    border: none;
+    line-height: 0;
+    vertical-align: top;
+}
+
+
+.gradient_overlay_block {
+    display: block;
+    position: relative;
+    padding: 0px 15px 30px;
+}
+
+.gradient_overlay {
+    display: block;
+    width: 100%;
+    height: 80px;
+    margin-top: -80px;
+    background: linear-gradient(rgba(255, 255, 255, 0), rgb(255, 255, 255));
+    content: "";
+}
+
+
 
 .product_load_more {
     display: block;
@@ -408,4 +439,300 @@
         color: rgb(255, 255, 255);
         /* 호버 시 텍스트 색상 변경 */
     }
+}
+
+.different_color {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px 0px 20px;
+    box-sizing: border-box;
+
+    .different_color_text_block {
+        align-items: center;
+        width: 100%;
+        padding: 8px 15px;
+        box-sizing: border-box;
+        text-align: center;
+
+        .different_color_text {
+            font-size: 20px;
+            line-height: 28px;
+            font-weight: 400;
+            color: rgb(0, 0, 0);
+        }
+    }
+
+    .different_color_images_block {
+        overflow: auto hidden;
+        white-space: nowrap;
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        /* 이미지를 가운데 정렬 */
+        margin-top: 20px;
+        /* 위 여백 조정 */
+        padding: 0px 15px;
+        box-sizing: border-box;
+
+        .different_color_images {
+            display: flex;
+            justify-content: center;
+            /* 요소들을 가운데 정렬 */
+            gap: 10px;
+
+            /* 요소들 사이의 간격 설정 */
+            .different_color_images img {
+                max-width: 100%;
+                /* 이미지의 최대 너비를 부모 요소의 너비에 맞춤 */
+                height: auto;
+                /* 비율 유지를 위해 높이를 자동으로 설정 */
+            }
+        }
+    }
+
+}
+
+
+.product_order_modal {
+    position: fixed;
+    bottom: 0px;
+    z-index: 1000;
+    max-width: 520px;
+    width: 100%;
+    background: rgb(255, 255, 255);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px -2px 20px;
+
+    .product_order_modal_exit {
+        width: 100%;
+        height: 35px;
+        background: rgb(255, 255, 255);
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .product_order_modal_option_block {
+        max-height: 300px;
+        background: rgb(245, 245, 245);
+        overflow: hidden auto;
+        font-size: 16px;
+        padding: 0px 10px 10px;
+        background: rgb(255, 255, 255);
+        display: flex;
+
+
+        .product_order_modal_option_select_block {
+            display: flex;
+            flex-direction: column;
+            line-height: 25px;
+            align-items: center;
+            justify-content: center;
+            flex: 1 1 0%;
+            flex-wrap: wrap;
+            margin-top: 10px;
+
+            .product_order_option_select_btn {
+                width: 100%;
+                height: 50px;
+                margin-bottom: 10px;
+                padding-left: 11px;
+                padding-right: 38px;
+
+                border: 1px solid rgb(204, 204, 204);
+                overflow: hidden;
+                text-align: left;
+                color: rgb(0, 0, 0);
+                font-size: 16px;
+                line-height: 48px;
+                appearance: none;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .product_order_modal_product_info_block {
+
+                padding: 16px 10px 15px;
+                background: rgb(245, 245, 245);
+                color: rgb(0, 0, 0);
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 1.5;
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+    }
+
+    .product_order_modal_buy_block {
+
+        display: flex;
+        height: 50px;
+        padding-top: 11px;
+        padding-right: 12px;
+        padding-left: 12px;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 11px);
+        font-size: 16px;
+        line-height: 25px;
+        align-items: center;
+        justify-content: center;
+        flex: 1 1 0%;
+        box-sizing: content-box;
+
+        .product_order_modal_add_cart_btn{
+            flex: 1 1 0%;
+            display: flex;
+            width: 100%;
+            height: 50px;
+            border: 1px solid rgb(0, 120, 255);
+            line-height: 25px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            background: rgb(255, 255, 255);
+            color: rgb(0, 120, 255);
+            margin-right: 8px;
+        }
+
+        .product_order_modal_buy_btn {
+            flex: 1 1 0%;
+            display: flex;
+            width: 100%;
+            height: 50px;
+            border-radius: 4px;
+            line-height: 25px;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(0, 120, 255);
+            color: rgb(255, 255, 255);
+        }
+    }
+
+    .product_order_option_select {
+        display: block;
+        font-size: 16px;
+        padding-top: 0px;
+        padding-right: 10px;
+        padding-left: 10px;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
+
+        .product_order_option_select_btn_after {
+            width: 100%;
+            height: 50px;
+            margin-bottom: 0px;
+            padding-left: 11px;
+            padding-right: 38px;
+            background-color: rgb(245, 245, 245);
+
+            background-repeat: no-repeat;
+            background-size: 22px 22px;
+            background-position: right 5px top 50%;
+            border: 1px solid rgb(0, 0, 0);
+            text-align: left;
+            color: rgb(0, 0, 0);
+            font-size: 16px;
+            line-height: 48px;
+            appearance: none;
+
+        }
+
+        .product_order_option_color_list {
+            max-height: 263px;
+            margin-top: -1.5px;
+            background: rgb(255, 255, 255);
+            border-right: 1px solid rgb(0, 0, 0);
+            border-bottom: 1px solid rgb(0, 0, 0);
+            border-left: 1px solid rgb(0, 0, 0);
+            border-image: initial;
+            border-top: none;
+            overflow: hidden auto;
+            list-style: none;
+
+            .product_order_option_color_list_item {
+                position: relative;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 13px 11px 11px;
+                font-size: 16px;
+                line-height: 24px;
+                cursor: pointer;
+                color: rgb(0, 0, 0);
+            }
+        }
+    }
+}
+
+.product_order_modal_product_info {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-height: 50px;
+    padding: 7px 5px 7px 10px;
+    background: rgb(245, 245, 245);
+    border-top: 1px solid rgb(245, 245, 245);
+    box-sizing: border-box;
+
+    .product_order_modal_product_list {
+        list-style: none;
+        width: 100%;
+
+        .product_order_modal_product_list_item {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            min-height: 50px;
+            padding: 7px 5px 7px 10px;
+            background: rgb(255, 255, 255);
+            border-top: 1px solid rgb(245, 245, 245);
+            box-sizing: border-box;
+
+            .product_order_modal_product_list_item_info {
+                flex-grow: 1;
+                margin: auto 0px;
+                padding-right: 10px;
+                word-break: break-all;
+                color: rgb(119, 119, 119);
+                font-size: 14px;
+
+            }
+
+            .product_order_modal_product_list_item_quantity {
+                min-width: 110px;
+                margin: auto 0px;
+                float: left;
+
+                .product_order_modal_product_list_item_quantity_input {
+                    width: 50px;
+                    height: 26px;
+                    box-sizing: border-box;
+                    text-align: center;
+                    border: 1px solid rgb(238, 238, 238);
+                    color: rgb(119, 119, 119);
+                    font-size: 16px;
+                    line-height: 26px;
+                }
+            }
+
+            .product_order_modal_product_list_item_price {
+                min-width: 98px;
+                margin: auto 0px;
+                padding-top: 2px;
+                text-align: right;
+
+            }
+        }
+    }
+}
+
+.product_order_modal_price {
+    padding: 16px 10px 15px;
+    background: rgb(245, 245, 245);
+    color: rgb(0, 0, 0);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.5;
+    display: flex;
+    justify-content: space-between;
 }
