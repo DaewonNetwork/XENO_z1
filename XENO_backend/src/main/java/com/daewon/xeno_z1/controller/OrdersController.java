@@ -2,10 +2,7 @@ package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Orders;
 import com.daewon.xeno_z1.dto.cart.CartDTO;
-import com.daewon.xeno_z1.dto.order.DeliveryOrdersDTO;
-import com.daewon.xeno_z1.dto.order.OrdersDTO;
-import com.daewon.xeno_z1.dto.order.OrdersListDTO;
-import com.daewon.xeno_z1.dto.order.OrdersResponseDTO;
+import com.daewon.xeno_z1.dto.order.*;
 import com.daewon.xeno_z1.exception.ProductNotFoundException;
 import com.daewon.xeno_z1.service.OrdersService;
 import com.daewon.xeno_z1.utils.JWTUtil;
@@ -31,7 +28,7 @@ public class OrdersController {
     private final JWTUtil jwtUtil;
 
     @GetMapping
-    public ResponseEntity<?> getCartItems(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> getAllOrders(@RequestHeader("Authorization") String token) {
         try {
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
@@ -83,6 +80,18 @@ public class OrdersController {
             return ResponseEntity.status(400).body("알맞은 주소와 휴대폰 번호를 입력해주세요");
         }
     }
+
+    // ** 주의사항 ** 주문한 사람의 토큰값이 아니면 Exception에 걸림.
+    @GetMapping("/confirm")
+    public ResponseEntity<?> confirmOrders(@RequestParam Long orderId, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            OrdersConfirmDTO ordersConfirmDTO = ordersService.confirmOrder(orderId, userDetails.getUsername());
+
+            return ResponseEntity.ok(ordersConfirmDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("주문내역을 찾을 수 없습니다.");
+        }
+    }
 }
 
 /*
@@ -101,6 +110,12 @@ public class OrdersController {
         "address" : "user address",
         "phoneNumber" : "user phoneNumber"
     }
+
+    ** 주의사항 ** 주문한 사람의 토큰값이 아니면 Exception에 걸림.
+    3. confirmOrders
+    http://localhost:8090/api/orders/confirms?orderId=해당하는orderId값  (GET)
+
+    Query Params에 key : value 형태로 orderId : 해당하는값, 넣어주면 됨
  */
 
 

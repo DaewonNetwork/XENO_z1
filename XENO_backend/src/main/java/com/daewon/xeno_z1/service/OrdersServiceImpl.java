@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -88,18 +89,28 @@ public class OrdersServiceImpl implements OrdersService {
         userRepository.save(users);
     }
 
-//    @Override
-//    public OrdersConfirmDTO confirmOrder(Long orderId) {
-//
-//        Orders orders = ordersRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found"));
-//        return new OrdersConfirmDTO(
-//                String.valueOf(order.getOrderId()),
-//                String.valueOf(order.getOrderNumber()),
-//                order.getUserId().getName(),
-//                order.getUserId().getAddress(),
-//                String.valueOf(order.getAmount())
-//        );
-//    }
+    @Transactional(readOnly = true)
+    @Override
+    public OrdersConfirmDTO confirmOrder(Long orderId, String email) {
+
+        // ** 주의사항 ** 주문한 사람의 토큰값이 아니면 Exception에 걸림.
+        Orders orders = ordersRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("주문내역을 찾을 수 없습니다."));
+        log.info("orders: " + orders);
+        log.info("email: " + email);
+
+        // 주문한 사용자와 현재 인증된 사용자가 일치하는지 확인
+        if (!orders.getUserId().getEmail().equals(email)) {
+            throw new UserNotFoundException("User not found");
+        }
+
+        return new OrdersConfirmDTO(
+                orders.getOrderId(),
+                String.valueOf(orders.getOrderNumber()),
+                orders.getUserId().getName(),
+                orders.getUserId().getAddress(),
+                String.valueOf(orders.getAmount())
+        );
+    }
 
     @Override
     public OrdersListDTO convertToDTO(Orders orders) {
