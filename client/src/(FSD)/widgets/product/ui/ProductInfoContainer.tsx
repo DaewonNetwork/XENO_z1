@@ -2,14 +2,16 @@
 
 import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useProductRead } from "../api/useProductRead";
+import { useProductRead } from "../../../entities/product/api/useProductRead";
 import { ProductInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
 import ProductImagesSlideList from "@/(FSD)/widgets/product/ui/ProductImagesSlideList";
-import RelatedColorProducts from "./RelatedColorProducts";
-import ProductDetailImages from "./ProductDetailImages";
+import RelatedColorProducts from "./ProductOtherColorImageList";
+
 import { useSetRecoilState } from "recoil";
 import { nameState } from "@/(FSD)/shareds/stores/ProductAtom";
+import ProductDetailImageList from "./ProductDetailImageList";
+import ProductOtherColorImageList from "./ProductOtherColorImageList";
 
 const ProductInfoContainer = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
@@ -46,8 +48,8 @@ const ProductInfoContainer = () => {
         <>
             <ProductImagesSlideList productImages={product.productImages} />
             <ProductInfo product={product} />
-            <RelatedColorProducts/>
-            <ProductDetailImages productColorId={productColorId} />
+            <ProductOtherColorImageList/>
+            <ProductDetailImageList productColorId={productColorId} />
         </>
     );
 };

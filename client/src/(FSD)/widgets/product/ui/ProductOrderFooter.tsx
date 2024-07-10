@@ -3,12 +3,15 @@
 import React from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { priceState, productsState } from "@/(FSD)/shareds/stores/ProductAtom";
-import { ProductList } from "./ProductOrderBar";
+
 import ProductPaymentBtn from "@/(FSD)/features/product/ui/ProductPaymentBtn";
+import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
+
+
 
 const ProductOrderFooter = () => {
 
-const productList = useRecoilValue<ProductList[]>(productsState)
+const productList = useRecoilValue<ProductOrderInfoType[]>(productsState)
     
 
 console.log(productList);

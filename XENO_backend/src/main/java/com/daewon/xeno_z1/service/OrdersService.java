@@ -10,7 +10,7 @@ public interface OrdersService {
 
     List<OrdersListDTO> getAllOrders(Long userId);
 
-    Orders createOrders(OrdersDTO ordersDTO, String email);
+    List<OrdersDTO> createOrders(List<OrdersDTO> ordersDTO, String email);
 
     void updateUserDeliveryInfo(String email, String address, String phoneNumber);
 

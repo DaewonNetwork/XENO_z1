@@ -2,17 +2,20 @@
 
 import { Button } from "@nextui-org/button";
 import React from "react";
-import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
+
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
-import { ProductList } from "@/(FSD)/widgets/product/ui/ProductOrderBar";
+
 import { useRecoilValue } from "recoil";
 import { userState } from "@/(FSD)/shareds/stores/UserAtom";
 
 import { useProductOrder } from "../api/useProductAddOrder";
-import { orderInfoState } from "@/(FSD)/shareds/stores/ProductAtom";
+import { reqState } from "@/(FSD)/shareds/stores/ProductAtom";
+import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
+import { useRouter } from "next/navigation";
+
 
 interface ProductPaymentBtnType {
-    productList: ProductList[];
+    productList: ProductOrderInfoType[];
 }
 
 
@@ -22,15 +25,17 @@ export interface ProductOrderType {
     req: string;
     quantity: number;
     amount: number;
-    address: string;
-    phoneNumber: string;
+    orderNumber?: number;
 }
 
 const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     const { user } = useRecoilValue(userState);
-    const {req,address,phoneNumber} = useRecoilValue(orderInfoState);
+    const req = useRecoilValue(reqState);
+    const router = useRouter();
+
     const onSuccess = (data: any) => {
         console.log("post 성공");
+        router.push('/order/success')
     }
 
     const { mutate } = useProductOrder({ onSuccess });
@@ -39,10 +44,6 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     console.log(user?.name)
 
     if (!user) return <></>
-
-
- 
-
 
     const generateRandomId = () => {
         const length = Math.floor(Math.random() * (32 - 16 + 1)) + 16;
@@ -66,8 +67,6 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
         req: req,
         quantity: product.quantity,
         amount: product.price,
-        address: address,
-        phoneNumber: phoneNumber
     }));
 
   
@@ -77,6 +76,7 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
         const tossPayments = await loadTossPayments("test_ck_Z1aOwX7K8m4b7av0xO6WryQxzvNP");
         console.log(productOrderList)
         const payment = tossPayments.payment({ customerKey: "a8s7d8asd" });
+
         mutate(productOrderList);
 
         await payment.requestPayment({
@@ -95,9 +95,7 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
                 useAppCardOnly: false,
             },
         }).then(data => {
-
-         
-
+          
 
         }).catch(error => {
             console.log("결제오류", error)
