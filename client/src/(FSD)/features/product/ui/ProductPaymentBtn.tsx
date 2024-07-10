@@ -35,7 +35,8 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
 
     const onSuccess = (data: any) => {
         console.log("post 성공");
-        router.push('/order/success')
+        localStorage.removeItem('newProducts');
+        router.push('/order/complete')
     }
 
     const { mutate } = useProductOrder({ onSuccess });

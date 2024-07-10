@@ -17,11 +17,15 @@ interface ProductLikeBtnType {
 }
 
 const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = false, index, parentRefetch }: ProductLikeBtnType) => {
+
     const onSuccess = (data: any) => {
         if (parentRefetch) {
             parentRefetch();
         }
     }
+
+
+
     const { mutate } = useProductLikeToggle({ onSuccess });
 
     const like = () => {

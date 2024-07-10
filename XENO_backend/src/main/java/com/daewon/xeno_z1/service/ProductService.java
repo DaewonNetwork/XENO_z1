@@ -1,7 +1,6 @@
 package com.daewon.xeno_z1.service;
 
-import com.daewon.xeno_z1.domain.Products;
-import com.daewon.xeno_z1.domain.Review;
+import com.daewon.xeno_z1.domain.Cart;
 import com.daewon.xeno_z1.dto.*;
 import com.daewon.xeno_z1.dto.review.ReviewDTO;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,14 +12,16 @@ import java.util.Map;
 public interface ProductService {
 
     ProductInfoDTO getProductInfo(Long productId) throws IOException;
+
     ProductDetailImagesDTO getProductDetailImages(Long productColorId, int page, int size);
-    List<ProductOtherColorImagesDTO>  getRelatedColorProductsImages(Long productColorId) throws IOException;
+
+    List<ProductOtherColorImagesDTO> getRelatedColorProductsImages(Long productColorId) throws IOException;
 
     ProductOrderBarDTO getProductOrderBar(Long productColorId);
 
-    void addToCart(List<AddToCartDTO> addToCartDTO);
+    List<ProductsInfoCardDTO> getProductsInfoByCategory(String categoryId, String categorySubId);
 
-    List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId,String categorySubId);
+    List<ProductsInfoCardDTO> getLikedProductsInfo();
 
     Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();
 
