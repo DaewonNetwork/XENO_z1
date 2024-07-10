@@ -29,21 +29,28 @@ export interface ProductOrderType {
 const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     const { user } = useRecoilValue(userState);
     const {req,address,phoneNumber} = useRecoilValue(orderInfoState);
+    const onSuccess = (data: any) => {
+        console.log("post 성공");
+    }
+
+    const { mutate } = useProductOrder({ onSuccess });
+
+    console.log(user)
+    console.log(user?.name)
 
     if (!user) return <></>
+
+
+ 
+
+
     const generateRandomId = () => {
         const length = Math.floor(Math.random() * (32 - 16 + 1)) + 16;
         const array = new Uint8Array(length);
         window.crypto.getRandomValues(array);
-
         return Array.from(array, (byte) => ("0" + byte.toString(16)).slice(-2)).join("");
     };
 
-    const onSuccess = (data: any) => {
-        console.log("post 성공");
-    }
-    const { mutate } = useProductOrder({ onSuccess });
-    
     const orderId = generateRandomId();
 
     const orderName: string =
@@ -63,11 +70,14 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
         phoneNumber: phoneNumber
     }));
 
+  
 
     const handleClick = async () => {
+        
         const tossPayments = await loadTossPayments("test_ck_Z1aOwX7K8m4b7av0xO6WryQxzvNP");
         console.log(productOrderList)
         const payment = tossPayments.payment({ customerKey: "a8s7d8asd" });
+        mutate(productOrderList);
 
         await payment.requestPayment({
             method: "CARD",
@@ -78,7 +88,6 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
             orderId: orderId,
             orderName: orderName,
             customerEmail: user.email,
-            customerName: user.name,
             card: {
                 useEscrow: false,
                 flowMode: "DEFAULT",
@@ -87,7 +96,7 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
             },
         }).then(data => {
 
-            mutate(productOrderList);
+         
 
 
         }).catch(error => {

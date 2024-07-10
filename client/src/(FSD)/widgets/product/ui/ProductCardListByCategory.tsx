@@ -4,13 +4,14 @@ import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import React from "react";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import classNames from "classnames/bind";
-import ProductCard from "@/(FSD)/entities/product/ui/ProductCard";
+
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
 
 import { categoryIdState, categorySubIdState } from "@/(FSD)/shareds/stores/CategoryAtom";
 import { useProductReadByCategory } from "@/(FSD)/entities/product/api/useProductReadByCategory";
 import { useRecoilValue } from "recoil";
 import ProductCardSkeletonShared from "@/(FSD)/shareds/ui/ProductCardSkeletonShared";
+import ProductCard from "@/(FSD)/shareds/ui/ProductCard";
 
 
 interface ProductCardListType {
