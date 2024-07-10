@@ -5,8 +5,8 @@ import com.daewon.xeno_z1.dto.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-import org.hibernate.mapping.Map;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
@@ -24,11 +24,11 @@ public interface ProductService {
 
 
 
-    // Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();
+     Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();
 
-    // List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category);
+     List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category);
 
-    // List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
+     List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
 
-    // Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
+//     Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
 }

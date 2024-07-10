@@ -19,11 +19,9 @@ public class ReviewDTO {
 
     private long productId; // 상품 테이블의 외래 키로, 어떤 상품인지를 나타냅니다.
 
-    private String productName;
-
-    // private Long productColorId; // 상품 색상 테이블의 외래 키로, 리뷰가 참조하는 상품의 색상을 나타냅니다.
-
     private long userId; // 리뷰를 작성한 사용자
+    
+    private String productName;
 
     private String text; // 리뷰의 내용
 
@@ -37,11 +35,15 @@ public class ReviewDTO {
 
     private String color;
 
+    private int replyIndex;
+
+    private long orderId;
+
     private List<byte[]> productImages;
+
     private List<byte[]> reviewDetailImages;
 
-    // ProductsColor 관련 필드
-    private Long productColorId;
-    // ProductsColorSize 관련 필드
-    private Long productColorSizeId;
+    private Long productColorId; // ProductsColor 관련 필드
+
+    private Long productColorSizeId; // ProductsColorSize 관련 필드
 }
