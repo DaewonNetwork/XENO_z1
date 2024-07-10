@@ -1,19 +1,16 @@
+import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export const useProductRead = (productColorId: number) => {
    
+    const fetchData = useFetchData();
     
     return useQuery({
         queryKey: ["product_read", productColorId],
-        queryFn: async () => {
-            const response = await fetch(`http://localhost:8090/product/read?productColorId=${productColorId}`);
-            console.log(response);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+        queryFn: () => fetchData({ 
+            path: `/product/read?productColorId=${productColorId}`,
+            isAuthRequired: true, 
+          }),
             
-            return await response.json();
-        },
-        placeholderData: keepPreviousData,
     });
 };

@@ -314,6 +314,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         List<ProductsInfoCardDTO> productsInfoCardDTOList = new ArrayList<>();
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String currentUserName = authentication.getName();

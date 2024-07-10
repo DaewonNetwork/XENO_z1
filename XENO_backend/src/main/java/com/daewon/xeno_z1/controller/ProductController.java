@@ -37,21 +37,21 @@ public class ProductController {
 
 
     @GetMapping("/read")
-    public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productId) throws IOException {
-        ProductInfoDTO productInfoDTO = productService.getProductInfo(productId);
-    log.info(productId);
+    public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productColorId) throws IOException {
+        ProductInfoDTO productInfoDTO = productService.getProductInfo(productColorId);
+    log.info(productColorId);
         return ResponseEntity.ok(productInfoDTO);
     }
 
     @GetMapping("/readImages")
     public ResponseEntity<ProductDetailImagesDTO> readProductDetailImages(
-            @RequestParam Long productId,
+            @RequestParam Long productColorId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "2") int size) {
         
         try {
             // ProductService를 통해 페이징 처리된 상품의 상세 이미지 가져오기
-            ProductDetailImagesDTO productDetailImagesDTO = productService.getProductDetailImages(productId, page,size);
+            ProductDetailImagesDTO productDetailImagesDTO = productService.getProductDetailImages(productColorId, page,size);
             
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(productDetailImagesDTO);
@@ -72,6 +72,7 @@ public class ProductController {
         List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
         return ResponseEntity.ok(result);
     }
+
     @GetMapping("/readFirstImages")
     public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
 
@@ -111,12 +112,17 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @Operation(summary = "좋아요한 상품")
+    @GetMapping("/read/like")
+    public ResponseEntity<List<ProductsInfoCardDTO>> readLikedProductList() {
 
-
-
-
-
-
-
-
+        try {
+            List<ProductsInfoCardDTO> products = productService.getLikedProductsInfo();
+            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
+            return ResponseEntity.ok(products);
+        } catch (Exception e) {
+            // 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

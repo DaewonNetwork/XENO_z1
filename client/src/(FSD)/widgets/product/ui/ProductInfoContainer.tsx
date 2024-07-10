@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect } from "react";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useProductRead } from "../../../entities/product/api/useProductRead";
 import { ProductInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
@@ -16,6 +16,9 @@ import ProductOtherColorImageList from "./ProductOtherColorImageList";
 const ProductInfoContainer = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
     const { data, isError, error, isPending, refetch } = useProductRead(Number(productColorId));
+
+
+   
 
     const setName = useSetRecoilState(nameState)
     
@@ -39,7 +42,9 @@ const ProductInfoContainer = () => {
         return <div>Loading...</div>;
     }
 
-   
+    if(!data) notFound();
+
+    
 
     console.log(product)
 
