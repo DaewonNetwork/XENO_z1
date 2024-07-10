@@ -1,3 +1,5 @@
+"use client";
+
 import IconShared from "@/(FSD)/shareds/ui/IconShared";
 import { Button } from "@nextui-org/button";
 import React from "react";
@@ -15,10 +17,6 @@ interface ProductLikeBtnType {
 }
 
 const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = false, index, parentRefetch }: ProductLikeBtnType) => {
-
-
-
-
     const onSuccess = (data: any) => {
         if (parentRefetch) {
             parentRefetch();
@@ -27,14 +25,8 @@ const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = 
     const { mutate } = useProductLikeToggle({ onSuccess });
 
     const like = () => {
-        console.log("asd")
-
         mutate(productColorId)
     }
-
-
-
-
 
     return (
         <>

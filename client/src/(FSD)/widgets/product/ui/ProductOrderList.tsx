@@ -1,32 +1,29 @@
 'use client'
 
 import React, { useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useProductOrderBarRead } from "@/(FSD)/entities/product/api/useProductOrderBarRead";
-import ProductOrderBar, { ProductList } from "@/(FSD)/widgets/product/ui/ProductOrderBar";
+
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { priceState, productsState } from "@/(FSD)/shareds/stores/ProductAtom";
-import ProductOrderInfoCard from "@/(FSD)/shareds/ui/ProductOrderInfoCard";
+import { productsState } from "@/(FSD)/shareds/stores/ProductAtom";
+import ProductOrderInfoCard from "@/(FSD)/entities/product/ui/ProductOrderInfoCard";
+import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
+
+
 
 
 
 const ProductOrderList = () => {
 
 
-    const [newProducts, setNewProducts] = useRecoilState<ProductList[]>(productsState)
-
+    const [newProducts, setNewProducts] = useRecoilState<ProductOrderInfoType[]>(productsState)
     useEffect(() => {
+
         const storedProducts = localStorage.getItem('newProducts');
         if (storedProducts) {
             setNewProducts(JSON.parse(storedProducts));
         }
-        // 페이지가 처음 로드될 때만 실행되도록 빈 배열을 dependency로 설정
     }, []);
 
-    const setPrice = useSetRecoilState(priceState)
 
-    
-    console.log("나는오더리스트", newProducts);
 
     return (
         <>

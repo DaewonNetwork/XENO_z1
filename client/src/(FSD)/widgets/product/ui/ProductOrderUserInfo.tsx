@@ -1,25 +1,36 @@
+import React from 'react';
+import { useRecoilState } from 'recoil';
 
-
-import React, { useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useProductOrderBarRead } from "@/(FSD)/entities/product/api/useProductOrderBarRead";
-import ProductOrderBar, { ProductList } from "@/(FSD)/widgets/product/ui/ProductOrderBar";
-import { useRecoilState } from "recoil";
-import { productsState } from "@/(FSD)/shareds/stores/ProductAtom";
-import ProductOrderList from "./ProductOrderList";
-
-
+import {reqState } from '@/(FSD)/shareds/stores/ProductAtom';
 
 const ProductOrderUserInfo = () => {
-    return (
-        <>
-        <input placeholder="이름" />
-            <input placeholder="배송지" />
-            <input placeholder="전화번호" />
-            <input placeholder="배송 요청사항" />
-        
-        </>
-    );
+  const [req, setReq] = useRecoilState(reqState);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setReq(value);
+  };
+
+  return (
+    <>
+      <input
+        name="address"
+        placeholder="배송지"
+        onChange={handleChange}
+      />
+      <input
+        name="phoneNumber"
+        placeholder="전화번호"
+        onChange={handleChange}
+      />
+      <input
+        name="req"
+        placeholder="배송 요청사항"
+        value={req}
+        onChange={handleChange}
+      />
+    </>
+  );
 };
 
 export default ProductOrderUserInfo;

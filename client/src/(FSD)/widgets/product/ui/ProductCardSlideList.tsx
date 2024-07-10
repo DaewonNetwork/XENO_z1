@@ -1,11 +1,13 @@
 "use client";
 
-import ProductCard from "@/(FSD)/entities/product/ui/ProductCard";
+
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import React from "react";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import Slider from "react-slick";
+import ProductCard from "@/(FSD)/entities/product/ui/ProductCard";
+
 
 interface ProductCardSlideListType {
     productList: ProductType[];
@@ -28,7 +30,7 @@ const ProductCardSlideList = ({ productList, isRank = false }: ProductCardSlideL
                 {
                     productList.map((product, index) => (
                         <React.Fragment key={product.productColorId}>
-                            <ProductCard product={product} linkBtn={<ProductLikeBtn isLike={product.like} productColorId={product.productColorId} />} isRank={isRank} rank={index + 1} />
+                            <ProductCard product={product} likeBtn={<ProductLikeBtn isLike={product.like} productColorId={product.productColorId} />} isRank={isRank} rank={index + 1} />
                         </React.Fragment>
                     ))
                 }

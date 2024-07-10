@@ -4,7 +4,8 @@ import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import classNames from "classnames/bind";
 
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
-import ProductCard from "@/(FSD)/shareds/ui/ProductCard";
+import ProductCard from "@/(FSD)/entities/product/ui/ProductCard";
+
 
 interface ProductCardListType {
     productList: ProductType[];
@@ -26,7 +27,7 @@ const ProductCardList = ({ productList, column = 3, isRank = false }: ProductCar
             {
                 productList.map((product, index) => (
                     <React.Fragment key={product.productColorId}>
-                        <ProductCard product={product} isRank={isRank} rank={index + 1} linkBtn={<ProductLikeBtn productColorId={product.productColorId} isLike={product.like} />} />
+                        <ProductCard product={product} isRank={isRank} rank={index + 1} likeBtn={<ProductLikeBtn productColorId={product.productColorId} isLike={product.like} />} />
                     </React.Fragment>
                 ))
             }

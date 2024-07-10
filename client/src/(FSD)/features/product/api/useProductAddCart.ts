@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { fetchData } from "@/(FSD)/shareds/fetch/fetchData";
+
 import { MutationType } from "../../types/mutation.type";
+import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 
 interface newProductsType {
     productColorSizeId: number;
@@ -9,6 +10,9 @@ interface newProductsType {
 }
 
 export const useProductAddCart = ({ onSuccess, onError }: MutationType) => {
+
+    const fetchData = useFetchData();
+
     return useMutation({
         mutationFn: (newProducts: newProductsType[]) => {
             return fetchData({
