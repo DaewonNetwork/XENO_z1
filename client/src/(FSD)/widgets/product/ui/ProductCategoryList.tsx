@@ -1,7 +1,7 @@
 'use client'
 
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
-import React from "react";
+import React, { useEffect } from "react";
 import { categoryIdState, categorySubIdState } from "@/(FSD)/shareds/stores/CategoryAtom";
 
 import { useRecoilValue } from "recoil";
@@ -9,6 +9,7 @@ import ProductCardSkeletonShared from "@/(FSD)/shareds/ui/ProductCardSkeletonSha
 
 import ProductCardList from "./ProductCardList";
 import { useProductListByCategoryRead } from "@/(FSD)/entities/product/api/useProductListByCategoryRead";
+import { userState } from "@/(FSD)/shareds/stores/UserAtom";
 
 
 const ProductCategoryList = ( ) => {
@@ -19,7 +20,10 @@ const ProductCategoryList = ( ) => {
 
     const { data, isLoading, refetch } = useProductListByCategoryRead(categoryId, categorySubId);
 
+    const {user} = useRecoilValue(userState);
+
     const productList: ProductType[] = data;
+
 
     console.log(productList)
 

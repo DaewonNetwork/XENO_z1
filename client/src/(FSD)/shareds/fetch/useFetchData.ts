@@ -11,6 +11,7 @@ const useFetchData = () => {
     const fetchData = async ({ path, method = "GET", contentType = "application/json", isAuthRequired = false, isNotAuthRequired = false, body }: FetchType) => {
         let response = null;
 
+     
         if ((!isNotAuthRequired && isLoggedIn) || (isAuthRequired && isLoggedIn)) {
             response = await fetch(`http://localhost:8090/api${path}`, {
                 method: method,

@@ -15,6 +15,7 @@ import { imageState, nameState, productsState } from "@/(FSD)/shareds/stores/Pro
 import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
 import { ProductOrderBarType } from "./ProductOrderBarContainer";
 import { ProductImages } from "./ProductOtherColorImageList";
+import { userState } from "@/(FSD)/shareds/stores/UserAtom";
 
 type SizeAndStockType = {
     size: string;
@@ -22,7 +23,7 @@ type SizeAndStockType = {
 };
 
 const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBarType, parentRefetch?: any }) => {
-    const { productColorId } = useParams<{ productColorId: string }>();
+    const {productColorId } = useParams<{ productColorId: string }>();
     const [isOpenOrder, setisOpenOrder] = useState(false);
     const [isSelectedColor, setIsSelectedColor] = useState(false);
     const [isSelectedSize, setIsSelectedSize] = useState(false);
@@ -35,7 +36,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     const name = useRecoilValue(nameState);
     const images: ProductImages[] = useRecoilValue(imageState)
     const [newProducts, setNewProducts] = useRecoilState<ProductOrderInfoType[]>(productsState)
-
+    
     console.log("이미지스" + images)
     const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
 
@@ -76,6 +77,8 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
         setPrice(totalProductPrice);
         console.log(products)
     }, [products]);
+
+    
 
     const getProductColorSizeId = (color: string, size: string): number | undefined => {
         const orderItem = orderBar.orderInfo.find(item => item.color === color && item.size === size);
