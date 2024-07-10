@@ -52,15 +52,16 @@ public class OrdersController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody OrdersDTO ordersDTO,
+    @PostMapping(produces = "application/json")
+    public ResponseEntity<?> createOrder(@RequestBody List<OrdersDTO> ordersDTO,
                                          @AuthenticationPrincipal UserDetails userDetails) {
         try {
             String userEmail = userDetails.getUsername();
-            log.info("orderUserEmail : " + userEmail);
-            Orders createdOrder = ordersService.createOrders(ordersDTO, userEmail);
 
-            return ResponseEntity.ok(new OrdersResponseDTO(createdOrder));
+            log.info("orderUserEmail : " + userEmail);
+            List<OrdersDTO> createdOrder = ordersService.createOrders(ordersDTO, userEmail);
+            log.info(createdOrder);
+            return ResponseEntity.ok(createdOrder);
         } catch (Exception e) {
             return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
         }

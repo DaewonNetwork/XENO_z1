@@ -1,17 +1,14 @@
 import React from 'react';
 import { useRecoilState } from 'recoil';
 
-import { orderInfoState } from '@/(FSD)/shareds/stores/ProductAtom';
+import {reqState } from '@/(FSD)/shareds/stores/ProductAtom';
 
 const ProductOrderUserInfo = () => {
-  const [orderInfo, setOrderInfo] = useRecoilState(orderInfoState);
+  const [req, setReq] = useRecoilState(reqState);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setOrderInfo((prevInfo) => ({
-      ...prevInfo,
-      [name]: value,
-    }));
+    setReq(value);
   };
 
   return (
@@ -19,19 +16,17 @@ const ProductOrderUserInfo = () => {
       <input
         name="address"
         placeholder="배송지"
-        value={orderInfo.address}
         onChange={handleChange}
       />
       <input
         name="phoneNumber"
         placeholder="전화번호"
-        value={orderInfo.phoneNumber}
         onChange={handleChange}
       />
       <input
         name="req"
         placeholder="배송 요청사항"
-        value={orderInfo.req}
+        value={req}
         onChange={handleChange}
       />
     </>

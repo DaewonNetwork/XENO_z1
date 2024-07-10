@@ -44,31 +44,31 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public Orders createOrders(OrdersDTO ordersDTO, String email) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public List<OrdersDTO> createOrders(List<OrdersDTO> ordersDTO, String email) {
 
-        log.info(authentication);
-        String currentUserName = authentication.getName();
-
-        log.info(currentUserName);
-
-        Users users = userRepository.findByEmail(currentUserName)
+        Users users = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
-        Orders orders = Orders.builder()
-                .orderPayId(generateOrderPayId(ordersDTO.getOrderPayId()))
-                .orderNumber(generateOrderNumber())
-                .productsColorSize(findProductColorSize(ordersDTO.getProductColorSizeId()))
+        Orders orders = new Orders();
+
+        Long orderNumber = generateOrderNumber();
+
+        for(OrdersDTO dto : ordersDTO) {
+            orders = Orders.builder()
+                .orderPayId(dto.getOrderPayId())
+                .orderNumber(orderNumber)
+                .productsColorSize(findProductColorSize(dto.getProductColorSizeId()))
                 .userId(users)
-                .status("결제완료")
-                .req(ordersDTO.getReq())
-                .quantity(ordersDTO.getQuantity())
-                .amount(ordersDTO.getAmount())
+                .status("결제 완료")
+                .req(dto.getReq())
+                .quantity(dto.getQuantity())
+                .amount(dto.getAmount())
                 .build();
+            ordersRepository.save(orders);
 
-        Hibernate.initialize(orders.getProductsColorSize().getProductsColor().getProducts());
+        }
 
-        return ordersRepository.save(orders);
+        return ordersDTO;
     }
 
     @Override

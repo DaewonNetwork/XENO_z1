@@ -2,32 +2,16 @@
 
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import React from "react";
-import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
-import classNames from "classnames/bind";
-
-import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
-
 import { categoryIdState, categorySubIdState } from "@/(FSD)/shareds/stores/CategoryAtom";
 import { useProductReadByCategory } from "@/(FSD)/entities/product/api/useProductReadByCategory";
 import { useRecoilValue } from "recoil";
 import ProductCardSkeletonShared from "@/(FSD)/shareds/ui/ProductCardSkeletonShared";
-import ProductCard from "@/(FSD)/shareds/ui/ProductCard";
+
+import ProductCardList from "./ProductCardList";
 
 
-interface ProductCardListType {
-    column?: number;
-    isRank?: boolean;
-};
-
-const cn = classNames.bind(styles);
-
-const ProductCardListByCategory = ({column = 3, isRank = false }: ProductCardListType) => {
-    const productCardListClassNames = cn({
-        "column_one": column === 1,
-        "column_two": column === 2,
-        "column_three": column === 3,
-    });
-
+const ProductCategoryList = ( ) => {
+  
     const categoryId = useRecoilValue(categoryIdState);
     const categorySubId = useRecoilValue(categorySubIdState);
 
@@ -58,17 +42,8 @@ const ProductCardListByCategory = ({column = 3, isRank = false }: ProductCardLis
    
 
     return (
-        <div className={`${styles.product_card_list} ${productCardListClassNames}`}>
-            {
-                productList.map((product, index) => (
-                    <React.Fragment key={product.productColorId}>
-                        <ProductCard product={product} isRank={isRank}
-                        rank={index + 1} linkBtn={<ProductLikeBtn  productColorId={product.productColorId} isLike={product.like} parentRefetch={refetch}/>} />
-                    </React.Fragment>
-                ))
-            }
-        </div>
+        <ProductCardList column={2} productList={productList}/>
     );
 };
 
-export default ProductCardListByCategory;
+export default ProductCategoryList;

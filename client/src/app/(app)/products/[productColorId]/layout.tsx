@@ -1,10 +1,11 @@
 'use client'
 
 
-import ProductOrderBarContainer from "@/(FSD)/entities/product/ui/ProductOrderBarContainer";
+
 import AppFixedBtmBar from "@/(FSD)/widgets/app/ui/AppFixedBtmBar";
 import AppFixedTopBar from "@/(FSD)/widgets/app/ui/AppFixedTopBar";
 import ProductHeader from "@/(FSD)/widgets/product/ui/ProductHeader";
+import ProductOrderBarContainer from "@/(FSD)/widgets/product/ui/ProductOrderBarContainer";
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 

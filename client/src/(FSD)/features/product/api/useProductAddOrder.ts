@@ -17,10 +17,10 @@ export const useProductOrder = ({ onSuccess, onError }: MutationType) => {
     return useMutation({
         mutationFn: (productOrderList: ProductOrderType[]) => {
             return fetchData({
-                path: "/api/orders",
+                path: "/orders",
                 method: "POST",
                 body: productOrderList,
-                isNotAuthRequired: true
+                isAuthRequired: true
             });
         },
         onSuccess: (data:any) => {
