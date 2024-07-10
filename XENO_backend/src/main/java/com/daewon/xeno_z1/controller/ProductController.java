@@ -90,21 +90,5 @@ public class ProductController {
     //     Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
     //     return ResponseEntity.ok(result);
     // }
-
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> registerProduct(
-            @RequestPart("productData") String productDataString,
-            @RequestPart("productImage") List<MultipartFile> productImage,
-            @RequestPart("productDetailImages") List<MultipartFile> productDetailImages) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            ProductregisterDTO productRegisterDTO = objectMapper.readValue(productDataString, ProductregisterDTO.class);
-            productService.registerProduct(productRegisterDTO, productImage, productDetailImages);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (Exception e) {
-            log.error("상품 등록 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
     
 }

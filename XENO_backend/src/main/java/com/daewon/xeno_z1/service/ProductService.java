@@ -35,5 +35,5 @@ public interface ProductService {
 
      List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
 
-//     Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
+//   Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
 }
