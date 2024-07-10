@@ -1,7 +1,8 @@
 import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
+import ProductInfoContainer from "@/(FSD)/widgets/product/ui/ProductInfoContainer";
 
 import React from "react";
-import ProductInfoContainer from "@/(FSD)/entities/product/ui/ProductInfoContainer";
+
 
 const Page = () => {
     return (

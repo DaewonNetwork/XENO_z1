@@ -4,6 +4,7 @@ import com.daewon.xeno_z1.domain.Orders;
 import com.daewon.xeno_z1.domain.ProductsColorSize;
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.auth.GetOneDTO;
+import com.daewon.xeno_z1.dto.order.OrdersConfirmDTO;
 import com.daewon.xeno_z1.dto.order.OrdersDTO;
 import com.daewon.xeno_z1.dto.order.OrdersListDTO;
 import com.daewon.xeno_z1.exception.UserNotFoundException;
@@ -13,6 +14,7 @@ import com.daewon.xeno_z1.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.aspectj.weaver.ast.Or;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,31 +46,31 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public Orders createOrders(OrdersDTO ordersDTO, String email) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public List<OrdersDTO> createOrders(List<OrdersDTO> ordersDTO, String email) {
 
-        log.info(authentication);
-        String currentUserName = authentication.getName();
-
-        log.info(currentUserName);
-
-        Users users = userRepository.findByEmail(currentUserName)
+        Users users = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
-        Orders orders = Orders.builder()
-                .orderPayId(generateOrderPayId(ordersDTO.getOrderPayId()))
-                .orderNumber(generateOrderNumber())
-                .productsColorSize(findProductColorSize(ordersDTO.getProductColorSizeId()))
+        Orders orders = new Orders();
+
+        Long orderNumber = generateOrderNumber();
+
+        for(OrdersDTO dto : ordersDTO) {
+            orders = Orders.builder()
+                .orderPayId(dto.getOrderPayId())
+                .orderNumber(orderNumber)
+                .productsColorSize(findProductColorSize(dto.getProductColorSizeId()))
                 .userId(users)
-                .status("결제완료")
-                .req(ordersDTO.getReq())
-                .quantity(ordersDTO.getQuantity())
-                .amount(ordersDTO.getAmount())
+                .status("결제 완료")
+                .req(dto.getReq())
+                .quantity(dto.getQuantity())
+                .amount(dto.getAmount())
                 .build();
+            ordersRepository.save(orders);
 
-        Hibernate.initialize(orders.getProductsColorSize().getProductsColor().getProducts());
+        }
 
-        return ordersRepository.save(orders);
+        return ordersDTO;
     }
 
     @Override
@@ -85,6 +87,19 @@ public class OrdersServiceImpl implements OrdersService {
 
         userRepository.save(users);
     }
+
+//    @Override
+//    public OrdersConfirmDTO confirmOrder(Long orderId) {
+//
+//        Orders orders = ordersRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found"));
+//        return new OrdersConfirmDTO(
+//                String.valueOf(order.getOrderId()),
+//                String.valueOf(order.getOrderNumber()),
+//                order.getUserId().getName(),
+//                order.getUserId().getAddress(),
+//                String.valueOf(order.getAmount())
+//        );
+//    }
 
     @Override
     public OrdersListDTO convertToDTO(Orders orders) {

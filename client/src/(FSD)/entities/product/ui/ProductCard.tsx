@@ -5,13 +5,13 @@ import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 
 interface ProductCardType {
     product: ProductType;
-    linkBtn: ReactNode;
+    likeBtn: ReactNode;
     isRank?: boolean;
     rank?: number;
 
 }
 
-const ProductCard = ({ product, linkBtn, isRank = false, rank = 0  }: ProductCardType) => {
+const ProductCard = ({ product, likeBtn, isRank = false, rank = 0  }: ProductCardType) => {
 
     const handleImageClick = () => {
         // 이미지 클릭 시 처리할 작업
@@ -35,7 +35,7 @@ const ProductCard = ({ product, linkBtn, isRank = false, rank = 0  }: ProductCar
                         className={styles.product_image}
                         onClick={handleImageClick}
                     />)}
-                {linkBtn && <div className={styles.product_like_btn}>{linkBtn}</div>}
+                {likeBtn && <div className={styles.product_like_btn}>{likeBtn}</div>}
             </div>
             <div className={styles.card_btm}>
                 <p className={"font-medium"}>{product.brandName}</p>

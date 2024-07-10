@@ -13,6 +13,8 @@ const useAuthStatus = () => {
 
     const user: UserType = data;
 
+    console.log(user)
+
     useEffect(() => {
         const accessToken = localStorage.getItem("access_token");
         const refreshToken = localStorage.getItem("refresh_token");

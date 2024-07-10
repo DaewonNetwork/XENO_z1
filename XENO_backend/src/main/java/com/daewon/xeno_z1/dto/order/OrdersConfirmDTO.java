@@ -7,12 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrdersDTO {
+public class OrdersConfirmDTO {
 
-    private String orderPayId;
-    private Long productColorSizeId;
-    private String req;
-
-    private int quantity;
-    private Long amount;
+    private String orderId;
+    private String orderNumber;
+    private String name;
+    private String address;
+    private String amount;
 }
