@@ -64,10 +64,17 @@ public class ProductPublicController {
         return ResponseEntity.ok(result);
     }
 
+
     @GetMapping("/top10-by-category/{category}")
     public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(
             @PathVariable String category) {
         List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/rank/page/{category}")
+    public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
         return ResponseEntity.ok(result);
     }
 
