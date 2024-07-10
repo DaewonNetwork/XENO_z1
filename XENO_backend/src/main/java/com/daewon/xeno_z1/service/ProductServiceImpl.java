@@ -6,8 +6,6 @@ import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 
 import com.daewon.xeno_z1.dto.*;
 
-import com.daewon.xeno_z1.repository.*;
-import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 import com.daewon.xeno_z1.utils.CategoryUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -62,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Products createProduct(ProductregisterDTO dto, List<MultipartFile> productImage, List<MultipartFile> productDetailimage) {
+    public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage, List<MultipartFile> productDetailimage) {
         // 1. Products 엔티티 생성 및 저장
         Products product = Products.builder()
                 .brandName(dto.getBrand_name())

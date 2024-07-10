@@ -36,6 +36,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     const name = useRecoilValue(nameState);
     const images: ProductImages[] = useRecoilValue(imageState)
     const [newProducts, setNewProducts] = useRecoilState<ProductOrderInfoType[]>(productsState)
+    const { isLoggedIn } = useRecoilValue(userState);
     
     console.log("이미지스" + images)
     const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
@@ -180,10 +181,11 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     // useProductAddCart 훅 사용
     const { mutate } = useProductAddCart({ onSuccess });
 
-
     const handleAddToCart = () => {
         if (products.length === 0) {
             alert("상품 옵션을 선택해주세요.");
+        } else if (!isLoggedIn) {
+            router.push('/auth/signin')
         } else {
             // color와 size를 제외한 새로운 배열 생성
             const newProducts = products.map(({ color, size, ...rest }) => rest);
@@ -201,12 +203,12 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
         router.push(`/cart`)
     }
 
-
     const handlePurchase = () => {
         if (products.length == 0) {
             alert("상품 옵션을 선택해주세요.");
-        } else {
-            // 구매 로직
+        } else if (!isLoggedIn) {
+            router.push('/auth/signin')
+        }  else {
             setisOpenOrder(false);
             setIsSelectedColor(false);
             setIsSelectedSize(false);
@@ -214,9 +216,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
 
                 const matchingImage = images.find(image => image.productColorId === product.productColorId);
 
-
                 const productImage = matchingImage ? matchingImage.productColorImage : null;
-
 
                 return {
                     ...product,
@@ -232,7 +232,6 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
             console.log(newProducts)
 
             setProducts([])
-
 
             if (newProducts1.length > 0) {
                 localStorage.setItem('newProducts', JSON.stringify(newProducts1));

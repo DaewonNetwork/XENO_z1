@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductregisterDTO {
+public class ProductRegisterDTO {
 
     private long productId;
 
