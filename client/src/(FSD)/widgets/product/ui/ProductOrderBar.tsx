@@ -12,20 +12,12 @@ import { useParams, useRouter } from "next/navigation";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { imageState, nameState, productsState } from "@/(FSD)/shareds/stores/ProductAtom";
-import { ProductImages } from "@/(FSD)/entities/product/ui/RelatedColorProducts";
-import { ProductOrderBarType } from "@/(FSD)/entities/product/ui/ProductOrderBarContainer";
+
+import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
+import { ProductOrderBarType } from "./ProductOrderBarContainer";
+import { ProductImages } from "./ProductOtherColorImageList";
 
 
-export type ProductList = {
-    productColorSizeId: number;
-    productColorId?: number;
-    color: string;
-    size: string;
-    quantity: number;
-    price: number;
-    name?: string;
-    image?: Uint8Array | null
-};
 
 type SizeAndStockType = {
     size: string;
@@ -43,10 +35,10 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     const [color, setColor] = useState('');
     const [size, setSize] = useState('');
     const [sizeAndStock, setSizeAndStock] = useState<SizeAndStockType[]>([]);
-    const [products, setProducts] = useState<ProductList[]>([]);
+    const [products, setProducts] = useState<ProductOrderInfoType[]>([]);
     const name = useRecoilValue(nameState);
     const images: ProductImages[] = useRecoilValue(imageState)
-    const [newProducts, setNewProducts] = useRecoilState<ProductList[]>(productsState)
+    const [newProducts, setNewProducts] = useRecoilState<ProductOrderInfoType[]>(productsState)
 
     console.log("이미지스" + images)
     const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
@@ -219,7 +211,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
             setisOpenOrder(false);
             setIsSelectedColor(false);
             setIsSelectedSize(false);
-            const newProducts1: ProductList[] = products.map(product => {
+            const newProducts1: ProductOrderInfoType[] = products.map(product => {
 
                 const matchingImage = images.find(image => image.productColorId === product.productColorId);
 

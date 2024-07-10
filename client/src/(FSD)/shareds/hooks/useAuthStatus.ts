@@ -13,6 +13,8 @@ const useAuthStatus = () => {
 
     const user: UserType = data;
 
+    console.log(user)
+
     useEffect(() => {
         const accessToken = localStorage.getItem("access_token");
         const refreshToken = localStorage.getItem("refresh_token");
@@ -49,7 +51,7 @@ const useAuthStatus = () => {
         refetch();
     }, [localStorage.getItem("access_token")]);
 
-    return { isPending };
+    return { data,isPending };
 };
 
 export default useAuthStatus;

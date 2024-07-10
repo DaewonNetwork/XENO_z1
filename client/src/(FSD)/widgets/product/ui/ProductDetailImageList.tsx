@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { useProductDetailRead } from "../api/useProductDetailRead";
+import { useProductDetailRead } from "../../../entities/product/api/useProductDetailRead";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import ProductImageSkeleton from "@/(FSD)/shareds/ui/ProductImageSkeleton";
 import { Button } from "@nextui-org/button";
@@ -10,7 +10,7 @@ interface Props {
     productColorId: string;
 }
 
-const ProductDetailImages = ({ productColorId }: Props) => {
+const ProductDetailImageList = ({ productColorId }: Props) => {
     const [size, setSize] = useState(2);
     const [isOpen, setIsOpen] = useState(false);
     const [loaded, setLoaded] = useState(false);
@@ -80,4 +80,4 @@ const ProductDetailImages = ({ productColorId }: Props) => {
     );
 };
 
-export default ProductDetailImages;
+export default ProductDetailImageList;

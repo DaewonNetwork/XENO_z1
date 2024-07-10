@@ -1,9 +1,9 @@
 import React from "react";
 import type { TextType } from "../types/Text.type";
 
-const TextLargeShared = ({ className = "", children }: TextType) => {
+const TextLargeShared = ({ className = "", fontWeight = "semibold", children }: TextType) => {
     return (
-        <h1 data-slot={"text_large"} className={`${className} text-large font-medium`}>{children}</h1>
+        <h1 data-slot={"text_large"} className={`${className} font-${fontWeight} text-large`}>{children}</h1>
     );
 };
 

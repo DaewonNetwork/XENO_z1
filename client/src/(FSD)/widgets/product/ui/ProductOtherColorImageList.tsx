@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
-import { useProductFirstImegesRead } from "../api/useProductFirstImegesRead";
+import { useProductFirstImegesRead } from "../../../entities/product/api/useProductFirstImegesRead";
 import { useParams } from "next/navigation";
 import Slider from "react-slick";
 import { useSetRecoilState } from "recoil";
@@ -13,7 +13,7 @@ export interface ProductImages {
     productColorImage: Uint8Array;   // 상품 색상 이미지 (Uint8Array)
 }
 
-const RelatedColorProducts = () => {
+const ProductOtherColorImageList = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
     const { data, isError, error, isPending, refetch } = useProductFirstImegesRead(Number(productColorId));
 
@@ -83,4 +83,4 @@ const RelatedColorProducts = () => {
     );
 };
 
-export default RelatedColorProducts;
+export default ProductOtherColorImageList;

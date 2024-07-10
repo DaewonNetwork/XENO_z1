@@ -3,7 +3,7 @@ import { UserType } from "@/(FSD)/shareds/types/User.type";
 import { MutationType } from "@/(FSD)/features/types/mutation.type";
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 
-export const useSellerAuthSignup = ({ onSuccess, onError }: MutationType) => {
+export const useAuthSellerSignup = ({ onSuccess, onError }: MutationType) => {
     const fetchData = useFetchData();
 
     return useMutation({

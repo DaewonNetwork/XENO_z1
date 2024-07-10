@@ -5,6 +5,7 @@ import { userState } from "../stores/UserAtom";
 import { FetchType } from "../types/FetchData.type";
 
 const useFetchData = () => {
+    
     const { isLoggedIn, accessToken } = useRecoilValue(userState);
 
     const fetchData = async ({ path, method = "GET", contentType = "application/json", isAuthRequired = false, isNotAuthRequired = false, body }: FetchType) => {

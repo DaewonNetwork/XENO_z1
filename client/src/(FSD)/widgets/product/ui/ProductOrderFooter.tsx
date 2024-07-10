@@ -1,21 +1,25 @@
+'use client'
+
 import React from "react";
-import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
-import AppContainer from "@/(FSD)/widgets/app/ui/AppContainer";
-import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
-import BackBtnShared from "@/(FSD)/shareds/ui/BackBtnShared";
-import LinkBtnShared from "@/(FSD)/shareds/ui/LinkBtnShared";
-import IconShared from "@/(FSD)/shareds/ui/IconShared";
-import { useRecoilValue } from "recoil";
-import { priceState } from "@/(FSD)/shareds/stores/ProductAtom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { priceState, productsState } from "@/(FSD)/shareds/stores/ProductAtom";
+
+import ProductPaymentBtn from "@/(FSD)/features/product/ui/ProductPaymentBtn";
+import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
+
+
 
 const ProductOrderFooter = () => {
 
-const price = useRecoilValue(priceState)
+const productList = useRecoilValue<ProductOrderInfoType[]>(productsState)
     
+
+console.log(productList);
+
     return (
-     <>
-     {price}
-     </>
+     <div>
+     <ProductPaymentBtn productList={productList}/>
+     </div>
     );
 };
 
