@@ -16,6 +16,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,7 @@ public class ProductServiceImpl implements ProductService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
+
     @Value("${uploadPath}")
     private String uploadPath;
 
@@ -71,6 +73,7 @@ public class ProductServiceImpl implements ProductService {
                 .isSale(dto.is_sale())
                 .productsNumber(Long.parseLong(dto.getProducts_number()))
                 .season(dto.getSeason())
+                .starAvg(0)  // 초기 평균 별점은 0으로 설정
                 .build();
         product = productsRepository.save(product);
 
@@ -83,39 +86,30 @@ public class ProductServiceImpl implements ProductService {
             productsColor = productsColorRepository.save(productsColor);
 
             // 3. ProductsColorSize 엔티티 생성 및 저장
-            // ProductsColorSize productsColorSize = ProductsColorSize.builder()
-            //         .productsColor(productsColor)
-            //         .stockS(0L)
-            //         .stockM(0L)
-            //         .stockL(0L)
-            //         .stockXL(0L)
-            //         .build();
-
-            // for (String size : dto.getSize()) {
-            //     switch (Size.valueOf(size.toUpperCase())) {
-            //         case S:
-            //             productsColorSize.setStockS(100L); // 초기 재고값 설정
-            //             break;
-            //         case M:
-            //             productsColorSize.setStockM(100L);
-            //             break;
-            //         case L:
-            //             productsColorSize.setStockL(100L);
-            //             break;
-            //         case XL:
-            //             productsColorSize.setStockXL(100L);
-            //             break;
-            //     }
-            // }
-            // productsColorSizeRepository.save(productsColorSize);
+//            for (String size : dto.getSize()) {
+//                ProductsColorSize productsColorSize = ProductsColorSize.builder()
+//                        .productsColor(productsColor)
+//                        .size(Size.valueOf(size.toUpperCase()))
+//                        .build();
+//                productsColorSize = productsColorSizeRepository.save(productsColorSize);
+//
+//                // ProductsStock 엔티티 생성 및 저장
+//                ProductsStock productsStock = ProductsStock.builder()
+//                        .productsColorSize(productsColorSize)
+//                        .stock(100L)  // 초기 재고를 100으로 설정
+//                        .build();
+//                productsStockRepository.save(productsStock);
+//            }
 
             // 4. ProductsImage 엔티티 생성 및 저장
             if (productImage != null && !productImage.isEmpty()) {
                 for (MultipartFile image : productImage) {
                     String fileName = saveImage(image);
+                    String uuid = UUID.randomUUID().toString();
                     ProductsImage productsImage = ProductsImage.builder()
                             .productsColor(productsColor)
                             .fileName(fileName)
+                            .uuid(uuid)
                             .build();
                     productsImageRepository.save(productsImage);
                 }
@@ -125,9 +119,11 @@ public class ProductServiceImpl implements ProductService {
             if (productDetailimage != null && !productDetailimage.isEmpty()) {
                 for (MultipartFile image : productDetailimage) {
                     String fileName = saveImage(image);
+                    String uuid = UUID.randomUUID().toString();
                     ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
                             .productsColor(productsColor)
                             .fileName(fileName)
+                            .uuid(uuid)
                             .build();
                     productsDetailImageRepository.save(productsDetailImage);
                 }
@@ -678,42 +674,37 @@ public class ProductServiceImpl implements ProductService {
 
     // 랭크 50개
     @Override
-    public List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category) {
-        List<Products> top50Products = productsRepository.findTop50ProductsByCategory(category);
-        return top50Products.stream()
-                .map(product -> {
-                    ProductsStar productsStar = productsStarRepository.findByProductId(product.getProductId())
-                            .orElse(null);
-                    ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
-                            .productId(product.getProductId())
-                            .productName(product.getName())
-                            .brandName(product.getBrandName())
-                            .price(product.getPrice())
-                            .priceSale(product.getPriceSale())
-                            .isSale(product.getIsSale())
-                            .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
-                            .reviewCount(reviewRepository.countByProductColorId(product.getProductId()))
-                            .category(product.getCategory())
-                            .categorySub(product.getCategorySub())
-                            .build();
+    public Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("starAvg").descending());
+        Page<Products> productsPage = productsRepository.findByCategoryOrderByStarAvgDesc(category, pageable);
+        
+        return productsPage.map(product -> {
+            ProductsStar productsStar = productsStarRepository.findByProductId(product.getProductId()).orElse(null);
+            ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                .productId(product.getProductId())
+                .productName(product.getName())
+                .brandName(product.getBrandName())
+                .price(product.getPrice())
+                .priceSale(product.getPriceSale())
+                .isSale(product.getIsSale())
+                .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
+                .reviewCount(reviewRepository.countReviewImagesByProductId(product.getProductId()))
+                .category(product.getCategory())
+                .categorySub(product.getCategorySub())
+                .build();
 
-                    List<ProductsImage> productImages = productsImageRepository
-                            .findByProductColorId(product.getProductId());
-                    if (!productImages.isEmpty()) {
-                        try {
-                            byte[] imageData = getImage(productImages.get(0).getUuid(),
-                                    productImages.get(0).getFileName());
-                            dto.setProductImage(imageData);
-                        } catch (IOException e) {
-                            log.error("Error loading product image", e);
-                        }
-                    }
+            List<ProductsImage> productImages = productsImageRepository.findByProductColorId(product.getProductId());
+            if (!productImages.isEmpty()) {
+                try {
+                    byte[] imageData = getImage(productImages.get(0).getUuid(), productImages.get(0).getFileName());
+                    dto.setProductImage(imageData);
+                } catch (IOException e) {
+                    log.error("Error loading product image", e);
+                }
+            }
 
-                    return dto;
-                })
-                .sorted(Comparator.comparingDouble(ProductsStarRankListDTO::getStarAvg).reversed())
-                .limit(50)
-                .collect(Collectors.toList());
+            return dto;
+        });
     }
 
 }

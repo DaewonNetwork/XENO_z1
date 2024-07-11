@@ -4,6 +4,7 @@ package com.daewon.xeno_z1.service;
 import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.dto.*;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -26,15 +27,13 @@ public interface ProductService {
 
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
-    Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();
-
     List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category);
 
-    List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
+//  List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
 
-//  Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
+    Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
 
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, List<MultipartFile> productDetailimage);
 
-//    Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
+//  Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
 }
