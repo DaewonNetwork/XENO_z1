@@ -1,21 +1,15 @@
 package com.daewon.xeno_z1.controller;
 
-import com.daewon.xeno_z1.domain.Orders;
-import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.exception.UserNotFoundException;
 import com.daewon.xeno_z1.repository.RefreshTokenRepository;
-import com.daewon.xeno_z1.repository.UserRepository;
 import com.daewon.xeno_z1.utils.JWTUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
-import java.util.Optional;
 
 @Log4j2
 @RestController
@@ -25,7 +19,6 @@ public class UserController {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JWTUtil jwtUtil;
-    private final UserRepository userRepository;
 
     // 클라이언트가 accessToken을 서버에 보내면
     // 서버에서 해당 토큰을 검증하고 payload 전체를 JSON 형식으로 클라이언트에게 반환이 가능

@@ -137,8 +137,6 @@ public class AuthController {
             // 401에러 발생
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
-
-
     }
 }
 
