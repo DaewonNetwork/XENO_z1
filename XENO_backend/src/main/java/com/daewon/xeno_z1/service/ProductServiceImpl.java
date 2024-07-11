@@ -585,7 +585,7 @@ public class ProductServiceImpl implements ProductService {
 
     // 모든 카테고리 랭크 10
     @Override
-    public Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank() {
+    public Map<String, List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory() {
         List<String> categories = Arrays.asList("상의", "아우터", "하의");
         Map<String, List<ProductsStarRankListDTO>> result = new HashMap<>();
 
