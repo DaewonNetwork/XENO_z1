@@ -1,12 +1,12 @@
 "use client";
 
 import { useRecoilValue } from "recoil";
-import { userState } from "../stores/UserAtom";
 import { FetchType } from "../types/FetchData.type";
+import { isLoggedInState } from "../stores/UserAtom";
 
 const useFetchData = () => {
-    
-    const { isLoggedIn, accessToken } = useRecoilValue(userState);
+    const isLoggedIn = useRecoilValue(isLoggedInState);
+    const accessToken = localStorage.getItem("access_token");
 
     const fetchData = async ({ path, method = "GET", contentType = "application/json", isAuthRequired = false, isNotAuthRequired = false, body }: FetchType) => {
         let response = null;
@@ -36,6 +36,7 @@ const useFetchData = () => {
         }
 
         const data = await response.json();
+        
         return data;
     };
 
