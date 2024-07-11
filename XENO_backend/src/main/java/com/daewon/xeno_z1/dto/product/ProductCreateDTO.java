@@ -21,6 +21,7 @@ public class ProductCreateDTO {
     private Long priceSale;
     private String category;
     private String categorySub;
+    private String season;
 
     private List<MultipartFile> productImages;
     private List<MultipartFile> productDetailImages;

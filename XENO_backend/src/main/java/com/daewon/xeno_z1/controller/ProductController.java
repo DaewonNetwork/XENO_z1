@@ -1,12 +1,15 @@
 package com.daewon.xeno_z1.controller;
 
+import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.dto.*;
 
+import com.daewon.xeno_z1.dto.product.ProductCreateDTO;
 import com.daewon.xeno_z1.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,12 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
-//@RestController
-@Controller
+@RestController
 @Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/api/product")
@@ -29,9 +32,57 @@ public class ProductController {
 
     private final ProductService productService;
 
-//    @PreAuthorize("hasRole('USER')")
+    @Value("${org.daewon.upload.path}")
+    private String uploadPath;
 
 
+    // 상품등록
+    /*
+        Content-Type : multipart/form-data
+
+
+     */
+    @PostMapping
+    public ResponseEntity<?> createProduct(
+            @RequestParam("productName") String productName,
+            @RequestParam("brandName") String brandName,
+            @RequestParam("price") Long price,
+            @RequestParam("isSale") boolean isSale,
+            @RequestParam("priceSale") Long priceSale,
+            @RequestParam("category") String category,
+            @RequestParam("categorySub") String categorySub,
+            @RequestParam("season") String season,
+            @RequestParam("colors") List<String> colors,
+            @RequestParam("size") List<String> size,
+            @RequestParam("stock") List<Long> stock,
+            @RequestParam("productImages") List<MultipartFile> productImages,
+            @RequestParam("productDetailImages") List<MultipartFile> productDetailImages
+    ) {
+        try {
+            ProductCreateDTO productCreateDTO = ProductCreateDTO.builder()
+                    .productName(productName)
+                    .brandName(brandName)
+                    .price(price)
+                    .isSale(isSale)
+                    .priceSale(priceSale)
+                    .category(category)
+                    .categorySub(categorySub)
+                    .season(season)
+                    .colors(colors)
+                    .size(size)
+                    .stock(stock)
+                    .productImages(productImages)
+                    .productDetailImages(productDetailImages)
+                    .build();
+
+            Products createdProduct = productService.createProduct(productCreateDTO, uploadPath);
+            return ResponseEntity.status(201).body(createdProduct);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("제품을 등록하는 도중 오류가 발생했습니다.");
+        }
+    }
 
     @GetMapping("/read")
     public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productId) throws IOException {

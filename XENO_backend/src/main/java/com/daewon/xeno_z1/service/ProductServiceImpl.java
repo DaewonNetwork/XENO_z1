@@ -75,6 +75,12 @@ public class ProductServiceImpl implements ProductService {
 //        productsColorSize.getProductsColor().getProducts().setCategory(productCreateDTO.getCategory());
 //        productsColorSize.getProductsColor().getProducts().setCategorySub(productCreateDTO.getCategorySub());
 
+        // 8자리 임의의 숫자 생성
+        Long productNumber;
+        do {
+            productNumber = 10000000 + (long) (Math.random() * 90000000);
+        } while (productsRepository.existsByProductsNumber(productNumber));
+
         Products product = Products.builder()
                 .name(productCreateDTO.getProductName())
                 .brandName(productCreateDTO.getBrandName())
@@ -83,6 +89,8 @@ public class ProductServiceImpl implements ProductService {
                 .priceSale(productCreateDTO.getPriceSale())
                 .category(productCreateDTO.getCategory())
                 .categorySub(productCreateDTO.getCategorySub())
+                .productsNumber(productNumber)
+                .season(productCreateDTO.getSeason())
                 .build();
 
         // 제품을 먼저 저장하여 productId를 생성함
