@@ -111,7 +111,7 @@ public class ReplyServiceImpl implements ReplyService {
         Long assumedUserId = 1L;
 
         if (reply.getUsers().getUserId() != assumedUserId) {
-            throw new RuntimeException("댓글을 수정할 권한이 없습니다.");
+            throw new RuntimeException("댓글을 수정할 권한이 없음.");
         }
 
         reply.setText(replyUpdateDTO.getReplyText());
@@ -127,7 +127,7 @@ public class ReplyServiceImpl implements ReplyService {
         Long assumedUserId = 1L;
 
         if (reply.getUsers().getUserId() != assumedUserId) {
-            throw new RuntimeException("댓글을 수정할 권한이 없습니다.");
+            throw new RuntimeException("댓글을 삭제할 권한이 없습니다.");
         }
 
         Review review = reply.getReview();

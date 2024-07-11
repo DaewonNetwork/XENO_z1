@@ -486,7 +486,7 @@ public class ProductServiceImpl implements ProductService {
                             .category(product.getCategory())
                             .categorySub(product.getCategorySub())
                             .build();
-                    
+
                     // 이미지 처리
                     if (productColorId != null) {
                         ProductsImage productImage = productsImageRepository.findFirstByProductColorId(productColorId);

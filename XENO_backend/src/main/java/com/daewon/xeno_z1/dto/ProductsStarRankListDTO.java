@@ -12,12 +12,21 @@ import lombok.NoArgsConstructor;
 public class ProductsStarRankListDTO {
 
     private Long productColorId;
+
     private String brandName;
+
     private Long price;
+
     private boolean isSale;
+
     private Long priceSale;
+
     private String category;
+
     private String categorySub;
+
+
+
     private byte[] productImage;
     
 }
