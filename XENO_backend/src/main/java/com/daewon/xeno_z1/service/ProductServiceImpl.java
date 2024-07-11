@@ -65,16 +65,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Products createProduct(ProductCreateDTO productCreateDTO, String uploadPath) {
 
-//        ProductsColorSize productsColorSize = new ProductsColorSize();
-//
-//        productsColorSize.getProductsColor().getProducts().setName(productCreateDTO.getProductName());
-//        productsColorSize.getProductsColor().getProducts().setBrandName(productCreateDTO.getBrandName());
-//        productsColorSize.getProductsColor().getProducts().setPrice(productCreateDTO.getPrice());
-//        productsColorSize.getProductsColor().getProducts().setIsSale(productCreateDTO.isSale());
-//        productsColorSize.getProductsColor().getProducts().setPriceSale(productCreateDTO.getPriceSale());
-//        productsColorSize.getProductsColor().getProducts().setCategory(productCreateDTO.getCategory());
-//        productsColorSize.getProductsColor().getProducts().setCategorySub(productCreateDTO.getCategorySub());
-
         // 8자리 임의의 숫자 생성
         Long productNumber;
         do {
