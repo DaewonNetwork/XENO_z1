@@ -73,10 +73,16 @@ public class ProductServiceImpl implements ProductService {
         productsColorSize.getProductsColor().getProducts().setCategory(productCreateDTO.getCategory());
         productsColorSize.getProductsColor().getProducts().setCategorySub(productCreateDTO.getCategorySub());
 
-        ProductsColor productsColor = new ProductsColor();
-        productsColor.getProducts().setProductId(productsColorSize.getProductColorSizeId());
-        productsColor.setColor(productsColorSize.getProductsColor().getColor());
+//        ProductsColor productsColor = new ProductsColor();
+//        productsColor.getProducts().setProductId(productsColorSize.getProductColorSizeId());
+//        productsColor.setColor(productsColorSize.getProductsColor().getColor());
 
+        ProductsColor productsColor = ProductsColor.builder()
+                .products(productsColorSize.getProductsColor().getProducts())
+                .color(productsColorSize.getProductsColor().getColor())
+                .build();
+
+        // 제품 대표 이미지 저장
         if (productCreateDTO.getProductImages() != null && !productCreateDTO.getProductImages().isEmpty()) {
             List<ProductsImage> productsImages = new ArrayList<>();
 
@@ -107,6 +113,51 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
         }
+
+        // 제품 상세 이미지 저장
+        if (productCreateDTO.getProductDetailImages() != null && !productCreateDTO.getProductDetailImages().isEmpty()) {
+            List<ProductsDetailImage> productsDetailImages = new ArrayList<>();
+
+            for (int i = 0; i < productCreateDTO.getProductDetailImages().size(); i++) {
+                MultipartFile detailsImageFile = productCreateDTO.getProductDetailImages().get(i);
+
+                if (detailsImageFile != null && !detailsImageFile.isEmpty()) {
+                    String originalDetailsImageName = detailsImageFile.getOriginalFilename();
+                    String uuid = UUID.randomUUID().toString();
+                    Path savePath = Paths.get(uploadPath, uuid + "_" + originalDetailsImageName);
+
+                    try {
+                        detailsImageFile.transferTo(savePath.toFile());
+
+                        // ProductsImage 엔티티 생성 및 저장
+                        ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
+                                .uuid(uuid)
+                                .fileName(originalDetailsImageName)
+                                .ord(i) // 현재 루프의 인덱스를 순서로 사용함
+                                .productsColor(productsColor)
+                                .build();
+
+                        productsDetailImages.add(productsDetailImage);
+                    } catch (IOException e) {
+                        log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);
+                        throw new RuntimeException("File processing error", e);
+                    }
+                }
+            }
+        }
+
+        // 상품 색상 설정
+        List<ProductsColor> productsColors = new ArrayList<>();
+        for(int i = 0; i < productCreateDTO.getColors().size(); i++ ) {
+            ProductsColor color = ProductsColor.builder()
+                    .color(productCreateDTO.getColors().get(i))
+                    .build();
+
+            productsColors.add(color);
+
+            productsColorSize.setProductsColor(color);
+        }
+
         return productsRepository.save();
     }
 
