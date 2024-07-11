@@ -35,7 +35,7 @@ public class ProductInfoDTO {
 
     private String season;
 
-    private long starAvg;
+    private double starAvg;
 
     private long likeIndex;
 

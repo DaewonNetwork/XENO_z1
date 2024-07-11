@@ -25,8 +25,8 @@ public class ProductsStar {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private ProductsColor productsColor;
 
-  private long starAvg;
+  private double starAvg;
 
-  private long starTotal;
+  private double starTotal;
 
 }

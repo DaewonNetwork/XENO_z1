@@ -3,6 +3,7 @@ package com.daewon.xeno_z1.controller;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
+import com.daewon.xeno_z1.dto.review.ReviewInfoDTO;
 import com.daewon.xeno_z1.repository.ProductsImageRepository;
 import com.daewon.xeno_z1.repository.ReviewImageRepository;
 import com.daewon.xeno_z1.repository.ReviewRepository;
@@ -12,10 +13,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -33,22 +36,6 @@ public class ReviewPublicController {
 
     @Value("${uploadPath}")
     private String uploadPath;
-
-//    @GetMapping
-//    public ResponseEntity<Page<ReviewDTO>> getReviews(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size) {
-//        Page<ReviewDTO> reviews = reviewService.getReviews(page, size);
-//        return ResponseEntity.ok(reviews);
-//    }
-
-//
-//
-//    @PostMapping(
-//            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-
 
 
 //    @Operation(summary = "리뷰 생성")
@@ -82,19 +69,6 @@ public class ReviewPublicController {
 
 
 
-//    @Operation(summary = "리뷰 조회")
-//    @GetMapping("/{reviewId}")
-//    public ResponseEntity<ReviewDTO> getReviewDetails(@PathVariable Long reviewId) {
-//        try {
-//            log.info("Fetching review details for reviewId: {}", reviewId);
-//            ReviewDTO reviewDTO = reviewService.getReviewDetails(reviewId);
-//            log.info("Retrieved review details: {}", reviewDTO);
-//            return ResponseEntity.ok(reviewDTO);
-//        } catch (RuntimeException e) {
-//            log.error("Error fetching review details for reviewId {}: ", reviewId, e);
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//    }
 //
 //    @PutMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Operation(summary = "리뷰 수정")
@@ -123,33 +97,7 @@ public class ReviewPublicController {
 //            }
 //    }
 //
-//        private ReviewDTO convertToDTO(Review review) {
-//            ReviewDTO dto = new ReviewDTO();
-//            dto.setReviewId(review.getReviewId());
-////            dto.setProductId(review.getProducts().getProductId());
-//            dto.setUserId(review.getUsers().getUserId());
-//            dto.setText(review.getText());
-//            dto.setStar(Math.round(review.getStar() * 10.0) / 10.0);
-//            dto.setReviewDate(review.getCreateAt() != null ? review.getCreateAt().toString() : null);
-//            dto.setName(userRepository.findById(review.getUsers().getUserId()).map(Users::getName).orElse(null));
-//            dto.setSize(review.getSize());
-////            dto.setColor(review.getProductsColor().getColor());/
-//
-//            List<ReviewImage> reviewImages = reviewImageRepository.findByReview(review);
-//            List<byte[]> reviewDetailImages = new ArrayList<>();
-//            for (ReviewImage reviewImage : reviewImages) {
-//                try {
-//                    byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
-//                    reviewDetailImages.add(imageData);
-//                } catch (IOException e) {
-//                    log.error("Error reading review image file", e);
-//                }
-//            }
-//            dto.setReviewDetailImages(reviewDetailImages);
-//            return dto;
-//        }
-//
-//
+
 //
 //    // 리뷰 삭제
 //    @DeleteMapping("/{reviewId}")
@@ -164,12 +112,27 @@ public class ReviewPublicController {
 //        }
 //    }
 
-//    @GetMapping("/images/{productId}")
-//    @Operation(summary = "제품의 모든 리뷰 이미지 가져오기")
-//    public ResponseEntity<List<ReviewCardDTO>> getReviewInfoList(@RequestParam Long productColorId, PageRequestDTO pageRequestDTO) {
-//        List<ReviewCardDTO> reviewList = reviewService.getAllProductReviewImages();
-//        return ResponseEntity.ok(reviewList);
-//    }
+
+
+
+    @Operation(summary = "리뷰 조회")
+    @GetMapping("/read")
+    public ResponseEntity<ReviewInfoDTO> getReviewInfo(@RequestParam Long reviewId) {
+        try {
+            ReviewInfoDTO reviewInfoDTO = reviewService.readReviewInfo(reviewId);
+            return ResponseEntity.ok(reviewInfoDTO);
+        } catch (RuntimeException e) {
+            log.error("Error fetching review details for reviewId {}: ", reviewId, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @Operation(summary = "리뷰 리스트")
+    @GetMapping("/read/List")
+    public ResponseEntity<PageResponseDTO<ReviewInfoDTO>> getReviews(@RequestParam Long productColorId, PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<ReviewInfoDTO> reviews = reviewService.readReviewList(productColorId,pageRequestDTO);
+        return ResponseEntity.ok(reviews);
+    }
 
     @GetMapping("/page/card")
     @Operation(summary = "제품의 모든 리뷰 이미지 가져오기")

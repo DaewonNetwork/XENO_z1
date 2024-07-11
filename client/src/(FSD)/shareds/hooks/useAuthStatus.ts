@@ -7,14 +7,11 @@ import { userState } from "../stores/UserAtom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
 const useAuthStatus = () => {
+
     const { data, isError, isPending, refetch } = useUserRead();
 
     const set = useSetRecoilState(userState);
-
     const user: UserType = data;
-
-    console.log(user)
-
     useEffect(() => {
         const accessToken = localStorage.getItem("access_token");
         const refreshToken = localStorage.getItem("refresh_token");
@@ -22,19 +19,19 @@ const useAuthStatus = () => {
         if (user && accessToken && refreshToken) {
             set(userData => {
                 const newData = { ...userData };
-                newData.user = user;
+                // newData.user = user;
                 newData.isLoggedIn = true;
                 newData.accessToken = accessToken;
-                newData.refreshToken = refreshToken;
+                // newData.refreshToken = refreshToken;
                 return newData;
             });
         } else {
             set(userData => {
                 const newData = { ...userData };
-                newData.user = null;
+                // newData.user = null;
                 newData.isLoggedIn = false;
                 newData.accessToken = "";
-                newData.refreshToken = "";
+                // newData.refreshToken = "";
                 return newData;
             });
         }

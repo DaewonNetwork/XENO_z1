@@ -38,7 +38,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     const [newProducts, setNewProducts] = useRecoilState<ProductOrderInfoType[]>(productsState)
     const { isLoggedIn } = useRecoilValue(userState);
     
-    console.log("이미지스" + images)
+
     const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
 
     const desiredOrder = ['S', 'M', 'L', 'XL'];
@@ -76,7 +76,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
         setCount(totalProductCount);
         const totalProductPrice = products.reduce((acc, curr) => acc + curr.price, 0);
         setPrice(totalProductPrice);
-        console.log(products)
+  
     }, [products]);
 
     
@@ -167,7 +167,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
 
 
     const onSuccess = (data: any) => {
-        console.log("성공");
+
 
         setProducts([]);
         onOpen();
@@ -189,7 +189,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
         } else {
             // color와 size를 제외한 새로운 배열 생성
             const newProducts = products.map(({ color, size, ...rest }) => rest);
-            console.log(newProducts);
+      
             setisOpenOrder(false)
             setIsSelectedColor(false);
             setIsSelectedSize(false);
@@ -225,11 +225,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
                 };
             });
 
-            console.log(newProducts1)
-
             setNewProducts(newProducts1)
-
-            console.log(newProducts)
 
             setProducts([])
 

@@ -45,9 +45,6 @@ const ProductInfoContainer = () => {
 
     if(!data) notFound();
 
-    
-
-    console.log(product)
 
 
     return (

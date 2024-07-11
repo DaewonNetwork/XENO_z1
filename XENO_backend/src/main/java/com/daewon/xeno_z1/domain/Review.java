@@ -26,10 +26,6 @@ public class Review extends BaseEntity {
   private Users users;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "productColorId", referencedColumnName = "productColorId")
-  private ProductsColor productsColor;
-
-  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "orderId", referencedColumnName = "orderId")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Orders order;
@@ -40,6 +36,10 @@ public class Review extends BaseEntity {
 
   public void setUsers(Long userId) {
     this.users = Users.builder().userId(userId).build();
+  }
+
+  public void setOrders(Long orderId) {
+    this.order = Orders.builder().orderId(orderId).build();
   }
 
 

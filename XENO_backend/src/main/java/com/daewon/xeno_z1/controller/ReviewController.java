@@ -1,52 +1,39 @@
 package com.daewon.xeno_z1.controller;
 
+import com.daewon.xeno_z1.dto.order.OrdersDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
+import com.daewon.xeno_z1.dto.review.ReviewInfoDTO;
+import com.daewon.xeno_z1.dto.review.ReviewUpdateDTO;
 import com.daewon.xeno_z1.repository.ProductsImageRepository;
 import com.daewon.xeno_z1.repository.ReviewImageRepository;
 import com.daewon.xeno_z1.repository.ReviewRepository;
 import com.daewon.xeno_z1.repository.UserRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.daewon.xeno_z1.domain.ProductsImage;
 import com.daewon.xeno_z1.domain.Review;
-import com.daewon.xeno_z1.domain.ReviewImage;
-import com.daewon.xeno_z1.domain.Users;
-import com.daewon.xeno_z1.dto.review.ReviewDTO;
+import com.daewon.xeno_z1.dto.review.ReviewCreateDTO;
 import com.daewon.xeno_z1.service.ReviewService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
@@ -61,149 +48,103 @@ public class ReviewController {
     private final ProductsImageRepository productsImageRepository;
     private final ReviewRepository reviewRepository;
 
-    @Value("${uploadPath}")
-    private String uploadPath;
 
-//    @GetMapping
-//    public ResponseEntity<Page<ReviewDTO>> getReviews(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size) {
-//        Page<ReviewDTO> reviews = reviewService.getReviews(page, size);
-//        return ResponseEntity.ok(reviews);
-//    }
+    @PostMapping(value = "/create",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createReview(
+            // @RequestPart 어노테이션은 요청의 일부인 특정 파트를 가져오는 데 사용됨.
+            // 클라이언트로부터 전달된 'reviewDTO'라는 이름의 JSON 데이터를 문자열 형식으로 받음
+            @RequestPart("reviewDTO") String reviewCreateDTOStr,
+            // 클라이언트로부터 전달된 파일 리스트를 받음.
+            // required = false 로 설정하여 파일이 없어도 요청이 처리됨
+            @RequestPart(name = "image", required = false) MultipartFile image,@AuthenticationPrincipal UserDetails userDetails) {
+        log.info("Review DTO String: " + reviewCreateDTOStr);
+        log.info("Files: " + image);
 
-//
-//
-//    @PostMapping(
-//            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
+        ReviewCreateDTO reviewDTO;
+        try {
+            // JSON 문자열을 ReviewDTO 객체로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            reviewDTO = objectMapper.readValue(reviewCreateDTOStr, ReviewCreateDTO.class);
+            log.info(reviewDTO);
+        } catch (IOException e) {
+            // JSON 변환 중 오류가 발생하면 로그를 남기고 예외 발생
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
+        }
 
+        try {
+            // 리뷰 생성 메서드 호출
+            String result = reviewService.createReview(reviewDTO, image != null && !image.isEmpty() ? image : null,userDetails);
 
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request", e);
+        }
+    }
 
-//    @Operation(summary = "리뷰 생성")
-//    public ResponseEntity<?> createReview(
-//            @RequestPart(name = "reviewDTO") String reviewDTOStr,
-//            @RequestPart(name = "images", required = false) List<MultipartFile> image) {
-//        log.info("Received reviewDTO: {}", reviewDTOStr);
-//        log.info("Images: " + images);
-//
-//        ReviewDTO reviewDTO;
-//        try {
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//            String decodedReviewDTO = URLDecoder.decode(reviewDTOStr, StandardCharsets.UTF_8.name());
-//            reviewDTO = objectMapper.readValue(decodedReviewDTO, ReviewDTO.class);
-//            log.info("Parsed ReviewDTO: {}", reviewDTO);
-//        } catch (IOException e) {
-//            log.error("Error parsing reviewDTO", e);
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
-//        }
-//
-//        try {
-//            Review createdReview = reviewService. createReview(reviewDTO, image);
-//            ReviewDTO responseDTO = convertToDTO(createdReview);
-//            return ResponseEntity.ok(responseDTO);
-//        } catch (RuntimeException e) {
-//            log.error("Error creating review", e);
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request", e);
-//        }
-//    }
+    @Operation(summary = "리뷰 조회")
+    @GetMapping("/read")
+    public ResponseEntity<ReviewInfoDTO> readReview(@RequestParam Long reviewId) {
+        try {
+            ReviewInfoDTO reviewInfoDTO = reviewService.readReviewInfo(reviewId);
+            return ResponseEntity.ok(reviewInfoDTO);
+        } catch (RuntimeException e) {
+            log.error("Error fetching review details for reviewId {}: ", reviewId, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
 
 
-//    @Operation(summary = "리뷰 조회")
-//    @GetMapping("/{reviewId}")
-//    public ResponseEntity<ReviewDTO> getReviewDetails(@PathVariable Long reviewId) {
-//        try {
-//            log.info("Fetching review details for reviewId: {}", reviewId);
-//            ReviewDTO reviewDTO = reviewService.getReviewDetails(reviewId);
-//            log.info("Retrieved review details: {}", reviewDTO);
-//            return ResponseEntity.ok(reviewDTO);
-//        } catch (RuntimeException e) {
-//            log.error("Error fetching review details for reviewId {}: ", reviewId, e);
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//    }
-//
-//    @PutMapping(value = "/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//    @Operation(summary = "리뷰 수정")
-//    public ResponseEntity<?> updateReview(
-//                @PathVariable Long reviewId,
-//                @RequestPart(name = "reviewDTO") String reviewDTOStr,
-//                @RequestPart(name = "images", required = false) List<MultipartFile> images) {
-//            ReviewDTO reviewDTO;
-//            try {
-//                ObjectMapper objectMapper = new ObjectMapper();
-//                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//                String decodedReviewDTO = URLDecoder.decode(reviewDTOStr, StandardCharsets.UTF_8.name());
-//                reviewDTO = objectMapper.readValue(decodedReviewDTO, ReviewDTO.class);
-//            } catch (IOException e) {
-//                log.error("Error parsing reviewDTO", e);
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
-//            }
-//
-//            try {
-//                Review updatedReview = reviewService.updateReview(reviewId, reviewDTO, images);
-//                ReviewDTO responseDTO = convertToDTO(updatedReview);
-//                return ResponseEntity.ok(responseDTO);
-//            } catch (Exception e) {
-//                log.error("Error updating review", e);
-//                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating review", e);
-//            }
-//    }
-//
-//        private ReviewDTO convertToDTO(Review review) {
-//            ReviewDTO dto = new ReviewDTO();
-//            dto.setReviewId(review.getReviewId());
-////            dto.setProductId(review.getProducts().getProductId());
-//            dto.setUserId(review.getUsers().getUserId());
-//            dto.setText(review.getText());
-//            dto.setStar(Math.round(review.getStar() * 10.0) / 10.0);
-//            dto.setReviewDate(review.getCreateAt() != null ? review.getCreateAt().toString() : null);
-//            dto.setName(userRepository.findById(review.getUsers().getUserId()).map(Users::getName).orElse(null));
-//            dto.setSize(review.getSize());
-////            dto.setColor(review.getProductsColor().getColor());/
-//
-//            List<ReviewImage> reviewImages = reviewImageRepository.findByReview(review);
-//            List<byte[]> reviewDetailImages = new ArrayList<>();
-//            for (ReviewImage reviewImage : reviewImages) {
-//                try {
-//                    byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
-//                    reviewDetailImages.add(imageData);
-//                } catch (IOException e) {
-//                    log.error("Error reading review image file", e);
-//                }
-//            }
-//            dto.setReviewDetailImages(reviewDetailImages);
-//            return dto;
-//        }
-//
-//
-//
-//    // 리뷰 삭제
-//    @DeleteMapping("/{reviewId}")
-//    @Operation(summary = "리뷰 삭제")
-//    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId) {
-//        try {
-//            reviewService.deleteReview(reviewId);
-//            return ResponseEntity.ok().body("리뷰 삭제 완료");
-//        }  catch (RuntimeException e) {
-//            log.error("리뷰 삭제 중 오류 발생", e);
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        }
-//    }
+    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "리뷰 수정")
+    public ResponseEntity<?> updateReview(
+                @RequestParam Long reviewId,
+                @RequestPart(name = "reviewDTO") String reviewDTOStr,
+                @RequestPart(name = "image", required = false) MultipartFile image) {
+            ReviewUpdateDTO reviewDTO;
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                reviewDTO = objectMapper.readValue(reviewDTOStr, ReviewUpdateDTO.class);
+            } catch (IOException e) {
+                log.error("Error parsing reviewDTO", e);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
+            }
 
-//    @GetMapping("/images/{productId}")
-//    @Operation(summary = "제품의 모든 리뷰 이미지 가져오기")
-//    public ResponseEntity<List<ReviewCardDTO>> getReviewInfoList(@RequestParam Long productColorId, PageRequestDTO pageRequestDTO) {
-//        List<ReviewCardDTO> reviewList = reviewService.getAllProductReviewImages();
-//        return ResponseEntity.ok(reviewList);
-//    }
+            try {
+                String updatedReview = reviewService.updateReview(reviewId, reviewDTO, image);
+                return ResponseEntity.ok(updatedReview);
+            } catch (Exception e) {
+                log.error("Error updating review", e);
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating review", e);
+            }
+    }
+
+    // 리뷰 삭제
+    @DeleteMapping("/delete")
+    @Operation(summary = "리뷰 삭제")
+    public ResponseEntity<?> deleteReview(@RequestParam Long reviewId) {
+        try {
+            reviewService.deleteReview(reviewId);
+            return ResponseEntity.ok().body("리뷰 삭제 완료");
+        }  catch (RuntimeException e) {
+            log.error("리뷰 삭제 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "리뷰 리스트")
+    @GetMapping("/read/List")
+    public ResponseEntity<PageResponseDTO<ReviewInfoDTO>> getReviewListByProductColorId(@RequestParam Long productColorId, PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<ReviewInfoDTO> reviews = reviewService.readReviewList(productColorId,pageRequestDTO);
+        return ResponseEntity.ok(reviews);
+    }
 
     @GetMapping("/page/card")
     @Operation(summary = "제품의 모든 리뷰 이미지 가져오기")
-    public ResponseEntity<PageResponseDTO<ReviewCardDTO>> getReviewCardList(PageRequestDTO pageRequestDTO) {
+    public ResponseEntity<PageResponseDTO<ReviewCardDTO>> getAllReviewList(PageRequestDTO pageRequestDTO) {
         PageResponseDTO<ReviewCardDTO> reviewList = reviewService.readAllReviewImageList(pageRequestDTO);
         return ResponseEntity.ok(reviewList);
     }

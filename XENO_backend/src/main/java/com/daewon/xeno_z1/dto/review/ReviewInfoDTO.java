@@ -11,8 +11,19 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReviewInfoDTO {
 
+    private Long reviewId;
+    private Long productColorId;
+    private String userName;
     private String productName;
-    private long price;
-    private int saleRate;
+    private String color;
+    private String size;
+    private String text;
+    private boolean isReview;
+    private double star;
+    private int replyIndex;
+    private byte[] reviewImage;
+    private byte[] productImage;
+    private String createAt;
+
 
 }

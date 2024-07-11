@@ -34,7 +34,7 @@ const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = 
     const { mutate } = useProductLikeToggle({ onSuccess });
 
     const like = () => {
-        if(!isLoggedIn){
+        if(isLoggedIn){
         mutate(productColorId)
         } else {
             router.push('/auth/signin')
