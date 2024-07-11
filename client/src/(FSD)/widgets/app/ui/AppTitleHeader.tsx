@@ -9,16 +9,17 @@ import ProductCart from "@/(FSD)/entities/product/ui/ProductCart";
 interface AppTitleHeaderType {
     title: string;
     href?: string;
+    left?: React.ReactNode;
     right?: React.ReactNode;
 }
 
-const AppTitleHeader = ({ title, right = <ProductCart /> }: AppTitleHeaderType) => {
+const AppTitleHeader = ({ title, left = <BackBtnShared />, right = <ProductCart /> }: AppTitleHeaderType) => {
     return (
         <header className={`border-default-100 border-b-small ${styles.title_header}`}>
             <AppContainer>
                 <AppInner>
                     <div className={styles.inner}>
-                        <BackBtnShared />
+                        {left}
                         <TextXLargeShared>{title}</TextXLargeShared>
                         {right}
                     </div>
