@@ -1,42 +1,22 @@
 "use client";
 
-import { UserType } from "@/(FSD)/shareds/types/User.type";
-import { useUserRead } from "@/(FSD)/entities/user/api/useUserRead";
 import { useEffect } from "react";
-import { userState } from "../stores/UserAtom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { isLoggedInState } from "../stores/UserAtom";
+import { useSetRecoilState } from "recoil";
+import { useTokenRead } from "@/(FSD)/entities/auth/api/useTokenRead";
 
 const useAuthStatus = () => {
-    const { data, isError, isPending, refetch } = useUserRead();
+    const { data, isError, isPending, refetch } = useTokenRead();
 
-    const set = useSetRecoilState(userState);
+    const set = useSetRecoilState(isLoggedInState);
 
-    const user: UserType = data;
-
-    console.log(user)
+    const isLoggedIn: boolean = !!data;
 
     useEffect(() => {
-        const accessToken = localStorage.getItem("access_token");
-        const refreshToken = localStorage.getItem("refresh_token");
-
-        if (user && accessToken && refreshToken) {
-            set(userData => {
-                const newData = { ...userData };
-                newData.user = user;
-                newData.isLoggedIn = true;
-                newData.accessToken = accessToken;
-                newData.refreshToken = refreshToken;
-                return newData;
-            });
+        if(isLoggedIn) {
+            set(true);
         } else {
-            set(userData => {
-                const newData = { ...userData };
-                newData.user = null;
-                newData.isLoggedIn = false;
-                newData.accessToken = "";
-                newData.refreshToken = "";
-                return newData;
-            });
+            set(false);
         }
     }, [data]);
 
@@ -51,7 +31,7 @@ const useAuthStatus = () => {
         refetch();
     }, [localStorage.getItem("access_token")]);
 
-    return { data,isPending };
+    return { data, isPending };
 };
 
 export default useAuthStatus;

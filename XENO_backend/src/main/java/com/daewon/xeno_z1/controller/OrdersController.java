@@ -4,6 +4,7 @@ import com.daewon.xeno_z1.domain.Orders;
 import com.daewon.xeno_z1.dto.cart.CartDTO;
 import com.daewon.xeno_z1.dto.order.*;
 import com.daewon.xeno_z1.exception.ProductNotFoundException;
+import com.daewon.xeno_z1.exception.UserNotFoundException;
 import com.daewon.xeno_z1.service.OrdersService;
 import com.daewon.xeno_z1.utils.JWTUtil;
 import io.jsonwebtoken.JwtException;
@@ -49,7 +50,7 @@ public class OrdersController {
     }
 
     @PostMapping(produces = "application/json")
-    public ResponseEntity<?> createOrder(@RequestBody List<OrdersDTO> ordersDTO,
+    public ResponseEntity<String> createOrder(@RequestBody List<OrdersDTO> ordersDTO,
                                          @AuthenticationPrincipal UserDetails userDetails) {
         log.info("ordersDTO Controller : " + ordersDTO);
         try {
@@ -58,7 +59,7 @@ public class OrdersController {
             log.info("orderUserEmail : " + userEmail);
             List<OrdersDTO> createdOrder = ordersService.createOrders(ordersDTO, userEmail);
             log.info(createdOrder);
-            return ResponseEntity.ok(createdOrder);
+            return ResponseEntity.ok("주문이 완료되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
         }
@@ -88,6 +89,8 @@ public class OrdersController {
             OrdersConfirmDTO ordersConfirmDTO = ordersService.confirmOrder(orderId, userDetails.getUsername());
 
             return ResponseEntity.ok(ordersConfirmDTO);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(403).body("접근 권한이 없습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("주문내역을 찾을 수 없습니다.");
         }
