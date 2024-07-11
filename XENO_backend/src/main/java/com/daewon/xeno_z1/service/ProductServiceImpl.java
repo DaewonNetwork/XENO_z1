@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -61,30 +62,35 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public Products createProduct(ProductCreateDTO productCreateDTO, String uploadPath) {
 
-        ProductsColorSize productsColorSize = new ProductsColorSize();
+//        ProductsColorSize productsColorSize = new ProductsColorSize();
+//
+//        productsColorSize.getProductsColor().getProducts().setName(productCreateDTO.getProductName());
+//        productsColorSize.getProductsColor().getProducts().setBrandName(productCreateDTO.getBrandName());
+//        productsColorSize.getProductsColor().getProducts().setPrice(productCreateDTO.getPrice());
+//        productsColorSize.getProductsColor().getProducts().setIsSale(productCreateDTO.isSale());
+//        productsColorSize.getProductsColor().getProducts().setPriceSale(productCreateDTO.getPriceSale());
+//        productsColorSize.getProductsColor().getProducts().setCategory(productCreateDTO.getCategory());
+//        productsColorSize.getProductsColor().getProducts().setCategorySub(productCreateDTO.getCategorySub());
 
-        productsColorSize.getProductsColor().getProducts().setName(productCreateDTO.getProductName());
-        productsColorSize.getProductsColor().getProducts().setBrandName(productCreateDTO.getBrandName());
-        productsColorSize.getProductsColor().getProducts().setPrice(productCreateDTO.getPrice());
-        productsColorSize.getProductsColor().getProducts().setIsSale(productCreateDTO.isSale());
-        productsColorSize.getProductsColor().getProducts().setPriceSale(productCreateDTO.getPriceSale());
-        productsColorSize.getProductsColor().getProducts().setCategory(productCreateDTO.getCategory());
-        productsColorSize.getProductsColor().getProducts().setCategorySub(productCreateDTO.getCategorySub());
-
-//        ProductsColor productsColor = new ProductsColor();
-//        productsColor.getProducts().setProductId(productsColorSize.getProductColorSizeId());
-//        productsColor.setColor(productsColorSize.getProductsColor().getColor());
-
-        ProductsColor productsColor = ProductsColor.builder()
-                .products(productsColorSize.getProductsColor().getProducts())
-                .color(productsColorSize.getProductsColor().getColor())
+        Products product = Products.builder()
+                .name(productCreateDTO.getProductName())
+                .brandName(productCreateDTO.getBrandName())
+                .price(productCreateDTO.getPrice())
+                .isSale(productCreateDTO.isSale())
+                .priceSale(productCreateDTO.getPriceSale())
+                .category(productCreateDTO.getCategory())
+                .categorySub(productCreateDTO.getCategorySub())
                 .build();
 
+        // 제품을 먼저 저장하여 productId를 생성함
+        product = productsRepository.save(product);
+
         // 제품 대표 이미지 저장
+        List<ProductsImage> productsImages = new ArrayList<>();
         if (productCreateDTO.getProductImages() != null && !productCreateDTO.getProductImages().isEmpty()) {
-            List<ProductsImage> productsImages = new ArrayList<>();
 
             for (int i = 0; i < productCreateDTO.getProductImages().size(); i++) {
                 MultipartFile mainImageFile = productCreateDTO.getProductImages().get(i);
@@ -102,7 +108,6 @@ public class ProductServiceImpl implements ProductService {
                                 .uuid(uuid)
                                 .fileName(originalMainImageName)
                                 .ord(i) // 현재 루프의 인덱스를 순서로 사용함
-                                .productsColor(productsColor)
                                 .build();
 
                         productsImages.add(productsImage);
@@ -115,8 +120,8 @@ public class ProductServiceImpl implements ProductService {
         }
 
         // 제품 상세 이미지 저장
+        List<ProductsDetailImage> productsDetailImages = new ArrayList<>();
         if (productCreateDTO.getProductDetailImages() != null && !productCreateDTO.getProductDetailImages().isEmpty()) {
-            List<ProductsDetailImage> productsDetailImages = new ArrayList<>();
 
             for (int i = 0; i < productCreateDTO.getProductDetailImages().size(); i++) {
                 MultipartFile detailsImageFile = productCreateDTO.getProductDetailImages().get(i);
@@ -134,7 +139,6 @@ public class ProductServiceImpl implements ProductService {
                                 .uuid(uuid)
                                 .fileName(originalDetailsImageName)
                                 .ord(i) // 현재 루프의 인덱스를 순서로 사용함
-                                .productsColor(productsColor)
                                 .build();
 
                         productsDetailImages.add(productsDetailImage);
@@ -146,19 +150,52 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        // 상품 색상 설정
+        // 색상, 사이즈, 재고 설정
+        /*
+           ProductsColor가 먼저 저장되어야 ProductsColorSize에서 참조가 가능하기 떄문에
+           color를 먼저 DB에 저장하고
+           마찬가지로 ProductsColorSIze가 저장되어야 ProductsStock에서 참조할 수 있으므로
+           color -> size -> stock 순으로 순차적으로 DB에 저장해줌
+         */
         List<ProductsColor> productsColors = new ArrayList<>();
         for(int i = 0; i < productCreateDTO.getColors().size(); i++ ) {
+            // 상품 색상 설정
             ProductsColor color = ProductsColor.builder()
+                    .products(product)
                     .color(productCreateDTO.getColors().get(i))
                     .build();
 
+            color = productsColorRepository.save(color);
             productsColors.add(color);
 
-            productsColorSize.setProductsColor(color);
+            for(ProductsImage mainImage : productsImages) {
+                mainImage.setProductsColor(color);
+            }
+            for(ProductsDetailImage detailImage : productsDetailImages) {
+                detailImage.setProductsColor(color);
+            }
+
+            // 상품 색상에 해당하는 사이즈 설정
+            ProductsColorSize size = ProductsColorSize.builder()
+                    .productsColor(color)
+                    .size(Size.valueOf(productCreateDTO.getSize().get(i).toUpperCase()))
+                    .build();
+
+            size = productsColorSizeRepository.save(size);
+
+            // 상품 색상에 해당하고 사이즈에 해당하는 재고 설정
+            ProductsStock stock = ProductsStock.builder()
+                    .productsColorSize(size)
+                    .stock(productCreateDTO.getStock().get(i))
+                    .build();
+
+            productsStockRepository.save(stock);
         }
 
-        return productsRepository.save();
+        productsImageRepository.saveAll(productsImages);
+        productsDetailImageRepository.saveAll(productsDetailImages);
+
+        return product;
     }
 
     @Override

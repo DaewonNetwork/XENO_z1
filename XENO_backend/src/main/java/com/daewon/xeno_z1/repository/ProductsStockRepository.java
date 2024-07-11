@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductsStockRepository extends JpaRepository<ProductsStar, Long> {
+public interface ProductsStockRepository extends JpaRepository<ProductsStock, Long> {
 
     @Query("select p from ProductsStock p where p.productsColorSize.productColorSizeId = :productColorSizeId")
     ProductsStock findByProductColorSizeId(@Param("productColorSizeId") Long productColorSizeId);
