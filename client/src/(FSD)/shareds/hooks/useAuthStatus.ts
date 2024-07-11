@@ -6,7 +6,7 @@ import { useSetRecoilState } from "recoil";
 import { useTokenRead } from "@/(FSD)/entities/auth/api/useTokenRead";
 
 const useAuthStatus = () => {
-    const { data, isError, isPending, refetch } = useTokenRead();
+    const { data, isError, isPending, error, refetch } = useTokenRead();
 
     const set = useSetRecoilState(isLoggedInState);
 
@@ -21,10 +21,14 @@ const useAuthStatus = () => {
     }, [data]);
 
     useEffect(() => {
-        if (isError) {
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("refresh_token");
-        }
+        console.log(error);
+        console.log(isError);
+        
+        
+        // if (isError) {
+        //     localStorage.removeItem("access_token");
+        //     localStorage.removeItem("refresh_token");
+        // }
     }, [isError]);
 
     useEffect(() => {

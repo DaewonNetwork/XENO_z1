@@ -11,8 +11,8 @@ import { z } from "zod";
 import styles from "@/(FSD)/shareds/styles/AuthStyle.module.scss";
 import { UserType } from "@/(FSD)/shareds/types/User.type";
 import { useAuthSignin } from "../api/useAuthSignin";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import { isLoggedInState } from "@/(FSD)/shareds/stores/UserAtom";
 
 const AuthSigninForm = () => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -20,8 +20,9 @@ const AuthSigninForm = () => {
 
     const [userData, setUserData] = useState<UserType | null>(null);
     
-    const setUser = useSetRecoilState(userState);
-    const user = useRecoilValue(userState);
+    const setIsLoggedIn = useSetRecoilState(isLoggedInState);
+    console.log(setIsLoggedIn);
+    
 
     const schema = z.object({
         email: z.string().regex(emailRegex, {
@@ -43,7 +44,7 @@ const AuthSigninForm = () => {
         localStorage.setItem("access_token", data.accessToken);
         localStorage.setItem("refresh_token", data.refreshToken);        
         
-        setUser({ user: userData });
+        setIsLoggedIn(true);
 
         router.push("/");
     }

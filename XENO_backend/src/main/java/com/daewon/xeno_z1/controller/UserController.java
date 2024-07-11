@@ -9,6 +9,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.Map;
 
 @Log4j2
@@ -46,7 +48,17 @@ public class UserController {
     @GetMapping("/token")
     public ResponseEntity<?> readToken(@RequestHeader("Authorization") String token) {
         try {
-            return ResponseEntity.ok(jwtUtil.validateToken(token));
+            // Bearer 토큰에서 "Bearer " 부분 제거
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+            // payload 반환
+            Map<String, Object> Message = new HashMap<>();
+
+            Message.put("message", "유효한 토큰입니다.");
+
+            return ResponseEntity.ok(Message);
+
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(403).body("유저 정보가 맞지 않습니다.");
         } catch (JwtException e) {

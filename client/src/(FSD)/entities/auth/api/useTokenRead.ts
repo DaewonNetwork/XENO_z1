@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 
 const tokenReadFetch = async () => {
     const accessToken = localStorage.getItem("access_token")!;
-
     const response = await fetch("http://localhost:8090/api/user/token", {
         method: "GET",
         headers: {

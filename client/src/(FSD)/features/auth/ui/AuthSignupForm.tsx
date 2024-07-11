@@ -11,8 +11,6 @@ import { useRouter } from "next/navigation";
 import styles from "@/(FSD)/shareds/styles/AuthStyle.module.scss";
 import { UserType } from "@/(FSD)/shareds/types/User.type";
 import { useAuthSignup } from "../api/useAuthSignup";
-import { useSetRecoilState } from "recoil";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
 
 const AuthSignupForm = () => {
     const userNameRegex = /^[가-힣a-zA-Z\s]{1,20}$/;
@@ -20,8 +18,6 @@ const AuthSignupForm = () => {
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
 
     const [userData, setUserData] = useState<UserType | null>(null);
-
-    const setUser = useSetRecoilState(userState);
     
     const schema = z.object({
         userName: z.string().regex(userNameRegex, { message: "알맞은 이름을 입력해주세요." }),
@@ -51,7 +47,6 @@ const AuthSignupForm = () => {
 
     const onSuccess = (data: any) => {
         if(!userData) return;
-        setUser({ user: userData });
         router.push("/");
     }
 
