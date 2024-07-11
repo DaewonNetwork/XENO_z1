@@ -3,7 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaPlus } from "react-icons/fa";
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { FaEye, FaEyeSlash, FaStar } from "react-icons/fa6";
-import { IoCloseCircle, IoSettingsSharp, IoSearchOutline, IoBagOutline, IoMenuOutline } from "react-icons/io5";
+import { IoCloseSharp, IoSettingsSharp, IoSearchOutline, IoBagOutline, IoMenuOutline } from "react-icons/io5";
 import { IconType } from "../types/Icon.type";
 import { GoHeartFill, GoHeart, GoProjectRoadmap, GoHome, GoHomeFill, GoPerson  } from "react-icons/go";
 import { MdLocalHospital } from "react-icons/md";
@@ -35,7 +35,7 @@ const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType
             component = <FaEyeSlash />;
             break;
         case "close":
-            component = <IoCloseCircle />;
+            component = <IoCloseSharp />;
             break;
         case "plus":
             component = <FaPlus />;
