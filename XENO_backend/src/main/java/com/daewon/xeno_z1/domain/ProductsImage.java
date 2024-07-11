@@ -26,9 +26,8 @@ public class ProductsImage {
   private ProductsColor productsColor;
 
   private String fileName;
-
-  private long ord;
-
   private String uuid;
+
+  private boolean isMain;
 
 }

@@ -8,7 +8,6 @@ const Layout = ({ children, }: { children: React.ReactNode; }) => {
 
     useEffect(() => { }, [isPending]);
 
-    console.log("루트",data)
     if (isPending) return <></>;
 
     return (

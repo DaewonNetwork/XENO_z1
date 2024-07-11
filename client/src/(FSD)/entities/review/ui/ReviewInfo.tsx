@@ -1,13 +1,21 @@
+import { ReviewInfoType } from "@/(FSD)/shareds/types/review/ReviewInfo.type";
 import React from "react";
 
-interface ReviewInfoType {
-    isReply?: boolean;
+
+interface ReviewInfoTypeProp {
+    review: ReviewInfoType
 }
 
-const ReviewInfo = ({ isReply = false } : ReviewInfoType) => {
+const ReviewInfo = ({ review }: ReviewInfoTypeProp) => {
+
+
     return (
         <div>
+            {review.text}
+            <img
+                src={`data:image/jpeg;base64,${review.reviewImage}`}
 
+            />
         </div>
     )
 }

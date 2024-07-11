@@ -27,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,11 +38,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 
-@RestController
+@Controller
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/api/review")
-public class ReviewController {
+@RequestMapping("/review")
+public class ReviewPublicController {
 
     private final ReviewService reviewService;
     private final ReviewImageRepository reviewImageRepository;
@@ -101,26 +102,26 @@ public class ReviewController {
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "리뷰 수정")
     public ResponseEntity<?> updateReview(
-                @RequestParam Long reviewId,
-                @RequestPart(name = "reviewDTO") String reviewDTOStr,
-                @RequestPart(name = "image", required = false) MultipartFile image) {
-            ReviewUpdateDTO reviewDTO;
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                reviewDTO = objectMapper.readValue(reviewDTOStr, ReviewUpdateDTO.class);
-            } catch (IOException e) {
-                log.error("Error parsing reviewDTO", e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
-            }
+            @RequestParam Long reviewId,
+            @RequestPart(name = "reviewDTO") String reviewDTOStr,
+            @RequestPart(name = "image", required = false) MultipartFile image) {
+        ReviewUpdateDTO reviewDTO;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            reviewDTO = objectMapper.readValue(reviewDTOStr, ReviewUpdateDTO.class);
+        } catch (IOException e) {
+            log.error("Error parsing reviewDTO", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
+        }
 
-            try {
-                String updatedReview = reviewService.updateReview(reviewId, reviewDTO, image);
-                return ResponseEntity.ok(updatedReview);
-            } catch (Exception e) {
-                log.error("Error updating review", e);
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating review", e);
-            }
+        try {
+            String updatedReview = reviewService.updateReview(reviewId, reviewDTO, image);
+            return ResponseEntity.ok(updatedReview);
+        } catch (Exception e) {
+            log.error("Error updating review", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating review", e);
+        }
     }
 
     // 리뷰 삭제
@@ -134,7 +135,7 @@ public class ReviewController {
             log.error("리뷰 삭제 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-}
+    }
 
     @Operation(summary = "리뷰 리스트")
     @GetMapping("/read/List")

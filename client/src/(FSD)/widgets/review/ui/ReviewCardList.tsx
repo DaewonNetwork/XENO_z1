@@ -4,49 +4,28 @@ import { useReviewCardListRead } from "@/(FSD)/entities/review/api/useReviewCard
 import ReviewCard from "@/(FSD)/entities/review/ui/ReviewCard";
 import styles from "@/(FSD)/shareds/styles/ReviewStyle.module.scss";
 import { ReviewCardType } from "@/(FSD)/shareds/types/review/ReviewCard.type";
-import React from "react";
+import React, { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 
 const ReviewCardList = () => {
-    const { data } = useReviewCardListRead();
+    const { reviewList, fetchNextPage, refetch, hasNextPage } = useReviewCardListRead();
+    const { ref, inView } = useInView();
 
-    const reviewCardList: ReviewCardType[] = data || [
-        {
-            reviewId: 0,
-            reviewImage: null,
-            productName: "asdasdasdd",
-            brandName: "asdasdasdsad",
-        },
-        {
-            reviewId: 1,
-            reviewImage: null,
-            productName: "asdasdasdd",
-            brandName: "asdasdasdsad",
-        },
-        {
-            reviewId: 2,
-            reviewImage: null,
-            productName: "asdasdasdd",
-            brandName: "asdasdasdsad",
-        },
-        {
-            reviewId: 3,
-            reviewImage: null,
-            productName: "asdasdasdd",
-            brandName: "asdasdasdsad",
-        },
-        {
-            reviewId: 4,
-            reviewImage: null,
-            productName: "asdasdasdd",
-            brandName: "asdasdasdsad",
-        },
-        {
-            reviewId: 5,
-            reviewImage: null,
-            productName: "asdasdasdd",
-            brandName: "asdasdasdsad",
+    console.log(hasNextPage)
+
+    useEffect(() => {
+        refetch();
+    }, [reviewList]);
+
+
+    useEffect(() => {
+        if (inView) {
+            console.log("asd")
+            fetchNextPage();
         }
-    ];
+    }, [inView]);
+
+    const reviewCardList: ReviewCardType[] = reviewList;
 
     if (!reviewCardList) return <></>;
 
@@ -59,6 +38,7 @@ const ReviewCardList = () => {
                     </React.Fragment>
                 ))
             }
+            <div ref={ref} />
         </div>
     )
 }

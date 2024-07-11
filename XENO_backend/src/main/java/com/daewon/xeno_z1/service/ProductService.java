@@ -4,6 +4,7 @@ package com.daewon.xeno_z1.service;
 import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.dto.*;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -13,6 +14,8 @@ import java.util.Map;
 public interface ProductService {
 
     ProductInfoDTO getProductInfo(Long productId) throws IOException;
+
+    ProductsInfoCardDTO getProductCardInfo(Long productColorId);
 
     ProductDetailImagesDTO getProductDetailImages(Long productColorId, int page, int size);
 
@@ -24,15 +27,15 @@ public interface ProductService {
 
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
-    Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();
-
     List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category);
 
-    List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
+    Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();
 
-//  Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
+//  List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
 
-    Products createProduct(ProductregisterDTO productregisterDTO, List<MultipartFile> productImage, List<MultipartFile> productDetailimage);
+    Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
 
-//    Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
+    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, List<MultipartFile> productDetailimage);
+
+//  Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductregisterDTO {
+public class ProductRegisterDTO {
 
     private long productId;
 
@@ -37,8 +37,5 @@ public class ProductregisterDTO {
 
     private List<String> size; // size 리스트
 
-    private List<byte[]> productImage;
-    
-    private List<byte[]> productDetailImages;
 
 }

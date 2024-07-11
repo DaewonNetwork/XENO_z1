@@ -1,34 +1,27 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Products;
-import com.daewon.xeno_z1.domain.Review;
 import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
 import com.daewon.xeno_z1.dto.ProductInfoDTO;
 import com.daewon.xeno_z1.dto.ProductOrderBarDTO;
 import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
-import com.daewon.xeno_z1.dto.ProductregisterDTO;
+import com.daewon.xeno_z1.dto.ProductRegisterDTO;
 import com.daewon.xeno_z1.dto.ProductsInfoCardDTO;
 import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
-import com.daewon.xeno_z1.dto.review.ReviewDTO;
 import com.daewon.xeno_z1.service.ProductService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -68,22 +61,20 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/top10-by-category")
-    public ResponseEntity<Map<String, List<ProductsStarRankListDTO>>> getTop10ProductsByCategoryRank() {
-        Map<String, List<ProductsStarRankListDTO>> result = productService.getTop10ProductsByCategoryRank();
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/top10-by-category/{category}")
+    @GetMapping("/rank/{category}")
     public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(
             @PathVariable String category) {
         List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
         return ResponseEntity.ok(result);
     }
 
+    // 랭크 50까지
     @GetMapping("/rank/page/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getTop50ProductsByCategory(@PathVariable String category) {
-        List<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category);
+    public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @PathVariable String category) {
+        Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
         return ResponseEntity.ok(result);
     }
 
@@ -143,9 +134,23 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "상품 카드")
+    @GetMapping("/read/info")
+    public ResponseEntity<ProductsInfoCardDTO> readProductCardInfo(@RequestParam Long productColorId) {
+
+        try {
+            ProductsInfoCardDTO product = productService.getProductCardInfo(productColorId);
+            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
+            return ResponseEntity.ok(product);
+        } catch (Exception e) {
+            // 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Products> registerProduct(
-            @RequestPart("productregisterDTO") ProductregisterDTO productregisterDTO,
+            @RequestPart("productregisterDTO") ProductRegisterDTO productregisterDTO,
             @RequestPart("productImage") List<MultipartFile> productImage,
             @RequestPart("productDetailimage") List<MultipartFile> productDetailimage) {
         try {

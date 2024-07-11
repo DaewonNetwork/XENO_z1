@@ -32,7 +32,7 @@ public class ProductsInfoCardDTO {
 
     private long likeIndex;
 
-    private long starAvg;
+    private double starAvg;
 
     private byte[] productImage;
 
