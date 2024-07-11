@@ -1,5 +1,6 @@
 package com.daewon.xeno_z1.service;
 
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
@@ -25,7 +26,7 @@ public interface ReviewService {
     void deleteReview(Long reviewId);
 
 
-    PageResponseDTO<ReviewCardDTO> readAllReviewImageList(PageRequestDTO pageRequestDTO);
+    PageInfinityResponseDTO<ReviewCardDTO> readAllReviewImageList(PageRequestDTO pageRequestDTO);
 
     PageResponseDTO<ReviewInfoDTO> readReviewList(Long productColorId,PageRequestDTO pageRequestDTO);
 

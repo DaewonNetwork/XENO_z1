@@ -1,6 +1,5 @@
 export interface ReviewCardType {
     reviewId: number;
-    reviewImage: Uint8Array | null;
-    productName: string;
-    brandName: string;
+    reviewImage: Uint8Array;
+   productColorId: number;
 };

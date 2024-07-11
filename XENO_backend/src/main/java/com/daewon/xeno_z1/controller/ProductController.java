@@ -135,6 +135,20 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "상품 카드")
+    @GetMapping("/read/info")
+    public ResponseEntity<ProductsInfoCardDTO> readProductCardInfo(@RequestParam Long productColorId) {
+
+        try {
+            ProductsInfoCardDTO product = productService.getProductCardInfo(productColorId);
+            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
+            return ResponseEntity.ok(product);
+        } catch (Exception e) {
+            // 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Products> registerProduct(
             @RequestPart("productregisterDTO") ProductRegisterDTO productregisterDTO,

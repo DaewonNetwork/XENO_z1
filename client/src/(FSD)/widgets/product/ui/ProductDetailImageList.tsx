@@ -14,7 +14,7 @@ const ProductDetailImageList = ({ productColorId }: Props) => {
     const [size, setSize] = useState(2);
     const [isOpen, setIsOpen] = useState(false);
     const [loaded, setLoaded] = useState(false);
-    const { data, isError, error, isPending, refetch } = useProductDetailImageListRead(Number(productColorId), size);
+    const { data, isError, error, isPending, refetch } = useProductDetailImageListRead(+productColorId, size);
 
     useEffect(() => {
         refetch();

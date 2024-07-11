@@ -230,6 +230,60 @@ public class ProductServiceImpl implements ProductService {
         return productInfoDTO;
     }
 
+
+    @Override
+    public ProductsInfoCardDTO getProductCardInfo(Long productColorId) {
+        ProductsColor productsColor = productsColorRepository.findById(productColorId).orElse(null);
+        ProductsLike productsLike = productsLikeRepository.findByProductColorId(productColorId).orElse(null);
+        ProductsStar productsStar = productsStarRepository.findByProductColorId(productColorId).orElse(null);
+        ProductsInfoCardDTO dto = ProductsInfoCardDTO.builder()
+                .productColorId(productColorId)
+                .name(productsColor.getProducts().getName())
+                .brandName(productsColor.getProducts().getBrandName())
+                .category(productsColor.getProducts().getCategory())
+                .categorySub(productsColor.getProducts().getCategorySub())
+                .isSale(productsColor.getProducts().getIsSale())
+                .price(productsColor.getProducts().getPrice())
+                .priceSale(productsColor.getProducts().getPriceSale())
+                .starAvg(productsStar != null ? productsStar.getStarAvg() : 0)
+                .likeIndex(productsLike != null ? productsLike.getLikeIndex() : 0)
+                .build();
+        ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productColorId);
+        if(productsImage != null) {
+        try {
+            byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
+            dto.setProductImage(imageData);
+        } catch (IOException e) {
+            // 예외 처리
+            e.printStackTrace();
+            dto.setProductImage(null);
+        }
+        } else{
+            dto.setProductImage(null);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String currentUserName = authentication.getName();
+
+        Users users = userRepository.findByEmail(currentUserName)
+                .orElse(null);
+
+        if(users != null) {
+            LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId,users.getUserId());
+            if(likeProducts != null) {
+                dto.setLike(likeProducts.isLike());
+            } else{
+                dto.setLike(false);
+            }
+        } else {
+            dto.setLike(false);
+        }
+
+
+        return dto;
+    }
+
     @Override
     public ProductDetailImagesDTO getProductDetailImages(Long productColorId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -483,31 +537,30 @@ public class ProductServiceImpl implements ProductService {
             ProductsInfoCardDTO dto = new ProductsInfoCardDTO();
             ProductsLike productsLike = productsLikeRepository
                     .findById(likeProducts.getProductsLike().getProductLikeId()).orElse(null);
-            // log.info(productsLike);
+
             ProductsColor productsColor = productsLike.getProductsColor();
-            log.info(productsColor);
+
             Products products = productsColor.getProducts();
-            log.info(products);
+
             ProductsStar productsStar = productsStarRepository.findByProductColorId(productsColor.getProductColorId())
                     .orElse(null);
-            log.info(productsStar);
+
 
             dto.setBrandName(products.getBrandName());
-            log.info(dto);
+
             dto.setName(products.getName());
-            log.info(dto);
+
             dto.setCategory(products.getCategory());
-            log.info(dto);
+
             dto.setCategorySub(products.getCategorySub());
-            log.info(dto);
+
             dto.setPrice(products.getPrice());
-            log.info(dto);
+
             dto.setPriceSale(products.getPriceSale());
-            log.info(dto);
+
             dto.setSale(products.getIsSale());
-            log.info(dto);
+
             dto.setLike(likeProducts.isLike());
-            log.info(dto);
             dto.setProductColorId(productsColor.getProductColorId());
             dto.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
             dto.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);

@@ -2,6 +2,7 @@ package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
 import com.daewon.xeno_z1.dto.order.OrdersDTO;
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
@@ -70,9 +71,9 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setReviewId(review.getReviewId());
         dto.setProductColorId(review.getOrder().getProductsColorSize().getProductsColor().getProductColorId());
         dto.setUserName(review.getUsers().getName());
-        dto.setProductName(review.getOrder().getProductsColorSize().getProductsColor().getProducts().getName());
-        dto.setColor(review.getOrder().getProductsColorSize().getProductsColor().getColor());
-        dto.setSize(review.getOrder().getProductsColorSize().getSize().name());
+//        dto.setProductName(review.getOrder().getProductsColorSize().getProductsColor().getProducts().getName());
+//        dto.setColor(review.getOrder().getProductsColorSize().getProductsColor().getColor());
+//        dto.setSize(review.getOrder().getProductsColorSize().getSize().name());
         dto.setText(review.getText());
         dto.setStar(review.getStar());
         int replyIndex = replyRepository.countByReviewId(review.getReviewId());
@@ -91,17 +92,17 @@ public class ReviewServiceImpl implements ReviewService {
             dto.setReviewImage(null);
         }
 
-        ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(review.getOrder().getProductsColorSize().getProductsColor().getProductColorId());
-        if (productsImage != null) {
-            try {
-                byte[] productImageData = getImage(productsImage.getUuid(), productsImage.getFileName());
-                dto.setProductImage(productImageData);
-            } catch (java.io.IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            dto.setReviewImage(null);
-        }
+//        ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(review.getOrder().getProductsColorSize().getProductsColor().getProductColorId());
+//        if (productsImage != null) {
+//            try {
+//                byte[] productImageData = getImage(productsImage.getUuid(), productsImage.getFileName());
+//                dto.setProductImage(productImageData);
+//            } catch (java.io.IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        } else {
+//            dto.setReviewImage(null);
+//        }
 
         return dto;
     }
@@ -255,19 +256,18 @@ public class ReviewServiceImpl implements ReviewService {
 }
 
     @Override
-    public PageResponseDTO<ReviewCardDTO> readAllReviewImageList(PageRequestDTO pageRequestDTO) {
+    public PageInfinityResponseDTO<ReviewCardDTO> readAllReviewImageList(PageRequestDTO pageRequestDTO) {
 
         Pageable pageable = PageRequest.of(
                 pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
                 pageRequestDTO.getSize(),
-                Sort.by("reviewId").ascending());
-        Page<Review> result = reviewRepository.findAll(pageable);
+                Sort.by("reviewImageId").ascending());
+        Page<ReviewImage> result = reviewImageRepository.findAll(pageable);
         List<ReviewCardDTO> dtoList = new ArrayList<>();
-        for (Review review : result.getContent()) {
+        for (ReviewImage reviewImage : result.getContent()) {
             ReviewCardDTO dto = new ReviewCardDTO();
-            dto.setReviewId(review.getReviewId());
-            dto.setProductColorId(review.getOrder().getProductsColorSize().getProductsColor().getProductColorId());
-            ReviewImage reviewImage = reviewImageRepository.findByReview(review);
+            dto.setReviewId(reviewImage.getReview().getReviewId());
+            dto.setProductColorId(reviewImage.getReview().getOrder().getProductsColorSize().getProductsColor().getProductColorId());
             byte[] image = null;
             if(reviewImage != null) {
                 try {
@@ -276,12 +276,11 @@ public class ReviewServiceImpl implements ReviewService {
                     throw new RuntimeException(e);
                 }
                 dto.setReviewImage(image);
-            } else {
-                dto.setReviewImage(null);
             }
+
             dtoList.add(dto);
         }
-      return PageResponseDTO.<ReviewCardDTO>withAll()
+      return PageInfinityResponseDTO.<ReviewCardDTO>withAll()
               .pageRequestDTO(pageRequestDTO)
               .dtoList(dtoList)
               .totalIndex((int) result.getTotalElements())

@@ -1,6 +1,7 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.dto.order.OrdersDTO;
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
@@ -84,7 +85,7 @@ public class ReviewController {
     }
 
     @Operation(summary = "리뷰 조회")
-    @GetMapping("/read")
+    @GetMapping("/info")
     public ResponseEntity<ReviewInfoDTO> readReview(@RequestParam Long reviewId) {
         try {
             ReviewInfoDTO reviewInfoDTO = reviewService.readReviewInfo(reviewId);
@@ -133,7 +134,7 @@ public class ReviewController {
             log.error("리뷰 삭제 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-g    }
+}
 
     @Operation(summary = "리뷰 리스트")
     @GetMapping("/read/List")
@@ -144,8 +145,8 @@ g    }
 
     @GetMapping("/page/card")
     @Operation(summary = "제품의 모든 리뷰 이미지 가져오기")
-    public ResponseEntity<PageResponseDTO<ReviewCardDTO>> getAllReviewList(PageRequestDTO pageRequestDTO) {
-        PageResponseDTO<ReviewCardDTO> reviewList = reviewService.readAllReviewImageList(pageRequestDTO);
+    public ResponseEntity<PageInfinityResponseDTO<ReviewCardDTO>> getAllReviewList(PageRequestDTO pageRequestDTO) {
+        PageInfinityResponseDTO<ReviewCardDTO> reviewList = reviewService.readAllReviewImageList(pageRequestDTO);
         return ResponseEntity.ok(reviewList);
     }
 }

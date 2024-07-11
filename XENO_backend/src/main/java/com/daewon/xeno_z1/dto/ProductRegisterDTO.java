@@ -37,8 +37,5 @@ public class ProductRegisterDTO {
 
     private List<String> size; // size 리스트
 
-    private List<byte[]> productImage;
-    
-    private List<byte[]> productDetailImages;
 
 }
