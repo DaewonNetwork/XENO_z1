@@ -17,28 +17,24 @@ public class ProductregisterDTO {
 
     private String brand_name;
 
-    private String category;
+    private String category; // 카테고리
 
     private String category_sub;
 
-    private String name;
+    private String name; // 상품명
     
-    private Long price;
+    private Long price; // 상품 가격
 
-    private boolean is_sale;
+    private boolean is_sale; // 세일 여부
 
-    private Long price_sale;
+    private Long price_sale; // 세일 가격
 
-    private String products_number;
+    private String products_number; // 품번
 
     private String season;
 
     private List<String> colors; // 색상
 
     private List<String> size; // size 리스트
-
-    private List<byte[]> productImage;
-    
-    private List<byte[]> productDetailImages;
 
 }

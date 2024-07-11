@@ -70,19 +70,19 @@ public class ProductController {
     }
 
     @GetMapping("/rank/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(
+    public ResponseEntity<List<ProductsStarRankListDTO>> getranktop10(
             @PathVariable String category) {
-        List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
+        List<ProductsStarRankListDTO> result = productService.getranktop10(category);
         return ResponseEntity.ok(result);
     }
 
     // 랭크 50까지
     @GetMapping("/rank/page/{category}")
-    public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
+    public ResponseEntity<Page<ProductsStarRankListDTO>> getrankTop50(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @PathVariable String category) {
-        Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
+        Page<ProductsStarRankListDTO> result = productService.getrankTop50(category, page, size);
         return ResponseEntity.ok(result);
     }
 
@@ -141,20 +141,4 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Products> registerProduct(
-            @RequestPart("productregisterDTO") ProductregisterDTO productregisterDTO,
-            @RequestPart("productImage") List<MultipartFile> productImage,
-            @RequestPart("productDetailimage") List<MultipartFile> productDetailimage) {
-        try {
-            Products createdProduct = productService.createProduct(productregisterDTO, productImage,
-                    productDetailimage);
-            return ResponseEntity.ok(createdProduct);
-        } catch (Exception e) {
-            log.error("상품 등록 중 오류 발생: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
 }

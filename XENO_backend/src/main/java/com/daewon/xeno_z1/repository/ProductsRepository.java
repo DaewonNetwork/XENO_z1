@@ -22,13 +22,16 @@ public interface ProductsRepository extends JpaRepository<Products, Long>{
     @Query("SELECT p FROM Products p WHERE p.category = :category and p.categorySub = :categorySub")
     List<Products> findByCategorySub(String category,String categorySub);
 
-    @Query("SELECT p FROM Products p JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
-    List<Products> findTop10ProductsByCategory(@Param("category") String category);
+//    @Query("SELECT p FROM Products p JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
+//    List<Products> findTop10ProductsByCategory(@Param("category") String category);
 
 //   @Query("SELECT p FROM Products p JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
 //   List<Products> findTop50ProductsByCategory(@Param("category") String category);
 
-     @Query("SELECT p FROM Products p LEFT JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
-     Page<Products> findByCategoryOrderByStarAvgDesc(String category, Pageable pageable);
+    @Query("SELECT p FROM Products p WHERE p.category = :category ORDER BY p.starAvg DESC")
+    List<Products> findTop10ByCategoryByStarAvgDesc(@Param("category") String category);
+
+    @Query("SELECT p FROM Products p LEFT JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
+    Page<Products> findByCategoryOrderByStarAvgDesc(String category, Pageable pageable);
 
 }

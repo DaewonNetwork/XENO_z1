@@ -25,13 +25,7 @@ public interface ProductService {
 
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
-    List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category);
+    List<ProductsStarRankListDTO> getranktop10(String category);
 
-//  List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
-
-    Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
-
-    Products createProduct(ProductregisterDTO productregisterDTO, List<MultipartFile> productImage, List<MultipartFile> productDetailimage);
-
-//  Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
+    Page<ProductsStarRankListDTO> getrankTop50(String category, int page, int size);
 }

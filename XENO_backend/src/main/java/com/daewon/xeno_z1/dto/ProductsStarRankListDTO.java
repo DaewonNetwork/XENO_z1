@@ -11,14 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProductsStarRankListDTO {
 
-    private Long productId;
-    private String productName;
+    private Long productColorId;
     private String brandName;
     private Long price;
-    private Long priceSale;
     private boolean isSale;
-    private double starAvg;
-    private Long reviewCount;
+    private Long priceSale;
     private String category;
     private String categorySub;
     private byte[] productImage;
