@@ -25,9 +25,14 @@
 
 .product_create_form {
     display: block;
+    padding-top: 20px;
 
-    &>div {
+    &>* {
         margin-bottom: 20px;
+
+        // &:nth-last-child(2) {
+        //     margin-bottom: 0;
+        // }
 
         &:last-child {
             margin-bottom: 0;

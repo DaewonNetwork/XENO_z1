@@ -1,14 +1,13 @@
-import { Button } from "@nextui-org/button";
-import React, { useRef, useState } from "react";
+import { Button, ButtonProps } from "@nextui-org/button";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import styles from "@/(FSD)/shareds/styles/ComponentStyle.module.scss";
 import Image from "next/image";
 import IconShared from "./IconShared";
 
-import type { ButtonProps } from "@nextui-org/button";
-
 interface FileInputSharedProps extends ButtonProps {
-    setFile: any;
     inputId: string;
+    setFile: any;
+    children?: ReactNode;
 }
 
 const FileInputShared = ({ inputId, children, setFile, ...props }: FileInputSharedProps) => {
