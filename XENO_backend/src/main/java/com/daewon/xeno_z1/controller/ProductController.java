@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -55,10 +57,24 @@ public class ProductController {
             @RequestParam("colors") List<String> colors,
             @RequestParam("size") List<String> size,
             @RequestParam("stock") List<Long> stock,
-            @RequestParam("productImages") List<MultipartFile> productImages,
-            @RequestParam("productDetailImages") List<MultipartFile> productDetailImages
+            @RequestParam("productImages") MultipartFile[] productImages,
+            @RequestParam("productDetailImages") MultipartFile[] productDetailImages
     ) {
+
         try {
+            if (productImages == null || productImages.length == 0) {
+                throw new IllegalArgumentException("Product images are required");
+            }
+            if (productDetailImages == null || productDetailImages.length == 0) {
+                throw new IllegalArgumentException("Product detail images are required");
+            }
+
+            List<List<MultipartFile>> productImagesListConverted = new ArrayList<>();
+            List<List<MultipartFile>> productDetailImagesListConverted = new ArrayList<>();
+
+            productImagesListConverted.add(Arrays.asList(productImages));
+            productDetailImagesListConverted.add(Arrays.asList(productDetailImages));
+
             ProductCreateDTO productCreateDTO = ProductCreateDTO.builder()
                     .productName(productName)
                     .brandName(brandName)
@@ -71,17 +87,81 @@ public class ProductController {
                     .colors(colors)
                     .size(size)
                     .stock(stock)
-                    .productImages(productImages)
-                    .productDetailImages(productDetailImages)
+                    .productImages(productImagesListConverted)
+                    .productDetailImages(productDetailImagesListConverted)
                     .build();
 
-            Products createdProduct = productService.createProduct(productCreateDTO, uploadPath);
-            return ResponseEntity.status(201).body(createdProduct);
+            Products createdProduct = productService.createProduct(productCreateDTO, "uploadPath");
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("제품을 등록하는 도중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
+
+
+//        try {
+//            List<List<MultipartFile>> productImagesListConverted = new ArrayList<>();
+//            List<List<MultipartFile>> productDetailImagesListConverted = new ArrayList<>();
+//
+//            if (productImages != null) {
+//                for (MultipartFile[] mainImages : productImages) {
+//                    productImagesListConverted.add(Arrays.asList(mainImages));
+//                }
+//            }
+//
+//            if (productDetailImages != null) {
+//                for (MultipartFile[] detailImages : productDetailImages) {
+//                    productDetailImagesListConverted.add(Arrays.asList(detailImages));
+//                }
+//            }
+//
+//            ProductCreateDTO productCreateDTO = ProductCreateDTO.builder()
+//                    .productName(productName)
+//                    .brandName(brandName)
+//                    .price(price)
+//                    .isSale(isSale)
+//                    .priceSale(priceSale)
+//                    .category(category)
+//                    .categorySub(categorySub)
+//                    .season(season)
+//                    .colors(colors)
+//                    .size(size)
+//                    .stock(stock)
+//                    .productImages(productImagesListConverted)
+//                    .productDetailImages(productDetailImagesListConverted)
+//                    .build();
+//
+//            Products createdProduct = productService.createProduct(productCreateDTO, "uploadPath");
+//            return ResponseEntity.status(201).body(createdProduct);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body("상품 등록 실패 : " + e.getMessage());
+//        }
+
+//        try {
+//            ProductCreateDTO productCreateDTO = ProductCreateDTO.builder()
+//                    .productName(productName)
+//                    .brandName(brandName)
+//                    .price(price)
+//                    .isSale(isSale)
+//                    .priceSale(priceSale)
+//                    .category(category)
+//                    .categorySub(categorySub)
+//                    .season(season)
+//                    .colors(colors)
+//                    .size(size)
+//                    .stock(stock)
+//                    .productImages(productImages)
+//                    .productDetailImages(productDetailImages)
+//                    .build();
+//
+//            Products createdProduct = productService.createProduct(productCreateDTO, uploadPath);
+//            return ResponseEntity.status(201).body(createdProduct);
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body("제품을 등록하는 도중 오류가 발생했습니다.");
+//        }
     }
 
     @GetMapping("/read")

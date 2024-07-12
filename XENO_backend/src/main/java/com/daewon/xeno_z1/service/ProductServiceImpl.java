@@ -86,75 +86,6 @@ public class ProductServiceImpl implements ProductService {
         // 제품을 먼저 저장하여 productId를 생성함
         product = productsRepository.save(product);
 
-        // 제품 대표 이미지 저장
-        List<ProductsImage> productsImages = new ArrayList<>();
-        if (productCreateDTO.getProductImages() != null && !productCreateDTO.getProductImages().isEmpty()) {
-
-            for (int i = 0; i < productCreateDTO.getProductImages().size(); i++) {
-                MultipartFile mainImageFile = productCreateDTO.getProductImages().get(i);
-
-                if (mainImageFile != null && !mainImageFile.isEmpty()) {
-                    String originalMainImageName = mainImageFile.getOriginalFilename();
-                    String uuid = UUID.randomUUID().toString();
-                    Path savePath = Paths.get(uploadPath, uuid + "_" + originalMainImageName);
-
-                    try {
-                        mainImageFile.transferTo(savePath.toFile());
-
-                        // ProductsImage 엔티티 생성 및 저장
-                        ProductsImage productsImage = ProductsImage.builder()
-                                .uuid(uuid)
-                                .fileName(originalMainImageName)
-                                .ord(i) // 현재 루프의 인덱스를 순서로 사용함
-                                .build();
-
-                        productsImages.add(productsImage);
-                    } catch (IOException e) {
-                        log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);
-                        throw new RuntimeException("File processing error", e);
-                    }
-                }
-            }
-        }
-
-        // 제품 상세 이미지 저장
-        List<ProductsDetailImage> productsDetailImages = new ArrayList<>();
-        if (productCreateDTO.getProductDetailImages() != null && !productCreateDTO.getProductDetailImages().isEmpty()) {
-
-            for (int i = 0; i < productCreateDTO.getProductDetailImages().size(); i++) {
-                MultipartFile detailsImageFile = productCreateDTO.getProductDetailImages().get(i);
-
-                if (detailsImageFile != null && !detailsImageFile.isEmpty()) {
-                    String originalDetailsImageName = detailsImageFile.getOriginalFilename();
-                    String uuid = UUID.randomUUID().toString();
-                    Path savePath = Paths.get(uploadPath, uuid + "_" + originalDetailsImageName);
-
-                    try {
-                        detailsImageFile.transferTo(savePath.toFile());
-
-                        // ProductsImage 엔티티 생성 및 저장
-                        ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
-                                .uuid(uuid)
-                                .fileName(originalDetailsImageName)
-                                .ord(i) // 현재 루프의 인덱스를 순서로 사용함
-                                .build();
-
-                        productsDetailImages.add(productsDetailImage);
-                    } catch (IOException e) {
-                        log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);
-                        throw new RuntimeException("File processing error", e);
-                    }
-                }
-            }
-        }
-
-        // 색상, 사이즈, 재고 설정
-        /*
-           ProductsColor가 먼저 저장되어야 ProductsColorSize에서 참조가 가능하기 떄문에
-           color를 먼저 DB에 저장하고
-           마찬가지로 ProductsColorSIze가 저장되어야 ProductsStock에서 참조할 수 있으므로
-           color -> size -> stock 순으로 순차적으로 DB에 저장해줌
-         */
         List<ProductsColor> productsColors = new ArrayList<>();
         for(int i = 0; i < productCreateDTO.getColors().size(); i++ ) {
             // 상품 색상 설정
@@ -166,11 +97,49 @@ public class ProductServiceImpl implements ProductService {
             color = productsColorRepository.save(color);
             productsColors.add(color);
 
-            for(ProductsImage mainImage : productsImages) {
-                mainImage.setProductsColor(color);
+            List<ProductsImage> productsImageList = new ArrayList<>();
+            List<ProductsDetailImage> productsDetailImageList = new ArrayList<>();
+
+        // 해당 색상에 대한 대표 이미지 저장
+        if(i < productCreateDTO.getProductImages().size()) {
+            List<MultipartFile> productsImages = productCreateDTO.getProductImages().get(i);
+            for (int j = 0; j < productCreateDTO.getProductImages().size(); j++) {
+                MultipartFile mainImageFile = productsImages.get(j);
+                if (mainImageFile != null && !mainImageFile.isEmpty()) {
+                    ProductsImage productsImage = saveProductMainImages(mainImageFile, color, j, uploadPath);
+                    productsImageList.add(productsImage);
+                }
             }
-            for(ProductsDetailImage detailImage : productsDetailImages) {
+        }
+
+        // 해당 색상에 대한 상세 이미지 저장
+            if(i < productCreateDTO.getProductDetailImages().size()) {
+                List<MultipartFile> productsDetailImages = productCreateDTO.getProductDetailImages().get(i);
+                for (int k = 0; k <productCreateDTO.getProductDetailImages().size(); k++) {
+                    MultipartFile detailImageFile = productsDetailImages.get(k);
+                    if (detailImageFile != null && !detailImageFile.isEmpty()) {
+                        ProductsDetailImage productsDetailImage = saveProductDetailImages(detailImageFile, color, k, uploadPath);
+                        productsDetailImageList.add(productsDetailImage);
+                    }
+                }
+            }
+
+
+        // 색상, 사이즈, 재고 설정
+        /*
+           ProductsColor가 먼저 저장되어야 ProductsColorSize에서 참조가 가능하기 떄문에
+           color를 먼저 DB에 저장하고
+           마찬가지로 ProductsColorSIze가 저장되어야 ProductsStock에서 참조할 수 있으므로
+           color -> size -> stock 순으로 순차적으로 DB에 저장해줌
+         */
+
+            for(ProductsImage mainImage : productsImageList) {
+                mainImage.setProductsColor(color);
+                productsImageRepository.save(mainImage);
+            }
+            for(ProductsDetailImage detailImage : productsDetailImageList) {
                 detailImage.setProductsColor(color);
+                productsDetailImageRepository.save(detailImage);
             }
 
             // 상품 색상에 해당하는 사이즈 설정
@@ -189,9 +158,6 @@ public class ProductServiceImpl implements ProductService {
 
             productsStockRepository.save(stock);
         }
-
-        productsImageRepository.saveAll(productsImages);
-        productsDetailImageRepository.saveAll(productsDetailImages);
 
         return product;
     }
@@ -545,6 +511,50 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return productsInfoByCategoryDTOList;
+    }
+
+    // 대표 이미지 설정
+    private ProductsImage saveProductMainImages(MultipartFile mainImageFile, ProductsColor productsColor, int ord, String uploadPath) {
+        try {
+            String originalMainImageName = mainImageFile.getOriginalFilename();
+            String uuid = UUID.randomUUID().toString();
+            Path savePath = Paths.get(uploadPath, uuid + "_" + originalMainImageName);
+            mainImageFile.transferTo(savePath.toFile());
+
+            ProductsImage productsImage = ProductsImage.builder()
+                    .uuid(uuid)
+                    .fileName(originalMainImageName)
+                    .ord(ord)
+                    .productsColor(productsColor)
+                    .build();
+
+            return productsImage;
+        } catch (IOException e) {
+            log.error("파일을 저장하는 도중 오류가 발생했습니다.");
+            throw new RuntimeException("대표 이미지 파일 처리 에러 발생", e);
+        }
+    }
+
+    // 상세 이미지 설정
+    private ProductsDetailImage saveProductDetailImages(MultipartFile detailImageFile, ProductsColor productsColor, int ord, String uploadPath) {
+        try {
+            String originalDetailsImageName = detailImageFile.getOriginalFilename();
+            String uuid = UUID.randomUUID().toString();
+            Path savePath = Paths.get(uploadPath, uuid + "_" + originalDetailsImageName);
+            detailImageFile.transferTo(savePath.toFile());
+
+            ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
+                    .uuid(uuid)
+                    .fileName(originalDetailsImageName)
+                    .ord(ord)
+                    .productsColor(productsColor)
+                    .build();
+
+            return productsDetailImage;
+        } catch (IOException e) {
+            log.error("파일을 저장하는 도중 오류 발생");
+            throw new RuntimeException("상세 이미지 파일 처리 에러 발생", e);
+        }
     }
 
 

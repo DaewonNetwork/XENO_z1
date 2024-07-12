@@ -23,8 +23,8 @@ public class ProductCreateDTO {
     private String categorySub;
     private String season;
 
-    private List<MultipartFile> productImages;
-    private List<MultipartFile> productDetailImages;
+    private List<List<MultipartFile>> productImages;
+    private List<List<MultipartFile>> productDetailImages;
 
     private List<String> colors; // 색상
     private List<String> size; // size 리스트
