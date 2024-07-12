@@ -3,26 +3,22 @@ package com.daewon.xeno_z1.controller;
 import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.dto.*;
 
-import com.daewon.xeno_z1.dto.product.ProductCreateDTO;
+import com.daewon.xeno_z1.dto.product.ProductRegisterDTO;
 import com.daewon.xeno_z1.service.ProductService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -36,133 +32,6 @@ public class ProductController {
 
     @Value("${org.daewon.upload.path}")
     private String uploadPath;
-
-
-    // 상품등록
-    /*
-        Content-Type : multipart/form-data
-
-
-     */
-    @PostMapping
-    public ResponseEntity<?> createProduct(
-            @RequestParam("productName") String productName,
-            @RequestParam("brandName") String brandName,
-            @RequestParam("price") Long price,
-            @RequestParam("isSale") boolean isSale,
-            @RequestParam("priceSale") Long priceSale,
-            @RequestParam("category") String category,
-            @RequestParam("categorySub") String categorySub,
-            @RequestParam("season") String season,
-            @RequestParam("colors") List<String> colors,
-            @RequestParam("size") List<String> size,
-            @RequestParam("stock") List<Long> stock,
-            @RequestParam("productImages") MultipartFile[] productImages,
-            @RequestParam("productDetailImages") MultipartFile[] productDetailImages
-    ) {
-
-        try {
-            if (productImages == null || productImages.length == 0) {
-                throw new IllegalArgumentException("Product images are required");
-            }
-            if (productDetailImages == null || productDetailImages.length == 0) {
-                throw new IllegalArgumentException("Product detail images are required");
-            }
-
-            List<List<MultipartFile>> productImagesListConverted = new ArrayList<>();
-            List<List<MultipartFile>> productDetailImagesListConverted = new ArrayList<>();
-
-            productImagesListConverted.add(Arrays.asList(productImages));
-            productDetailImagesListConverted.add(Arrays.asList(productDetailImages));
-
-            ProductCreateDTO productCreateDTO = ProductCreateDTO.builder()
-                    .productName(productName)
-                    .brandName(brandName)
-                    .price(price)
-                    .isSale(isSale)
-                    .priceSale(priceSale)
-                    .category(category)
-                    .categorySub(categorySub)
-                    .season(season)
-                    .colors(colors)
-                    .size(size)
-                    .stock(stock)
-                    .productImages(productImagesListConverted)
-                    .productDetailImages(productDetailImagesListConverted)
-                    .build();
-
-            Products createdProduct = productService.createProduct(productCreateDTO, "uploadPath");
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-        }
-
-
-//        try {
-//            List<List<MultipartFile>> productImagesListConverted = new ArrayList<>();
-//            List<List<MultipartFile>> productDetailImagesListConverted = new ArrayList<>();
-//
-//            if (productImages != null) {
-//                for (MultipartFile[] mainImages : productImages) {
-//                    productImagesListConverted.add(Arrays.asList(mainImages));
-//                }
-//            }
-//
-//            if (productDetailImages != null) {
-//                for (MultipartFile[] detailImages : productDetailImages) {
-//                    productDetailImagesListConverted.add(Arrays.asList(detailImages));
-//                }
-//            }
-//
-//            ProductCreateDTO productCreateDTO = ProductCreateDTO.builder()
-//                    .productName(productName)
-//                    .brandName(brandName)
-//                    .price(price)
-//                    .isSale(isSale)
-//                    .priceSale(priceSale)
-//                    .category(category)
-//                    .categorySub(categorySub)
-//                    .season(season)
-//                    .colors(colors)
-//                    .size(size)
-//                    .stock(stock)
-//                    .productImages(productImagesListConverted)
-//                    .productDetailImages(productDetailImagesListConverted)
-//                    .build();
-//
-//            Products createdProduct = productService.createProduct(productCreateDTO, "uploadPath");
-//            return ResponseEntity.status(201).body(createdProduct);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body("상품 등록 실패 : " + e.getMessage());
-//        }
-
-//        try {
-//            ProductCreateDTO productCreateDTO = ProductCreateDTO.builder()
-//                    .productName(productName)
-//                    .brandName(brandName)
-//                    .price(price)
-//                    .isSale(isSale)
-//                    .priceSale(priceSale)
-//                    .category(category)
-//                    .categorySub(categorySub)
-//                    .season(season)
-//                    .colors(colors)
-//                    .size(size)
-//                    .stock(stock)
-//                    .productImages(productImages)
-//                    .productDetailImages(productDetailImages)
-//                    .build();
-//
-//            Products createdProduct = productService.createProduct(productCreateDTO, uploadPath);
-//            return ResponseEntity.status(201).body(createdProduct);
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body("제품을 등록하는 도중 오류가 발생했습니다.");
-//        }
-    }
 
     @GetMapping("/read")
     public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productId) throws IOException {
@@ -246,9 +115,53 @@ public class ProductController {
         }
     }
 
+    /*
+        createProduct 값 넘겨주는 방식
+        {
+              "brandName": "Brand A",
+              "category": "Clothing",
+              "categorySub": "T-Shirts",
+              "name": "Summer T-Shirt",
+              "price": 50000,
+              "sale": true,
+              "priceSale": 45000,
+              "productsNumber": "123456789",
+              "season": "Summer",
+              "colors": "Red",
+              "size": [
+                {"size": "S", "stock": 100},
+                {"size": "M", "stock": 150},
+                {"size": "L", "stock": 120}
+              ]
+        }
+    */
 
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createProduct(
+            @RequestPart("productCreateDTO") String productRegisterDTOStr,
+            @RequestPart("productImage") List<MultipartFile> productImage,
+            @RequestPart("productDetailImage") MultipartFile productDetailImage) {
 
+        ProductRegisterDTO productDTO;
 
-
-
+        try {
+            // JSON 문자열을 ReviewDTO 객체로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            productDTO = objectMapper.readValue(productRegisterDTOStr, ProductRegisterDTO.class);
+            log.info(productDTO);
+        } catch (IOException e) {
+            // JSON 변환 중 오류가 발생하면 로그를 남기고 예외 발생
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
+        }
+        try {
+            Products createdProduct = productService.createProduct(productDTO, productImage != null && !productImage.isEmpty() ? productImage : null,
+                    productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
+            );
+            return ResponseEntity.ok("성공");
+        } catch (Exception e) {
+            log.error("상품 등록 중 오류 발생: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
