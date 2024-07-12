@@ -19,7 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,130 +35,151 @@ public class ReplyServiceImpl implements ReplyService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
 
-    // @Override
-    // public Long createReply(ReplyDTO replyDTO) {
-    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //     String currentUserName = authentication.getName();
-
-    //     Users user = userRepository.findByEmail(currentUserName)
-    //             .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
-
-    //     Review review = reviewRepository.findById(replyDTO.getReviewId())
-    //             .orElseThrow(() -> new ReviewNotFoundException());
-
-    //     Reply reply = Reply.builder()
-    //             .users(user)
-    //             .review(review)
-    //             .text(replyDTO.getReplyText())
-    //             .build();
-
-    //     Reply savedReply = replyRepository.save(reply);
-    //     review.setReplyIndex(review.getReplyIndex() + 1);
-    //     reviewRepository.save(review);
-
-    //     return savedReply.getReplyId();
-    // }
-
     @Override
-    public Long createReply(ReplyDTO replyDTO) {
-        Users user = userRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("기본 사용자를 찾을 수 없음"));
+    public Long createReply(ReplyDTO replyDTO) { // 답글 등록
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Review review = reviewRepository.findById(replyDTO.getReviewId())
-                .orElseThrow(() -> new ReviewNotFoundException());
+        String currentUserName = authentication.getName();
 
-        Reply reply = Reply.builder()
-                .users(user)
-                .review(review)
-                .text(replyDTO.getReplyText())
-                .build();
+        Users users = userRepository.findByEmail(currentUserName)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
-        Reply savedReply = replyRepository.save(reply);
+        Reply reply = modelMapper.map(replyDTO, Reply.class);
+        reply.setReview(replyDTO.getReplyId());
+        reply.setUsers(users.getUserId());
+
+        Long replyId = replyRepository.save(reply).getReplyId();
+        Long reviewId = replyDTO.getReviewId();
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException());
         review.setReplyIndex(review.getReplyIndex() + 1);
-        reviewRepository.save(review);
 
-        return savedReply.getReplyId();
+        return replyId;
     }
 
     @Override
     public ReplyReadDTO readReply(Long replyId) {
-        Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없음"));
-
+        Optional<Reply> replyOptional = replyRepository.findById(replyId);
+        Reply reply = replyOptional.orElseThrow();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
-        Users currentUser = userRepository.findByEmail(currentUserName).orElse(null);
+        log.info("이름:"+currentUserName);
+        Users users = userRepository.findByEmail(currentUserName).orElse(null);
 
-        return convertToReplyReadDTO(reply, currentUser);
+        if(users != null) {
+            ReplyReadDTO replyReadDTO = ReplyReadDTO.builder()
+                    .replyId(reply.getReplyId())
+                    .userName(reply.getUsers().getName())
+                    .replyText(reply.getText())
+                    .createAt(reply.getCreateAt() != null ? reply.getCreateAt().format(formatter) : null)
+                    .updateAt(reply.getUpdateAt() != null ? reply.getUpdateAt().format(formatter) : null)
+                    .isReply(reply.getUsers().getUserId() == users.getUserId())
+                    .build();
+
+            return replyReadDTO;
+        } else {
+            ReplyReadDTO replyReadDTO = ReplyReadDTO.builder()
+                    .replyId(reply.getReplyId())
+                    .userName(reply.getUsers().getName())
+                    .replyText(reply.getText())
+                    .createAt(reply.getCreateAt() != null ? reply.getCreateAt().format(formatter) : null)
+                    .updateAt(reply.getUpdateAt() != null ? reply.getUpdateAt().format(formatter) : null)
+                    .isReply(false)
+                    .build();
+
+            return replyReadDTO;
+        }
     }
 
     @Override
     public List<ReplyReadDTO> readReplys(Long reviewId) {
         List<Reply> replies = replyRepository.listOfReview(reviewId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
-        Users currentUser = userRepository.findByEmail(currentUserName).orElse(null);
-
-        return replies.stream()
-                .map(reply -> convertToReplyReadDTO(reply, currentUser))
-                .collect(Collectors.toList());
+        log.info("이름:" + currentUserName);
+        Users users = userRepository.findByEmail(currentUserName)
+                .orElse(null);
+        List<ReplyReadDTO> replyDTOList = new ArrayList<>();
+        if (users != null) {
+            replyDTOList = replies.stream()
+                    .map(reply -> ReplyReadDTO.builder()
+                            .replyId(reply.getReplyId())
+                            .userName(reply.getUsers().getName())
+                            .replyText(reply.getText())
+                            .createAt(reply.getCreateAt() != null ? reply.getCreateAt().format(formatter) : null)
+                            .updateAt(reply.getUpdateAt() != null ? reply.getUpdateAt().format(formatter) : null)
+                            .isReply(reply.getUsers().getUserId() == users.getUserId())
+                            .build())
+                    .collect(Collectors.toList());
+        } else {
+            replyDTOList = replies.stream()
+                    .map(reply -> ReplyReadDTO.builder()
+                            .replyId(reply.getReplyId())
+                            .userName(reply.getUsers().getName())
+                            .replyText(reply.getText())
+                            .createAt(reply.getCreateAt() != null ? reply.getCreateAt().format(formatter) : null)
+                            .updateAt(reply.getUpdateAt() != null ? reply.getUpdateAt().format(formatter) : null)
+                            .isReply(false)
+                            .build())
+                    .collect(Collectors.toList());
+        }
+        return replyDTOList;
     }
 
     @Override
-    public void updateReply(ReplyUpdateDTO replyUpdateDTO) {
-        Reply reply = replyRepository.findById(replyUpdateDTO.getReplyId())
-                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없음"));
+    public void updateReply(ReplyUpdateDTO replyUpdateDTO) { // 댓글 수정
+        Optional<Reply> replyOptional = replyRepository.findById(replyUpdateDTO.getReplyId());
+        Reply reply = replyOptional.orElseThrow();
 
-        // userId를 1로 가정
-        Long assumedUserId = 1L;
+        reply.setReplyText(replyUpdateDTO.getReplyText()); // 리뷰 내용 수정
 
-        if (reply.getUsers().getUserId() != assumedUserId) {
-            throw new RuntimeException("댓글을 수정할 권한이 없음.");
-        }
-
-        reply.setText(replyUpdateDTO.getReplyText());
         replyRepository.save(reply);
     }
 
     @Override
     public void deleteReply(Long replyId) {
-        Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없음"));
-        
-        // userId를 1로 가정
-        Long assumedUserId = 1L;
-
-        if (reply.getUsers().getUserId() != assumedUserId) {
-            throw new RuntimeException("댓글을 삭제할 권한이 없습니다.");
-        }
-
-        Review review = reply.getReview();
+        Reply reply = replyRepository.findById(replyId).orElseThrow();
+        Long reviewId = reply.getReview().getReviewId();
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException());
         review.setReplyIndex(review.getReplyIndex() - 1);
-
         replyRepository.deleteById(replyId);
     }
 
+    // 사용자 ID로 댓글 목록을 조회하는 메서드
     @Override
     public List<ReplyReadDTO> getRepliesByUserId(Long userId) {
         List<Reply> replies = replyRepository.findByUserId(userId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
-        Users currentUser = userRepository.findByEmail(currentUserName).orElse(null);
-
-        return replies.stream()
-                .map(reply -> convertToReplyReadDTO(reply, currentUser))
-                .collect(Collectors.toList());
-    }
-
-    private ReplyReadDTO convertToReplyReadDTO(Reply reply, Users currentUser) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
-        return ReplyReadDTO.builder()
-                .replyId(reply.getReplyId())
-                .userName(reply.getUsers().getName())
-                .replyText(reply.getText())
-                .createAt(reply.getCreateAt() != null ? reply.getCreateAt().format(formatter) : null)
-                .updateAt(reply.getUpdateAt() != null ? reply.getUpdateAt().format(formatter) : null)
-                .isReply(currentUser != null && reply.getUsers().getUserId() == currentUser.getUserId())
-                .build();
+        log.info("이름:" + currentUserName);
+        Users users = userRepository.findByEmail(currentUserName)
+                .orElse(null);
+        List<ReplyReadDTO> replyDTOList = new ArrayList<>();
+        if (users != null) {
+            replies.stream()
+                    .map(reply -> ReplyReadDTO.builder()
+                            .replyId(reply.getReplyId())
+                            .userName(reply.getUsers().getName())
+                            .replyText(reply.getText())
+                            .createAt(reply.getCreateAt() != null ? reply.getCreateAt().format(formatter) : null)
+                            .updateAt(reply.getUpdateAt() != null ? reply.getUpdateAt().format(formatter) : null)
+                            .isReply(reply.getUsers().getUserId() == users.getUserId())
+                            .build())
+                    .collect(Collectors.toList());
+        } else {
+            replies.stream()
+                    .map(reply -> ReplyReadDTO.builder()
+                            .replyId(reply.getReplyId())
+                            .userName(reply.getUsers().getName())
+                            .replyText(reply.getText())
+                            .createAt(reply.getCreateAt() != null ? reply.getCreateAt().format(formatter) : null)
+                            .updateAt(reply.getUpdateAt() != null ? reply.getUpdateAt().format(formatter) : null)
+                            .isReply(false)
+                            .build())
+                    .collect(Collectors.toList());
+        }
+        return replyDTOList;
     }
 }
