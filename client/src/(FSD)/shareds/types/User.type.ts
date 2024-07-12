@@ -11,10 +11,3 @@ export interface UserType {
     phoneNumber?: string;
     companyId?: string;
 };
-
-export interface UserAtomType {
-    accessToken?: string;
-    refreshToken?: string;
-    isLoggedIn?: boolean;
-    user?: UserType | null;
-};

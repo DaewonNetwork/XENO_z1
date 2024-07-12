@@ -54,28 +54,6 @@ public class CartController {
         }
     }
 
-//    @GetMapping
-//    public ResponseEntity<?> getCartItems(@RequestHeader("Authorization") String token) {
-//        try {
-//            if (token.startsWith("Bearer ")) {
-//                token = token.substring(7);
-//            }
-//
-//            Map<String, Object> claims = jwtUtil.validateToken(token);
-//            Long userId = Long.parseLong(claims.get("userId").toString());
-//
-//            log.info("유저 ID: " + userId);
-//
-//            List<CartDTO> cartList = cartService.getCartItems(userId);
-//
-//            log.info("장바구니 목록: " + cartList);
-//
-//            return ResponseEntity.ok(cartList);
-//        } catch (JwtException e) {
-//            return ResponseEntity.status(401).body("토큰이 유효하지 않습니다.");
-//        }
-//    }
-
     @GetMapping
     public ResponseEntity<?> getCartItems(@RequestHeader("Authorization") String token) {
         try {
