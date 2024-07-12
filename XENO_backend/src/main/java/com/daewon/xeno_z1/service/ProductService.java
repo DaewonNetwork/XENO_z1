@@ -25,12 +25,8 @@ public interface ProductService {
 
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
-    List<ProductsInfoCardDTO> getProductsInfoByCategory(String categoryId, String categorySubId);
 
-    List<ProductsInfoCardDTO> getLikedProductsInfo();
-
-
-    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailimage);
+    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
 
 

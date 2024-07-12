@@ -45,15 +45,16 @@ public class ReplyServiceImpl implements ReplyService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
         Reply reply = Reply.builder()
-                .users(user)
-                .review(review)
+                .users(users)
+
                 .text(replyDTO.getReplyText())
                 .build();
+        reply.setReview(replyDTO.getReviewId());
 
         Reply savedReply = replyRepository.save(reply);
-        reviewRepository.save(review);
 
-        return replyId;
+
+        return savedReply.getReplyId();
     }
 
     @Override
