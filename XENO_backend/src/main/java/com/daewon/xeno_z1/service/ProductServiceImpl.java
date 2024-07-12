@@ -472,10 +472,9 @@ public class ProductServiceImpl implements ProductService {
 
                     Long productColorId = null;
 
-                    List<ProductsColor> productsColors = productsColorRepository.findByProductId(product.getProductId());
-                    if (!productsColors.isEmpty()) {
-                        productColorId = productsColors.get(0).getProductColorId();
-                    }
+                    Optional<ProductsColor> productsColors = productsColorRepository.findByProductColorId(productColorId);
+                    // productsColors.get() 호출하여 productColor엔티티를 가져오고 그 엔티티의 getProductColorId 변수 할당
+                    productColorId = productsColors.get().getProductColorId();
 
                     ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
                             .productColorId(productColorId)
@@ -520,10 +519,10 @@ public class ProductServiceImpl implements ProductService {
         return productsPage.map(product -> {
 
             Long productColorId = null;
-            List<ProductsColor> productsColors = productsColorRepository.findByProductId(product.getProductId());
-            if (!productsColors.isEmpty()) {
-                productColorId = productsColors.get(0).getProductColorId();
-            }
+
+            Optional<ProductsColor> productsColors = productsColorRepository.findByProductColorId(productColorId);
+            // productsColors.get() 호출하여 productColor엔티티를 가져오고 그 엔티티의 getProductColorId 변수 할당
+            productColorId = productsColors.get().getProductColorId();
 
             ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
                     .productColorId(productColorId)
