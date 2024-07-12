@@ -6,12 +6,8 @@ import com.daewon.xeno_z1.dto.cart.CartDTO;
 import com.daewon.xeno_z1.dto.cart.CartSummaryDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface CartService {
-
-//    Long addCart(CartDTO request);
-//    void addToCart(Long userId, Long productColorSizeId, Long productImageId, Long quantity);
 
     void addToCart(List<AddToCartDTO> addToCartDTOList);
 

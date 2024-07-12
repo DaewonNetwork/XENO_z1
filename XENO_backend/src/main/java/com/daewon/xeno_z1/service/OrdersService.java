@@ -16,7 +16,7 @@ public interface OrdersService {
 
     void updateUserDeliveryInfo(String email, String address, String phoneNumber);
 
-//    OrdersConfirmDTO confirmOrder(Long orderId);
+    OrdersConfirmDTO confirmOrder(Long orderId, String email);
 
     OrdersListDTO convertToDTO(Orders orders);
 

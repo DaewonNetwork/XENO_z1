@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrdersConfirmDTO {
 
-    private String orderId;
+    private Long orderId;
+    private String orderPayId;
     private String orderNumber;
     private String name;
     private String address;
-    private String amount;
+    private double amount;
+    private int quantity;
 }
