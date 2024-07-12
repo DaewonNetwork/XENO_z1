@@ -15,6 +15,9 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long>{
 
-    @Query("SELECT COUNT(r) FROM Review r WHERE r.productsColorSize.productsColor.products.productId = :productId")
-    long countReviewImagesByProductId(@Param("productId") Long productId); // 작성한 리뷰 수
+    @Query("SELECT r FROM Review r WHERE r.order.productsColorSize.productsColor.productColorId = :productColorId ")
+    Page<Review> findByProductColorId(@Param("productColorId") Long productColorId, Pageable pageable);
+
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.order.productsColorSize.productsColor.productColorId = :productColorId")
+    long countByProductColorId(Long productColorId); // 리뷰 작성한 수
 }

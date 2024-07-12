@@ -26,6 +26,10 @@ public interface ProductService {
 
     ProductOrderBarDTO getProductOrderBar(Long productColorId);
 
+    List<ProductsInfoCardDTO> getProductsInfoByCategory(String categoryId, String categorySubId);
+
+    List<ProductsInfoCardDTO> getLikedProductsInfo();
+
     void addToCart(List<AddToCartDTO> addToCartDTO);
 
 //    List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId,String categorySubId);

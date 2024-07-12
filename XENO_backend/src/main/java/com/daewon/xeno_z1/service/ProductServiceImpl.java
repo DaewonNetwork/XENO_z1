@@ -19,9 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -31,8 +29,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.daewon.xeno_z1.domain.QProductsColor.productsColor;
 
 @Service
 @Log4j2
@@ -51,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductsStockRepository productsStockRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final CartRepository cartRepository;
 
 
     @Value("${org.daewon.upload.path}")
@@ -222,7 +219,9 @@ public class ProductServiceImpl implements ProductService {
 
         // 약국정보의 총 리뷰 수를 Review 테이블에서 productId를 통해 Select, Count 반환, 없을경우 0
         productInfoDTO.setReviewIndex(
-                reviewRepository.countByProductsProductId(productColorId) != 0 ? reviewRepository.countByProductsProductId(productColorId) : 0);
+                reviewRepository.countByProductColorId(productColorId) != 0
+                        ? reviewRepository.countByProductColorId(productColorId)
+                        : 0);
 
 
         List<ProductsImage> productImages = productsImageRepository.findByProductColorId(products.getProductColorId());
@@ -432,9 +431,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId, String categorySubId) {
+    public List<ProductsInfoCardDTO> getProductsInfoByCategory(String categoryId, String categorySubId) {
         List<Products> productsList = new ArrayList<>();
-        if (categoryId.equals("000") && categorySubId.isEmpty()){
+        if (categoryId.equals("000") && categorySubId.isEmpty()) {
             productsList = productsRepository.findAll();
         } else if (categorySubId.isEmpty()) {
             String category = CategoryUtils.getCategoryFromCode(categoryId);
@@ -442,10 +441,11 @@ public class ProductServiceImpl implements ProductService {
         } else {
             String category = CategoryUtils.getCategoryFromCode(categoryId);
             String categorySub = CategoryUtils.getCategorySubFromCode(categorySubId);
-            productsList = productsRepository.findByCategorySub(category,categorySub);
+            productsList = productsRepository.findByCategorySub(category, categorySub);
         }
 
-        List<ProductsInfoByCategoryDTO> productsInfoByCategoryDTOList = new ArrayList<>();
+        List<ProductsInfoCardDTO> productsInfoCardDTOList = new ArrayList<>();
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String currentUserName = authentication.getName();
@@ -455,10 +455,12 @@ public class ProductServiceImpl implements ProductService {
         Users users = userRepository.findByEmail(currentUserName)
                 .orElse(null);
 
+        log.info(users);
+
         for (Products products : productsList) {
             List<ProductsColor> productsColors = productsColorRepository.findByProductId(products.getProductId());
             for (ProductsColor productsColor : productsColors) {
-                ProductsInfoByCategoryDTO dto = new ProductsInfoByCategoryDTO();
+                ProductsInfoCardDTO dto = new ProductsInfoCardDTO();
                 dto.setBrandName(products.getBrandName());
                 dto.setName(products.getName());
                 dto.setCategory(products.getCategory());
@@ -468,29 +470,33 @@ public class ProductServiceImpl implements ProductService {
                 dto.setSale(products.getIsSale());
                 if (users != null) {
                     Long userId = users.getUserId();
-                    LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productsColor.getProductColorId(),userId);
+                    LikeProducts likeProducts = likeRepository
+                            .findByProductColorIdAndUserId(productsColor.getProductColorId(), userId);
                     dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
                 } else {
                     dto.setLike(false);
                 }
-                ProductsLike productsLike = productsLikeRepository.findByProductColorId(productsColor.getProductColorId()).orElse(null);
-                ProductsStar productsStar = productsStarRepository.findByProductColorId(productsColor.getProductColorId()).orElse(null);
-                ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productsColor.getProductColorId());
-                if(productsImage != null) {
+                ProductsLike productsLike = productsLikeRepository
+                        .findByProductColorId(productsColor.getProductColorId()).orElse(null);
+                ProductsStar productsStar = productsStarRepository
+                        .findByProductColorId(productsColor.getProductColorId()).orElse(null);
+                ProductsImage productsImage = productsImageRepository
+                        .findFirstByProductColorId(productsColor.getProductColorId());
+                if (productsImage != null) {
                     try {
                         byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
                         dto.setProductImage(imageData);
                     } catch (IOException e) {
 
-                      }
+                    }
                 } else {
-                        dto.setProductImage(null);
+                    dto.setProductImage(null);
                 }
                 dto.setProductColorId(productsColor.getProductColorId());
                 dto.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
                 dto.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);
 
-                productsInfoByCategoryDTOList.add(dto);
+                productsInfoCardDTOList.add(dto);
             }
         }
 
