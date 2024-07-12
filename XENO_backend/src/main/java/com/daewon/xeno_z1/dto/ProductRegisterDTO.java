@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class ProductRegisterDTO {
 
-    private long productId;
+
 
     private String brandName;
 
@@ -33,9 +33,11 @@ public class ProductRegisterDTO {
 
     private String season;
 
-    private List<String> colors; // 색상
+    private String colors; // 색상
 
     private List<ProductSizeDTO> size; // size 리스트
+
+
 
 
 }

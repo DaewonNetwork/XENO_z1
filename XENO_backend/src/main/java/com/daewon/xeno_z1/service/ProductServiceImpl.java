@@ -52,6 +52,7 @@ public class ProductServiceImpl implements ProductService {
     @Value("${uploadPath}")
     private String uploadPath;
 
+
     public byte[] getImage(String uuid, String fileName) throws IOException {
         String filePath = uploadPath + uuid + "_" + fileName;
         // 파일을 바이트 배열로 읽기
@@ -60,65 +61,76 @@ public class ProductServiceImpl implements ProductService {
         return image;
     }
 
-//    @Override
-//    public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage, List<MultipartFile> productDetailImage) {
-//        // 1. Products 엔티티 생성 및 저장
-//        Products product = Products.builder()
-//                .brandName(dto.getBrandName())
-//                .name(dto.getName())
-//                .category(dto.getCategory())
-//                .categorySub(dto.getCategorySub())
-//                .price(dto.getPrice())
-//                .priceSale(dto.getPriceSale())
-//                .isSale(dto.isSale())
-//                .productsNumber(Long.parseLong(dto.getProductsNumber()))
-//                .season(dto.getSeason())
-//                .build();
-//         productsRepository.save(product);
-//
-//        // 2. ProductsColor 엔티티 생성 및 저장
-//        for (String color : dto.getColors()) {
-//            ProductsColor productsColor = ProductsColor.builder()
-//                    .products(product)
-//                    .color(color)
-//                    .build();
-//             productsColorRepository.save(productsColor);
-//
-//            if (productImage != null && !productImage.isEmpty()) {
-//                for (MultipartFile image : productImage) {
-//                    String fileName = saveImage(image);
-//                    String uuid = UUID.randomUUID().toString();
-//                    ProductsImage productsImage = ProductsImage.builder()
-//                            .productsColor(productsColor)
-//                            .fileName(fileName)
-//                            .uuid(uuid)
-//                            .build();
-//                    productsImageRepository.save(productsImage);
-//                }
-//            }
-//
-////             3. ProductsColorSize 엔티티 생성 및 저장
-//            for (ProductSizeDTO size : dto.getSize()) {
-//                ProductsColorSize productsColorSize = ProductsColorSize.builder()
-//                        .productsColor(productsColor)
-//                        .size(Size.valueOf(size.getSize()))
-//                        .build();
-//                productsColorSizeRepository.save(productsColorSize);
-//
-//                // ProductsStock 엔티티 생성 및 저장
-//                ProductsStock productsStock = ProductsStock.builder()
-//                        .productsColorSize(productsColorSize)
-//                        .stock(size.getStock())  // 초기 재고를 100으로 설정
-//                        .build();
-//                productsStockRepository.save(productsStock);
-//
-//            }
-//
-//        }
-//        return product;
-//    }
-//
-//
+    @Override
+    public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage,MultipartFile productDetailImage) {
+        // 1. Products 엔티티 생성 및 저장
+        Products product = Products.builder()
+                .brandName(dto.getBrandName())
+                .name(dto.getName())
+                .category(dto.getCategory())
+                .categorySub(dto.getCategorySub())
+                .price(dto.getPrice())
+                .priceSale(dto.getPriceSale())
+                .isSale(dto.isSale())
+                .productsNumber(Long.parseLong(dto.getProductsNumber()))
+                .season(dto.getSeason())
+                .build();
+         productsRepository.save(product);
+
+        // 2. ProductsColor 엔티티 생성 및 저장
+
+            ProductsColor productsColor = ProductsColor.builder()
+                    .products(product)
+                    .color(dto.getColors())
+                    .build();
+             productsColorRepository.save(productsColor);
+
+
+
+//             3. ProductsColorSize 엔티티 생성 및 저장
+            for (ProductSizeDTO size : dto.getSize()) {
+                ProductsColorSize productsColorSize = ProductsColorSize.builder()
+                        .productsColor(productsColor)
+                        .size(Size.valueOf(size.getSize()))
+                        .build();
+                productsColorSizeRepository.save(productsColorSize);
+
+                // ProductsStock 엔티티 생성 및 저장
+                ProductsStock productsStock = ProductsStock.builder()
+                        .productsColorSize(productsColorSize)
+                        .stock(size.getStock())  // 초기 재고를 100으로 설정
+                        .build();
+                productsStockRepository.save(productsStock);
+
+            }
+        if (productImage != null && !productImage.isEmpty()) {
+            for (MultipartFile image : productImage) {
+                String fileName = saveImage(image);
+                String uuid = UUID.randomUUID().toString();
+                ProductsImage productsImage = ProductsImage.builder()
+                        .productsColor(productsColor)
+                        .fileName(fileName)
+                        .uuid(uuid)
+                        .build();
+                productsImageRepository.save(productsImage);
+            }
+        }
+
+        if (productDetailImage != null && !productDetailImage.isEmpty()) {
+                String fileName = saveImage(productDetailImage);
+                String uuid = UUID.randomUUID().toString();
+                ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
+                        .productsColor(productsColor)
+                        .fileName(fileName)
+                        .uuid(uuid)
+                        .build();
+                productsDetailImageRepository.save(productsDetailImage);
+        }
+
+        return product;
+    }
+
+
 
     private String saveImage(MultipartFile image) {
         String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();

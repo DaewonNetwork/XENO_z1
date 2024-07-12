@@ -35,6 +35,6 @@ public interface ProductService {
 
 //    Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
 
-//    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, List<MultipartFile> productDetailimage);
+    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailimage);
 
 }

@@ -1,12 +1,8 @@
 package com.daewon.xeno_z1.controller;
 
-import com.daewon.xeno_z1.domain.Orders;
-import com.daewon.xeno_z1.dto.cart.CartDTO;
-import com.daewon.xeno_z1.dto.order.DeliveryOrdersDTO;
-import com.daewon.xeno_z1.dto.order.OrdersDTO;
-import com.daewon.xeno_z1.dto.order.OrdersListDTO;
-import com.daewon.xeno_z1.dto.order.OrdersResponseDTO;
-import com.daewon.xeno_z1.exception.ProductNotFoundException;
+import com.daewon.xeno_z1.dto.order.*;
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
+import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.service.OrdersService;
 import com.daewon.xeno_z1.utils.JWTUtil;
 import io.jsonwebtoken.JwtException;
@@ -83,6 +79,43 @@ public class OrdersController {
             return ResponseEntity.status(400).body("알맞은 주소와 휴대폰 번호를 입력해주세요");
         }
     }
+
+
+    @GetMapping("/list")
+    public ResponseEntity<PageInfinityResponseDTO<OrdersCardListDTO>> getOrderCardList(@AuthenticationPrincipal UserDetails userDetails, PageRequestDTO pageRequestDTO) {
+        try {
+            String userEmail = userDetails.getUsername();
+
+            log.info("orderUserEmail : " + userEmail);
+            PageInfinityResponseDTO<OrdersCardListDTO> orderCardList = ordersService.getOrderCardList(pageRequestDTO,userEmail);
+            log.info(orderCardList);
+            return ResponseEntity.ok(orderCardList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/read")
+    public ResponseEntity<?> getOrderDetails(@RequestParam Long orderId, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String userEmail = userDetails.getUsername();
+
+            log.info("orderUserEmail : " + userEmail);
+            OrdersDetailInfoDTO orderInfo = ordersService.getOrderDetailInfo(orderId,userEmail);
+
+            return ResponseEntity.ok(orderInfo);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
+        }
+    }
+
+
+
+
+
+
+
+
 }
 
 /*

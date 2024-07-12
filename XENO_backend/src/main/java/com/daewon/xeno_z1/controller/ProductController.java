@@ -153,33 +153,33 @@ public class ProductController {
         }
     }
 
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> registerProduct(
-            @RequestPart("productRegisterDTO") String productRegisterDTOStr,
-            @RequestPart("productImage") List<MultipartFile> productImage,
-            @RequestPart("productDetailImage") List<MultipartFile> productDetailImage) {
+     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+     public ResponseEntity<?> registerProduct(
+             @RequestPart("productRegisterDTO") String productRegisterDTOStr,
+             @RequestPart("productImage") List<MultipartFile> productImage,
+             @RequestPart("productDetailImage") MultipartFile productDetailImage) {
 
-        ProductRegisterDTO productDTO;
+         ProductRegisterDTO productDTO;
 
-        try {
-            // JSON 문자열을 ReviewDTO 객체로 변환
-            ObjectMapper objectMapper = new ObjectMapper();
-            productDTO = objectMapper.readValue(productRegisterDTOStr, ProductRegisterDTO.class);
-            log.info(productDTO);
-        } catch (IOException e) {
-            // JSON 변환 중 오류가 발생하면 로그를 남기고 예외 발생
-            log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
-        }
-        try {
-            Products createdProduct = productService.createProduct(productDTO, productImage != null && !productImage.isEmpty() ? productImage : null,
-                    productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
-                    );
-            return ResponseEntity.ok("성공");
-        } catch (Exception e) {
-            log.error("상품 등록 중 오류 발생: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+         try {
+             // JSON 문자열을 ReviewDTO 객체로 변환
+             ObjectMapper objectMapper = new ObjectMapper();
+             productDTO = objectMapper.readValue(productRegisterDTOStr, ProductRegisterDTO.class);
+             log.info(productDTO);
+         } catch (IOException e) {
+             // JSON 변환 중 오류가 발생하면 로그를 남기고 예외 발생
+             log.error(e.getMessage());
+             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
+         }
+         try {
+             Products createdProduct = productService.createProduct(productDTO, productImage != null && !productImage.isEmpty() ? productImage : null,
+                     productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
+                     );
+             return ResponseEntity.ok("성공");
+         } catch (Exception e) {
+             log.error("상품 등록 중 오류 발생: ", e);
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+         }
+     }
 
 }
