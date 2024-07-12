@@ -11,7 +11,8 @@ import java.util.List;
 
 public interface ProductService {
 
-    ProductInfoDTO getProductInfo(Long productId) throws IOException;
+    ProductInfoDTO getProductColorInfo(Long productColorId) throws IOException;
+    ProductCreateGetInfoDTO getProductInfo(Long productId) throws IOException;
 
     ProductsInfoCardDTO getProductCardInfo(Long productColorId);
 

@@ -8,7 +8,7 @@ import { FormType } from "../types/Form.type";
 interface FormInputProps extends Omit<InputProps, "name">, FormType {
 }
 
-const FormInputShared = ({ name, control, endContent, startContent, radius, ...props }: FormInputProps) => {
+const FormInputShared = ({ name, control, endContent, startContent, readOnly, radius, ...props }: FormInputProps) => {
     return (
         <Controller
             name={name}
@@ -23,6 +23,7 @@ const FormInputShared = ({ name, control, endContent, startContent, radius, ...p
                         value={value}
                         isRequired
                         id={name}
+                        readOnly={readOnly}
 
                         onChange={(e: any) => {
                             onChange(e);

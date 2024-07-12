@@ -144,7 +144,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductInfoDTO getProductInfo(Long productColorId) {
+    public ProductInfoDTO getProductColorInfo(Long productColorId) {
         log.info(productColorId);
 
         Optional<ProductsColor> result = productsColorRepository.findById(productColorId);
@@ -225,6 +225,36 @@ public class ProductServiceImpl implements ProductService {
         return productInfoDTO;
     }
 
+
+    @Override
+    public ProductCreateGetInfoDTO getProductInfo(Long productId) throws IOException {
+
+        Optional<Products> result = productsRepository.findById(productId);
+        Products products = result.orElseThrow(() -> new ProductNotFoundException()); // Products 객체 생성
+        List<ProductsColor> resultList = productsColorRepository.findByProductId(productId);
+        ProductCreateGetInfoDTO dto = new ProductCreateGetInfoDTO();
+
+        if (resultList.size() >= 1) {
+            List<String> colors = new ArrayList<>();
+            for (ProductsColor productsColor : resultList) {
+                colors.add(productsColor.getColor());
+            }
+            dto.setColorType(colors);
+        }
+
+        dto.setBrandName(products.getBrandName());
+        dto.setName(products.getName());
+        dto.setCategory(products.getCategory());
+        dto.setCategorySub(products.getCategorySub());
+        dto.setPrice(products.getPrice());
+        dto.setPriceSale(products.getPriceSale());
+        dto.setProductNumber(products.getProductNumber());
+        dto.setSeason(products.getSeason());
+        dto.setSale(products.getIsSale());
+
+
+        return dto;
+    }
 
     @Override
     public ProductsInfoCardDTO getProductCardInfo(Long productColorId) {

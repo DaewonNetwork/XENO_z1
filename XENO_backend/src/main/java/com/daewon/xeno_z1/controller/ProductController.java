@@ -1,12 +1,7 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Products;
-import com.daewon.xeno_z1.dto.product.ProductDetailImagesDTO;
-import com.daewon.xeno_z1.dto.product.ProductInfoDTO;
-import com.daewon.xeno_z1.dto.product.ProductOrderBarDTO;
-import com.daewon.xeno_z1.dto.product.ProductOtherColorImagesDTO;
-import com.daewon.xeno_z1.dto.product.ProductRegisterDTO;
-import com.daewon.xeno_z1.dto.product.ProductsInfoCardDTO;
+import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.service.ProductService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,14 +58,21 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/read")
-    public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productColorId) throws IOException {
-        ProductInfoDTO productInfoDTO = productService.getProductInfo(productColorId);
-        log.info(productColorId);
+    @GetMapping("/color/read")
+    public ResponseEntity<ProductInfoDTO> readProductColor(@RequestParam Long productColorId) throws IOException {
+        ProductInfoDTO productInfoDTO = productService.getProductColorInfo(productColorId);
+
         return ResponseEntity.ok(productInfoDTO);
     }
 
-    @GetMapping("/readImages")
+    @GetMapping("/read")
+    public ResponseEntity<ProductCreateGetInfoDTO> readProduct(@RequestParam Long productId) throws IOException {
+        ProductCreateGetInfoDTO productInfoDTO = productService.getProductInfo(productId);
+
+        return ResponseEntity.ok(productInfoDTO);
+    }
+
+    @GetMapping("/color/readImages")
     public ResponseEntity<ProductDetailImagesDTO> readProductDetailImages(
             @RequestParam Long productColorId,
             @RequestParam(defaultValue = "0") int page,
@@ -89,7 +91,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/readFirstImages")
+    @GetMapping("/color/readFirstImages")
     public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
 
         try {
@@ -118,7 +120,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/readOrderBar")
+    @GetMapping("/color/readOrderBar")
     public ResponseEntity<ProductOrderBarDTO> readOrderBar(@RequestParam Long productColorId) {
 
         try {
@@ -146,7 +148,7 @@ public class ProductController {
     }
 
     @Operation(summary = "상품 카드")
-    @GetMapping("/read/info")
+    @GetMapping("/color/read/info")
     public ResponseEntity<ProductsInfoCardDTO> readProductCardInfo(@RequestParam Long productColorId) {
 
         try {
