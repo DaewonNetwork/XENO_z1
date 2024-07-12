@@ -486,9 +486,9 @@ public class ProductServiceImpl implements ProductService {
                             .categorySub(product.getCategorySub())
                             .build();
 
-                    // 이미지 처리
+                    // isMain이 true인 이미지만 처리
                     if (productColorId != null) {
-                        ProductsImage productImage = productsImageRepository.findFirstByProductColorId(productColorId);
+                        ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
                         if (productImage != null) {
                             try {
                                 String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
@@ -518,11 +518,18 @@ public class ProductServiceImpl implements ProductService {
 
         return productsPage.map(product -> {
 
+//            Long productColorId = null;
+
+//            Optional<ProductsColor> productsColors = productsColorRepository.findByProductColorId(productColorId);
+            // productsColors.get() 호출하여 productColor엔티티를 가져오고 그 엔티티의 getProductColorId 변수 할당
+//            productColorId = productsColors.get().getProductColorId();
+
             Long productColorId = null;
 
-            Optional<ProductsColor> productsColors = productsColorRepository.findByProductColorId(productColorId);
-            // productsColors.get() 호출하여 productColor엔티티를 가져오고 그 엔티티의 getProductColorId 변수 할당
-            productColorId = productsColors.get().getProductColorId();
+            List<ProductsColor> productsColors = productsColorRepository.findByProductId(product.getProductId());
+            if (!productsColors.isEmpty()) {
+                productColorId = productsColors.get(0).getProductColorId();
+            }
 
             ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
                     .productColorId(productColorId)
@@ -534,9 +541,9 @@ public class ProductServiceImpl implements ProductService {
                     .categorySub(product.getCategorySub())
                     .build();
 
-            // 이미지 한 개만 처리
+            // isMain이 true인 이미지만 처리
             if (productColorId != null) {
-                ProductsImage productImage = productsImageRepository.findFirstByProductColorId(productColorId);
+                ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
                 if (productImage != null) {
                     try {
                         String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();

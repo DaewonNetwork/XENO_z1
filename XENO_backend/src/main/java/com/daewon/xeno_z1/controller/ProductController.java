@@ -76,7 +76,6 @@ public class ProductController {
         return ResponseEntity.ok(result);
     }
 
-    // 랭크 50까지
     @GetMapping("/rank/page/{category}")
     public ResponseEntity<Page<ProductsStarRankListDTO>> getrankTop50(
             @RequestParam(defaultValue = "0") int page,
