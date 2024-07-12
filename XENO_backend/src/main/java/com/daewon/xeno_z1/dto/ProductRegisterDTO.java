@@ -15,21 +15,21 @@ public class ProductRegisterDTO {
 
     private long productId;
 
-    private String brand_name;
+    private String brandName;
 
     private String category;
 
-    private String category_sub;
+    private String categorySub;
 
     private String name;
     
     private Long price;
 
-    private boolean is_sale;
+    private boolean isSale;
 
-    private Long price_sale;
+    private Long priceSale;
 
-    private String products_number;
+    private String productsNumber;
 
     private String season;
 

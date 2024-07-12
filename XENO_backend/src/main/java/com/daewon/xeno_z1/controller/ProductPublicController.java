@@ -59,28 +59,27 @@ public class ProductPublicController {
         }
     }
 
-    @GetMapping("/rank/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(
-            @PathVariable String category) {
-        List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/rank/page/{category}")
-    public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @PathVariable String category) {
-        Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
-        return ResponseEntity.ok(result);
-    }
+//    @GetMapping("/rank/{category}")
+//    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(
+//            @PathVariable String category) {
+//        List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
+//        return ResponseEntity.ok(result);
+//    }
+//
+//    @GetMapping("/rank/page/{category}")
+//    public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "20") int size,
+//            @PathVariable String category) {
+//        Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
+//        return ResponseEntity.ok(result);
+//    }
 
     @GetMapping("/readFirstImages")
     public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
 
         try {
-            List<ProductOtherColorImagesDTO> firstProductImages = productService
-                    .getRelatedColorProductsImages(productColorId);
+            List<ProductOtherColorImagesDTO> firstProductImages = productService.getRelatedColorProductsImages(productColorId);
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(firstProductImages);
         } catch (Exception e) {

@@ -8,8 +8,10 @@ import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
 import com.daewon.xeno_z1.dto.ProductRegisterDTO;
 import com.daewon.xeno_z1.dto.ProductsInfoCardDTO;
 import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
+import com.daewon.xeno_z1.dto.review.ReviewCreateDTO;
 import com.daewon.xeno_z1.service.ProductService;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,8 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -61,22 +66,22 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/rank/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(
-            @PathVariable String category) {
-        List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
-        return ResponseEntity.ok(result);
-    }
-
-    // 랭크 50까지
-    @GetMapping("/rank/page/{category}")
-    public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @PathVariable String category) {
-        Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
-        return ResponseEntity.ok(result);
-    }
+//    @GetMapping("/rank/{category}")
+//    public ResponseEntity<List<ProductsStarRankListDTO>> getTop10ProductsBySpecificCategory(
+//            @PathVariable String category) {
+//        List<ProductsStarRankListDTO> result = productService.getTop10ProductsBySpecificCategory(category);
+//        return ResponseEntity.ok(result);
+//    }
+//
+//    // 랭크 50까지
+//    @GetMapping("/rank/page/{category}")
+//    public ResponseEntity<Page<ProductsStarRankListDTO>> getProductsByCategoryWithPagination(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "20") int size,
+//            @PathVariable String category) {
+//        Page<ProductsStarRankListDTO> result = productService.getTop50ProductsByCategory(category, page, size);
+//        return ResponseEntity.ok(result);
+//    }
 
     @GetMapping("/readFirstImages")
     public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
@@ -149,14 +154,28 @@ public class ProductController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Products> registerProduct(
-            @RequestPart("productregisterDTO") ProductRegisterDTO productregisterDTO,
+    public ResponseEntity<?> registerProduct(
+            @RequestPart("productRegisterDTO") String productRegisterDTOStr,
             @RequestPart("productImage") List<MultipartFile> productImage,
-            @RequestPart("productDetailimage") List<MultipartFile> productDetailimage) {
+            @RequestPart("productDetailImage") List<MultipartFile> productDetailImage) {
+
+        ProductRegisterDTO productDTO;
+
         try {
-            Products createdProduct = productService.createProduct(productregisterDTO, productImage,
-                    productDetailimage);
-            return ResponseEntity.ok(createdProduct);
+            // JSON 문자열을 ReviewDTO 객체로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            productDTO = objectMapper.readValue(productRegisterDTOStr, ProductRegisterDTO.class);
+            log.info(productDTO);
+        } catch (IOException e) {
+            // JSON 변환 중 오류가 발생하면 로그를 남기고 예외 발생
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
+        }
+        try {
+            Products createdProduct = productService.createProduct(productDTO, productImage != null && !productImage.isEmpty() ? productImage : null,
+                    productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
+                    );
+            return ResponseEntity.ok("성공");
         } catch (Exception e) {
             log.error("상품 등록 중 오류 발생: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
