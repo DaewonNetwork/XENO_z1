@@ -31,7 +31,7 @@ public class ProductInfoDTO {
 
     private boolean isSale;
 
-    private long productsNumber;
+    private String productNumber;
 
     private String season;
 

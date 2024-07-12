@@ -35,7 +35,7 @@ public class Products {
 
   private boolean isSale;
 
-  private long productsNumber;
+  private String productNumber;
 
   private String season;
 

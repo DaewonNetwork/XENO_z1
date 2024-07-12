@@ -29,7 +29,7 @@ public class ProductRegisterDTO {
 
     private Long priceSale;
 
-    private String productsNumber;
+    private String productNumber;
 
     private String season;
 

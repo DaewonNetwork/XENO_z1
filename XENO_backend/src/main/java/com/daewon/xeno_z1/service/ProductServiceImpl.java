@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
                 .price(dto.getPrice())
                 .priceSale(dto.getPriceSale())
                 .isSale(dto.isSale())
-                .productsNumber(Long.parseLong(dto.getProductsNumber()))
+                .productNumber(dto.getProductNumber())
                 .season(dto.getSeason())
                 .build();
         productsRepository.save(product);
@@ -172,7 +172,7 @@ public class ProductServiceImpl implements ProductService {
         productInfoDTO.setCategorySub(products.getProducts().getCategorySub());
         productInfoDTO.setPrice(products.getProducts().getPrice());
         productInfoDTO.setPriceSale(products.getProducts().getPriceSale());
-        productInfoDTO.setProductsNumber(products.getProducts().getProductsNumber());
+        productInfoDTO.setProductNumber(products.getProducts().getProductNumber());
         productInfoDTO.setSeason(products.getProducts().getSeason());
         productInfoDTO.setSale(products.getProducts().getIsSale());
 
