@@ -73,9 +73,10 @@ public class ReviewController {
 
         try {
             // 리뷰 생성 메서드 호출
-            String result = reviewService.createReview(reviewDTO, image != null && !image.isEmpty() ? image : null,userDetails);
+            reviewService.createReview(reviewDTO, image != null && !image.isEmpty() ? image : null,userDetails);
 
-            return ResponseEntity.ok(result);
+
+            return ResponseEntity.ok("\"성공\"");
         } catch (RuntimeException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request", e);

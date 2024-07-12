@@ -143,8 +143,6 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             return "잘못된 주문 내역입니다.";
         }
-
-
         if (image != null && !image.isEmpty()) {
             // 원본 파일명 가져오기
             String originalName = image.getOriginalFilename();

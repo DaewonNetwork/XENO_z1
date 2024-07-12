@@ -9,7 +9,7 @@ import ProductCardSkeletonShared from "@/(FSD)/shareds/ui/ProductCardSkeletonSha
 
 import ProductCardList from "./ProductCardList";
 import { useProductListByCategoryRead } from "@/(FSD)/entities/product/api/useProductListByCategoryRead";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
+
 
 
 const ProductCategoryList = ( ) => {
@@ -17,10 +17,7 @@ const ProductCategoryList = ( ) => {
     const categoryId = useRecoilValue(categoryIdState);
     const categorySubId = useRecoilValue(categorySubIdState);
 
-
     const { data, isLoading, refetch } = useProductListByCategoryRead(categoryId, categorySubId);
-
-    const {user} = useRecoilValue(userState);
 
     const productList: ProductType[] = data;
 
@@ -41,8 +38,6 @@ const ProductCategoryList = ( ) => {
             </div>
         );
     }
-    
-    
     
 
     // 데이터가 없는 경우 빈 화면을 반환

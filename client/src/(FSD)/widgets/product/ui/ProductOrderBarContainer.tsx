@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useProductOrderBarRead } from "@/(FSD)/entities/product/api/useProductOrderBarRead";
 import ProductOrderBar from "@/(FSD)/widgets/product/ui/ProductOrderBar";
 import { useRecoilValue } from "recoil";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
+
 
  export interface ProductOrderInfoType {
     productColorId: number;

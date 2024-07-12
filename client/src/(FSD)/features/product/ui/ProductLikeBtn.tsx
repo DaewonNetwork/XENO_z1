@@ -7,7 +7,7 @@ import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import TextSmallShared from "@/(FSD)/shareds/ui/TextSmallShared";
 import { useProductLikeToggle } from "../api/useProductLikeToggle";
 import { useRecoilValue } from "recoil";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
+import { isLoggedInState} from "@/(FSD)/shareds/stores/UserAtom";
 import { useRouter } from "next/navigation";
 
 
@@ -22,7 +22,7 @@ interface ProductLikeBtnType {
 
 const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = false, index, parentRefetch }: ProductLikeBtnType) => {
 
-    const { isLoggedIn } = useRecoilValue(userState);
+    const  isLoggedIn  = useRecoilValue(isLoggedInState);
 
     const router = useRouter();
     const onSuccess = (data: any) => {

@@ -6,7 +6,7 @@ import React from "react";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 
 import { useRecoilValue } from "recoil";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
+
 
 import { useProductOrder } from "../api/useProductAddOrder";
 import { reqState } from "@/(FSD)/shareds/stores/ProductAtom";
@@ -29,7 +29,6 @@ export interface ProductOrderType {
 }
 
 const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
-    const { user } = useRecoilValue(userState);
     const req = useRecoilValue(reqState);
     const router = useRouter();
 
@@ -41,10 +40,8 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
 
     const { mutate } = useProductOrder({ onSuccess });
 
-    console.log(user)
-    console.log(user?.name)
-
-    if (!user) return <></>
+ 
+   
 
     const generateRandomId = () => {
         const length = Math.floor(Math.random() * (32 - 16 + 1)) + 16;
@@ -88,7 +85,7 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
             },
             orderId: orderId,
             orderName: orderName,
-            customerEmail: user.email,
+            customerEmail: "user.email",
             card: {
                 useEscrow: false,
                 flowMode: "DEFAULT",

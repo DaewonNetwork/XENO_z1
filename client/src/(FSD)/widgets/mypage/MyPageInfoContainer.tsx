@@ -3,12 +3,13 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
+
 import UserInfo from "./UserInfo";
+import { isLoggedInState } from "@/(FSD)/shareds/stores/UserAtom";
 
 const MyPageInfoContainer = () => {
 
-    const { isLoggedIn } = useRecoilValue(userState);
+    const isLoggedIn = useRecoilValue(isLoggedInState);
 
     const router = useRouter();
 

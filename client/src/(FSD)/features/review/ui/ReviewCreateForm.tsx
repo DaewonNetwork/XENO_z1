@@ -15,7 +15,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import FormInputShared from "@/(FSD)/shareds/ui/FormInputShared";
 
 import { useRecoilValue } from "recoil";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
+import { isLoggedInState} from "@/(FSD)/shareds/stores/UserAtom";
 import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
 import StarShared from "@/(FSD)/shareds/ui/StarShared";
 
@@ -45,9 +45,10 @@ const ReviewCreateForm = () => {
     });
 
     const onSuccess = (data: any) => {
-        router.push(`/pharmacy/${orderId}`);
+        router.push(`/seller`);
     }
 
+ 
     const [file, setFile] = useState<any>();
 
     const { mutate } = useReviewCreate({ onSuccess });
@@ -63,7 +64,7 @@ const ReviewCreateForm = () => {
         mutate(formData);
     }
 
-    const { isLoggedIn } = useRecoilValue(userState);
+    const isLoggedIn  = useRecoilValue(isLoggedInState);
 
     if(!isLoggedIn) return <></>;
 

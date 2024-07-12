@@ -134,7 +134,7 @@ public class OrdersServiceImpl implements OrdersService {
         log.info("email: " + email);
 
         // 주문한 사용자와 현재 인증된 사용자가 일치하는지 확인
-        if (!orders.getUserId().getEmail().equals(email)) {
+        if (!orders.getUser().getEmail().equals(email)) {
             throw new UserNotFoundException("User not found");
         }
 
@@ -142,8 +142,8 @@ public class OrdersServiceImpl implements OrdersService {
                 orders.getOrderId(),
                 orders.getOrderPayId(),
                 String.valueOf(orders.getOrderNumber()),
-                orders.getUserId().getName(),
-                orders.getUserId().getAddress(),
+                orders.getUser().getName(),
+                orders.getUser().getAddress(),
                 orders.getAmount(),
                 orders.getQuantity()
         );

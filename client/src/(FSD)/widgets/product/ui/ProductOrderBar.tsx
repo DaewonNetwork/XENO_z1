@@ -15,7 +15,7 @@ import { imageState, nameState, productsState } from "@/(FSD)/shareds/stores/Pro
 import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
 import { ProductOrderBarType } from "./ProductOrderBarContainer";
 import { ProductImages } from "./ProductOtherColorImageList";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
+import { isLoggedInState } from "@/(FSD)/shareds/stores/UserAtom";
 
 type SizeAndStockType = {
     size: string;
@@ -36,7 +36,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     const name = useRecoilValue(nameState);
     const images: ProductImages[] = useRecoilValue(imageState)
     const [newProducts, setNewProducts] = useRecoilState<ProductOrderInfoType[]>(productsState)
-    const { isLoggedIn } = useRecoilValue(userState);
+    const  isLoggedIn  = useRecoilValue(isLoggedInState);
     
 
     const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
