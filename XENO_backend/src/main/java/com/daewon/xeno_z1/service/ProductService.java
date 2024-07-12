@@ -27,15 +27,14 @@ public interface ProductService {
 
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
-    List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category);
+//    List<ProductsStarRankListDTO> getTop10ProductsBySpecificCategory(String category);
 
-    Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();
+//    Map<String, List<ProductsStarRankListDTO>> getTop10ProductsByCategoryRank();
 
 //  List<ProductsStarRankListDTO> getTop50ProductsByCategory(String category);
 
-    Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
+//    Page<ProductsStarRankListDTO> getTop50ProductsByCategory(String category, int page, int size);
 
-    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, List<MultipartFile> productDetailimage);
+//    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, List<MultipartFile> productDetailimage);
 
-//  Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images);
 }

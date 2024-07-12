@@ -35,7 +35,7 @@ public class ProductRegisterDTO {
 
     private List<String> colors; // 색상
 
-    private List<String> size; // size 리스트
+    private List<ProductSizeDTO> size; // size 리스트
 
 
 }
