@@ -1,17 +1,17 @@
-import { Button } from "@nextui-org/button";
-import React, { useRef, useState } from "react";
+import { Button, ButtonProps } from "@nextui-org/button";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import styles from "@/(FSD)/shareds/styles/ComponentStyle.module.scss";
 import Image from "next/image";
 import IconShared from "./IconShared";
 
-import type { ButtonProps } from "@nextui-org/button";
-
 interface FileInputSharedProps extends ButtonProps {
-    setFile: any;
     inputId: string;
+    setFile: any;
+    children?: ReactNode;
+    height?: number;
 }
 
-const FileInputShared = ({ inputId, children, setFile, ...props }: FileInputSharedProps) => {
+const FileInputShared = ({ inputId, setFile, height = 160, }: FileInputSharedProps) => {
     const [preview, setPreview] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -38,21 +38,23 @@ const FileInputShared = ({ inputId, children, setFile, ...props }: FileInputShar
     };
 
     return (
-        <div className={styles.file_container}>
-            <div className={styles.file_input_box}>
-                <input ref={inputRef} onChange={handleFileChange} id={inputId} type={"file"} />
-                <Button className={styles.file_btn} {...props}>
-                    <label htmlFor={inputId}>{children}</label>
-                </Button>
-            </div>
-            {preview &&
+        <div style={{ height: height }} className={`${preview ? "" : "bg-content2"} rounded-medium ${styles.file_container}`}>
+            {
+                !preview &&
+                <div className={styles.file_input_box}>
+                    <input ref={inputRef} onChange={handleFileChange} id={inputId} type={"file"} />
+                    <label htmlFor={inputId}>
+                        <IconShared iconType={"plus"} iconSize={"lg"} />
+                    </label>
+                </div>
+            }
+            {
+                preview &&
                 <div className={styles.preview_img_box}>
-                    <div className={styles.preview_img_item}>
-                        <div className={styles.preview_img_close_btn}>
-                            <Button onClick={handleDeletePreview} variant={"light"} size={"md"} isIconOnly endContent={<IconShared iconType={"close"} />} />
-                        </div>
-                        <Image src={preview} alt={"preview"} layout="fill" objectFit="contain" />
+                    <div className={styles.preview_img_close_btn}>
+                        <Button onClick={handleDeletePreview} variant={"light"} size={"sm"} isIconOnly endContent={<IconShared iconType={"close"} />} />
                     </div>
+                    <Image src={preview} alt={"preview"} layout="fill" objectFit="contain" />
                 </div>
             }
         </div>
