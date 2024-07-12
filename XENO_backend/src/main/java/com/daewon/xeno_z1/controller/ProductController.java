@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,22 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/rank/{category}")
+    public ResponseEntity<List<ProductsStarRankListDTO>> getranktop10(
+            @PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getranktop10(category);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/rank/page/{category}")
+    public ResponseEntity<Page<ProductsStarRankListDTO>> getrankTop50(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @PathVariable String category) {
+        Page<ProductsStarRankListDTO> result = productService.getrankTop50(category, page, size);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/readFirstImages")
     public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
 
@@ -71,19 +88,19 @@ public class ProductController {
         }
     }
 
-    @Operation(summary = "카테고리")
-    @GetMapping("/read/category")
-    public ResponseEntity<List<ProductsInfoByCategoryDTO>> readProductsListByCategory(@RequestParam String categoryId, @RequestParam(required = false, defaultValue = "") String categorySubId) {
-
-        try {
-            List<ProductsInfoByCategoryDTO> products = productService.getProductsInfoByCategory(categoryId,categorySubId);
-            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            // 예외 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    @Operation(summary = "카테고리")
+//    @GetMapping("/read/category")
+//    public ResponseEntity<List<ProductsInfoByCategoryDTO>> readProductsListByCategory(@RequestParam String categoryId, @RequestParam(required = false, defaultValue = "") String categorySubId) {
+//
+//        try {
+//            List<ProductsInfoByCategoryDTO> products = productService.getProductsInfoByCategory(categoryId,categorySubId);
+//            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
+//            return ResponseEntity.ok(products);
+//        } catch (Exception e) {
+//            // 예외 처리
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 
 
     @GetMapping("/readOrderBar")

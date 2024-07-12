@@ -1,6 +1,7 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Products;
+import com.daewon.xeno_z1.domain.ProductsColor;
 import com.daewon.xeno_z1.dto.*;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.util.List;
 
 import com.daewon.xeno_z1.dto.product.ProductRegisterDTO;
 import com.daewon.xeno_z1.dto.product.ProductUpdateDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
@@ -26,8 +28,11 @@ public interface ProductService {
 
     void addToCart(List<AddToCartDTO> addToCartDTO);
 
-    List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId,String categorySubId);
+//    List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId,String categorySubId);
+
+    List<ProductsStarRankListDTO> getranktop10(String category);
+
+    Page<ProductsStarRankListDTO> getrankTop50(String category, int page, int size);
 
     Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
-
 }

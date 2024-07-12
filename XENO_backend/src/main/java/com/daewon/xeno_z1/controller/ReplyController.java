@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @Log4j2
-@RequestMapping("/reply")
+@RequestMapping("api/reply")
 @RequiredArgsConstructor
 public class ReplyController {
 

@@ -13,8 +13,8 @@ public interface ProductsStarRepository extends JpaRepository<ProductsStar, Long
 
     @Query("select p from ProductsStar p where p.productsColor.productColorId=:productColorId")
     Optional<ProductsStar> findByProductColorId(Long productColorId);
+
     @Query("select p from ProductsStar p where p.productsColor.productColorId=:productId")
     Optional<ProductsStar> findByProductId(Long productId);
 
-    List<ProductsStar> findTop10ByOrderByStarAvgDesc();
 }

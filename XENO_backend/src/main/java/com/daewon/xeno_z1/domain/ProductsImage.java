@@ -31,4 +31,5 @@ public class ProductsImage {
 
   private String uuid;
 
+  private boolean isMain;
 }

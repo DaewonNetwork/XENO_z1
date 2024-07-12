@@ -30,6 +30,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
+import static com.daewon.xeno_z1.domain.QProductsColor.productsColor;
+
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -45,7 +47,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductsColorRepository productsColorRepository;
     private final ProductsColorSizeRepository productsColorSizeRepository;
     private final ProductsStockRepository productsStockRepository;
-    private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
 
@@ -491,9 +492,173 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        return productsInfoByCategoryDTOList;
+        return productsInfoCardDTOList;
     }
 
+    @Override
+    public List<ProductsInfoCardDTO> getLikedProductsInfo() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String currentUserName = authentication.getName();
+
+        Users users = userRepository.findByEmail(currentUserName)
+                .orElse(null);
+
+        log.info(users);
+        List<LikeProducts> likeProductsList = likeRepository.findByUserId(users.getUserId());
+        log.info(likeProductsList);
+        List<ProductsInfoCardDTO> productsInfoCardDTOList = new ArrayList<>();
+
+        for (LikeProducts likeProducts : likeProductsList) {
+            ProductsInfoCardDTO dto = new ProductsInfoCardDTO();
+            ProductsLike productsLike = productsLikeRepository
+                    .findById(likeProducts.getProductsLike().getProductLikeId()).orElse(null);
+            // log.info(productsLike);
+            ProductsColor productsColor = productsLike.getProductsColor();
+            log.info(productsColor);
+            Products products = productsColor.getProducts();
+            log.info(products);
+            ProductsStar productsStar = productsStarRepository.findByProductColorId(productsColor.getProductColorId())
+                    .orElse(null);
+            log.info(productsStar);
+
+            dto.setBrandName(products.getBrandName());
+            log.info(dto);
+            dto.setName(products.getName());
+            log.info(dto);
+            dto.setCategory(products.getCategory());
+            log.info(dto);
+            dto.setCategorySub(products.getCategorySub());
+            log.info(dto);
+            dto.setPrice(products.getPrice());
+            log.info(dto);
+            dto.setPriceSale(products.getPriceSale());
+            log.info(dto);
+            dto.setSale(products.getIsSale());
+            log.info(dto);
+            dto.setLike(likeProducts.isLike());
+            log.info(dto);
+            dto.setProductColorId(productsColor.getProductColorId());
+            dto.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
+            dto.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);
+            ProductsImage productsImage = productsImageRepository
+                    .findFirstByProductColorId(productsColor.getProductColorId());
+            log.info(productsImage);
+            if (productsImage != null) {
+                try {
+                    byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
+                    dto.setProductImage(imageData);
+                    log.info("성공");
+                } catch (IOException e) {
+                    log.info(e.getMessage());
+                }
+            } else {
+                log.info("널입니다");
+                dto.setProductImage(null);
+            }
+            productsInfoCardDTOList.add(dto);
+            log.info(productsInfoCardDTOList);
+            log.info(dto);
+        }
+
+        return productsInfoCardDTOList;
+    }
+
+    // 카테고리 별 랭크 10개
+    @Override
+    public List<ProductsStarRankListDTO> getranktop10(String category) {
+        List<Products> top10Products = productsRepository.findTop10ByCategoryByStarAvgDesc(category);
+        return top10Products.stream()
+                .map(product -> {
+
+                    Long productColorId = null;
+
+                    List<ProductsColor> productsColors = productsColorRepository.findByProductId(product.getProductId());
+                    if (!productsColors.isEmpty()) {
+                        productColorId = productsColors.get(0).getProductColorId();
+                    }
+
+                    ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                            .productColorId(productColorId)
+                            .brandName(product.getBrandName())
+                            .price(product.getPrice())
+                            .priceSale(product.getPriceSale())
+                            .isSale(product.getIsSale())
+                            .category(product.getCategory())
+                            .categorySub(product.getCategorySub())
+                            .build();
+
+                    // isMain이 true인 이미지만 처리
+                    if (productColorId != null) {
+                        ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                        if (productImage != null) {
+                            try {
+                                String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                                Path path = Paths.get(filePath);
+                                if (Files.exists(path)) {
+                                    byte[] imageData = Files.readAllBytes(path);
+                                    dto.setProductImage(imageData);
+                                } else {
+                                    log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
+                                }
+                            } catch (IOException e) {
+                                log.error("이미지 로딩 중 오류 발생", e);
+                            }
+                        }
+                    }
+                    return dto;
+                })
+                .limit(10)
+                .collect(Collectors.toList());
+    }
+
+    // 랭크 50개
+    @Override
+    public Page<ProductsStarRankListDTO> getrankTop50(String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("starAvg").descending());
+        Page<Products> productsPage = productsRepository.findByCategoryOrderByStarAvgDesc(category, pageable);
+
+        return productsPage.map(product -> {
+
+            Long productColorId = null;
+
+            List<ProductsColor> productsColors = productsColorRepository.findByProductId(product.getProductId());
+            if (!productsColors.isEmpty()) {
+                productColorId = productsColors.get(0).getProductColorId();
+            }
+
+            ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                    .productColorId(productColorId)
+                    .brandName(product.getBrandName())
+                    .price(product.getPrice())
+                    .priceSale(product.getPriceSale())
+                    .isSale(product.getIsSale())
+                    .category(product.getCategory())
+                    .categorySub(product.getCategorySub())
+                    .build();
+
+            // isMain이 true인 이미지만 처리
+            if (productColorId != null) {
+                ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                if (productImage != null) {
+                    try {
+                        String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                        Path path = Paths.get(filePath);
+                        if (Files.exists(path)) {
+                            byte[] imageData = Files.readAllBytes(path);
+                            dto.setProductImage(imageData);
+                        } else {
+                            log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
+                        }
+                    } catch (IOException e) {
+                        log.error("이미지 로딩 중 오류 발생", e);
+                    }
+                }
+            }
+            return dto;
+        });
+    }
 }
 
 
