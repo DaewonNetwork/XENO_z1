@@ -4,6 +4,7 @@ import com.daewon.xeno_z1.domain.Orders;
 import com.daewon.xeno_z1.dto.order.*;
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.product.ProductHeaderDTO;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface OrdersService {
 
     PageInfinityResponseDTO<OrdersCardListDTO> getOrderCardList(PageRequestDTO pageRequestDTO,String email);
 
-    OrdersDetailInfoDTO getOrderDetailInfo(Long orderId, String email);
+    ProductHeaderDTO getProductHeader(Long orderId, String email);
 
 
 }

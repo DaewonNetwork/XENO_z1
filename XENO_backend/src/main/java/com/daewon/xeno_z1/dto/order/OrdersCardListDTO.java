@@ -14,6 +14,7 @@ import java.util.List;
 public class OrdersCardListDTO {
 
     private Long orderId;
+    private Long productColorId;
     private String orderDate;
     private String brandName;
     private String productName;

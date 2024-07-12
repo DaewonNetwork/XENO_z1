@@ -5,6 +5,7 @@ import com.daewon.xeno_z1.dto.auth.GetOneDTO;
 import com.daewon.xeno_z1.dto.order.*;
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.product.ProductHeaderDTO;
 import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
 import com.daewon.xeno_z1.exception.UserNotFoundException;
 import com.daewon.xeno_z1.repository.OrdersRepository;
@@ -65,7 +66,7 @@ public class OrdersServiceImpl implements OrdersService {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         log.info("user: " + userId);
-        List<Orders> orders = ordersRepository.findByUserId(user);
+        List<Orders> orders = ordersRepository.findByUser(user);
         return orders.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
@@ -84,7 +85,7 @@ public class OrdersServiceImpl implements OrdersService {
                 .orderPayId(dto.getOrderPayId())
                 .orderNumber(orderNumber)
                 .productsColorSize(findProductColorSize(dto.getProductColorSizeId()))
-                .userId(users)
+                .user(users)
                 .status("결제 완료")
                 .req(dto.getReq())
                 .quantity(dto.getQuantity())
@@ -140,7 +141,7 @@ public class OrdersServiceImpl implements OrdersService {
 
         // GetOneDTO 리스트 생성 및 설정
         List<GetOneDTO> getOneList = new ArrayList<>();
-        getOneList.add(createGetOneDTO(orders.getUserId()));
+        getOneList.add(createGetOneDTO(orders.getUser()));
         ordersListDTO.setGetOne(getOneList);
 
         return ordersListDTO;
@@ -202,7 +203,7 @@ public class OrdersServiceImpl implements OrdersService {
 
         Users users = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        Page<Orders> orders = ordersRepository.findPagingOrdersByUserId(pageable,users);
+        Page<Orders> orders = ordersRepository.findPagingOrdersByUser(pageable,users);
 
         List<OrdersCardListDTO> dtoList = new ArrayList<>();
 
@@ -242,13 +243,21 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public OrdersDetailInfoDTO getOrderDetailInfo(Long orderId, String email) {
+    public ProductHeaderDTO getProductHeader(Long orderId, String email) {
 
-        Orders orders = ordersRepository.findById(orderId).orElse(null);
-        OrdersDetailInfoDTO dto = new OrdersDetailInfoDTO();
+        Users users = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
+        log.info(email);
+        log.info(orderId);
 
+        log.info(users.getUserId());
+        Orders orders = ordersRepository.findByOrderIdAndUserId(orderId,users);
+        log.info(orders);
+        ProductHeaderDTO dto = new ProductHeaderDTO();
+        dto.setProductColorId(orders.getProductsColorSize().getProductsColor().getProductColorId());
+        dto.setName(orders.getProductsColorSize().getProductsColor().getProducts().getName());
+        dto.setColor(orders.getProductsColorSize().getProductsColor().getColor());
 
-        return null;
+        return dto;
     }
 }

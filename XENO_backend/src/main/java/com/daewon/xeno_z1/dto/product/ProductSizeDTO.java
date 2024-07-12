@@ -1,4 +1,4 @@
-package com.daewon.xeno_z1.dto;
+package com.daewon.xeno_z1.dto.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductOtherColorImagesDTO {
-
-    private long productColorId;
-
-    private byte[] productColorImage;
-
+public class ProductSizeDTO {
+    private String size;
+    private long stock;
 }

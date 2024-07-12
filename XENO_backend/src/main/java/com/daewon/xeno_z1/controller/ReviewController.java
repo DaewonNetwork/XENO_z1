@@ -4,6 +4,7 @@ import com.daewon.xeno_z1.dto.order.OrdersDTO;
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.dto.page.PageResponseDTO;
+import com.daewon.xeno_z1.dto.product.ProductHeaderDTO;
 import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
 import com.daewon.xeno_z1.dto.review.ReviewInfoDTO;
 import com.daewon.xeno_z1.dto.review.ReviewUpdateDTO;
@@ -11,6 +12,7 @@ import com.daewon.xeno_z1.repository.ProductsImageRepository;
 import com.daewon.xeno_z1.repository.ReviewImageRepository;
 import com.daewon.xeno_z1.repository.ReviewRepository;
 import com.daewon.xeno_z1.repository.UserRepository;
+import com.daewon.xeno_z1.service.OrdersService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.daewon.xeno_z1.domain.Review;
@@ -44,11 +46,7 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    private final ReviewImageRepository reviewImageRepository;
-    private final UserRepository userRepository;
-    private final ProductsImageRepository productsImageRepository;
-    private final ReviewRepository reviewRepository;
-
+    private final OrdersService ordersService;
 
     @PostMapping(value = "/create",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createReview(
@@ -148,6 +146,21 @@ public class ReviewController {
     public ResponseEntity<PageInfinityResponseDTO<ReviewCardDTO>> getAllReviewList(PageRequestDTO pageRequestDTO) {
         PageInfinityResponseDTO<ReviewCardDTO> reviewList = reviewService.readAllReviewImageList(pageRequestDTO);
         return ResponseEntity.ok(reviewList);
+    }
+
+
+    @GetMapping("/header")
+    public ResponseEntity<?> getProductHeader(@RequestParam Long orderId, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String userEmail = userDetails.getUsername();
+
+            log.info("orderUserEmail : " + userEmail);
+            ProductHeaderDTO header = ordersService.getProductHeader(orderId,userEmail);
+
+            return ResponseEntity.ok(header);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
+        }
     }
 }
 

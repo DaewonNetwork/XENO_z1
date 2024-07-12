@@ -1,19 +1,16 @@
-package com.daewon.xeno_z1.dto;
+package com.daewon.xeno_z1.dto.product;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductInfoDTO {
-
-    private long productId;
+public class ProductsInfoCardDTO {
 
     private long productColorId;
 
@@ -31,30 +28,12 @@ public class ProductInfoDTO {
 
     private boolean isSale;
 
-    private long productsNumber;
-
-    private String season;
-
-    private double starAvg;
+    private boolean isLike;
 
     private long likeIndex;
 
-    private long reviewIndex;
+    private double starAvg;
 
-    private boolean booleanColor;
-
-    private boolean isLike;
-
-    private String color;
-
-    private List<String> colorType;
-
-    private List<byte[]> productImages;
-
-
-
-
-
-
+    private byte[] productImage;
 
 }

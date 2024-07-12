@@ -1,10 +1,9 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
+import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
-
-import com.daewon.xeno_z1.dto.*;
 
 import com.daewon.xeno_z1.utils.CategoryUtils;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -62,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage,MultipartFile productDetailImage) {
+    public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
         // 1. Products 엔티티 생성 및 저장
         Products product = Products.builder()
                 .brandName(dto.getBrandName())
@@ -178,6 +175,7 @@ public class ProductServiceImpl implements ProductService {
         productInfoDTO.setSeason(products.getProducts().getSeason());
         productInfoDTO.setSale(products.getProducts().getIsSale());
 
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         log.info(authentication);
@@ -235,6 +233,7 @@ public class ProductServiceImpl implements ProductService {
         ProductsInfoCardDTO dto = ProductsInfoCardDTO.builder()
                 .productColorId(productColorId)
                 .name(productsColor.getProducts().getName())
+
                 .brandName(productsColor.getProducts().getBrandName())
                 .category(productsColor.getProducts().getCategory())
                 .categorySub(productsColor.getProducts().getCategorySub())

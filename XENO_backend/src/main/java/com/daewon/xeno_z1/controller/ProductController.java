@@ -1,14 +1,12 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Products;
-import com.daewon.xeno_z1.dto.ProductDetailImagesDTO;
-import com.daewon.xeno_z1.dto.ProductInfoDTO;
-import com.daewon.xeno_z1.dto.ProductOrderBarDTO;
-import com.daewon.xeno_z1.dto.ProductOtherColorImagesDTO;
-import com.daewon.xeno_z1.dto.ProductRegisterDTO;
-import com.daewon.xeno_z1.dto.ProductsInfoCardDTO;
-import com.daewon.xeno_z1.dto.ProductsStarRankListDTO;
-import com.daewon.xeno_z1.dto.review.ReviewCreateDTO;
+import com.daewon.xeno_z1.dto.product.ProductDetailImagesDTO;
+import com.daewon.xeno_z1.dto.product.ProductInfoDTO;
+import com.daewon.xeno_z1.dto.product.ProductOrderBarDTO;
+import com.daewon.xeno_z1.dto.product.ProductOtherColorImagesDTO;
+import com.daewon.xeno_z1.dto.product.ProductRegisterDTO;
+import com.daewon.xeno_z1.dto.product.ProductsInfoCardDTO;
 import com.daewon.xeno_z1.service.ProductService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,19 +14,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Log4j2

@@ -14,8 +14,8 @@ const OrderCard = ({ order }: OrderCardProps) => {
     if(!order) return <></>
     const router = useRouter();
 
-    const redirectToOrderDetailInfo = () => {
-        router.push(`/mypage/orders/detail${order.orderId}`)
+    const redirectToReviewCreate = () => {
+        router.push(`/reviews/create/${order.orderId}`)
     }
 
     return (
@@ -31,7 +31,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
         <img
                     src={`data:image/jpeg;base64,${order.productImage}`}
         />
-        <button onClick={redirectToOrderDetailInfo}> </button>
+        <button onClick={redirectToReviewCreate}> 후기 작성</button>
 
         
         

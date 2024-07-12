@@ -1,16 +1,14 @@
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-export const useOrderDetailInfoRead = (orderId:number) => {
+export const useReviewHeaderRead = (orderId:number) => {
   
-
-
     const fetchData = useFetchData();
     
     return useQuery({
-        queryKey: ["order_list"],
+        queryKey: ["review_header_read"],
         queryFn: () => fetchData({ 
-            path: `/orders/read?orderId=${orderId}`,
+            path: `/review/header?orderId=${orderId}`,
          
           }),
             

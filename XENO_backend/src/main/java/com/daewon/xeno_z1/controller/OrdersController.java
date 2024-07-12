@@ -3,6 +3,7 @@ package com.daewon.xeno_z1.controller;
 import com.daewon.xeno_z1.dto.order.*;
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.product.ProductHeaderDTO;
 import com.daewon.xeno_z1.service.OrdersService;
 import com.daewon.xeno_z1.utils.JWTUtil;
 import io.jsonwebtoken.JwtException;
@@ -95,19 +96,7 @@ public class OrdersController {
         }
     }
 
-    @GetMapping("/read")
-    public ResponseEntity<?> getOrderDetails(@RequestParam Long orderId, @AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            String userEmail = userDetails.getUsername();
 
-            log.info("orderUserEmail : " + userEmail);
-            OrdersDetailInfoDTO orderInfo = ordersService.getOrderDetailInfo(orderId,userEmail);
-
-            return ResponseEntity.ok(orderInfo);
-        } catch (Exception e) {
-            return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
-        }
-    }
 
 
 
