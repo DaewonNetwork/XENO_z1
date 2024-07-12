@@ -1,11 +1,14 @@
 "use client";
 
 import { Controller } from "react-hook-form";
-import { Input } from "@nextui-org/input";
+import { Input, InputProps } from "@nextui-org/input";
 import IconShared from "./IconShared";
-import { FormInputType } from "../types/FormInput.type";
+import { FormType } from "../types/Form.type";
 
-const FormInputShared = ({ name, control, endContent, startContent, radius, ...props }: FormInputType) => {
+interface FormInputProps extends Omit<InputProps, "name">, FormType {
+}
+
+const FormInputShared = ({ name, control, endContent, startContent, radius, ...props }: FormInputProps) => {
     return (
         <Controller
             name={name}

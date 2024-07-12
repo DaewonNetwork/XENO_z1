@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
@@ -14,7 +14,7 @@ const ProductCreateForm = () => {
     const [category, setCategory] = useState();
     const [subCategory, setSubCategory] = useState();
 
-    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isOpen, setIsOpen] = useState<boolean>(true);
 
     const schema = z.object({
         name: z.string(),

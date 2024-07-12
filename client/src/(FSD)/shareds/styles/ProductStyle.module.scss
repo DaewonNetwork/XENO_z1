@@ -58,6 +58,32 @@
     right: 0;
     bottom: 0;
     z-index: 99999;
+
+    div[data-slot="inner"] {
+        p {
+            &:first-child {
+                margin-top: 20px;
+            }
+        }
+
+        button {
+            &:last-child {
+                margin-top: 20px;
+            }
+        }
+    }
+
+    p {
+        margin-bottom: 20px;
+    }
+
+    .img_input_box {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
 }
 
 .product_order_bar {
