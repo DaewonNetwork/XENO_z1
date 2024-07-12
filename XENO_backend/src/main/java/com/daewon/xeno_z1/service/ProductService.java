@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.daewon.xeno_z1.dto.product.ProductRegisterDTO;
 import com.daewon.xeno_z1.dto.product.ProductUpdateDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
