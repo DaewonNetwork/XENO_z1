@@ -4,7 +4,7 @@ import React from 'react'
 import { useCartProductListRead } from '@/(FSD)/entities/cart/api/useCartProductListRead'
 import { useCartSummary } from '@/(FSD)/entities/cart/api/useCartSummary'
 import { useRecoilValue } from 'recoil'
-import { userState } from '@/(FSD)/shareds/stores/UserAtom'
+
 import { UserType } from '@/(FSD)/shareds/types/User.type'
 
 export interface CartItemsProps {
@@ -24,12 +24,7 @@ export interface CartItemsProps {
 const CartProductList = () => {
     const { data, isLoading: itemsLoading, error: itemsError } = useCartProductListRead();
     const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary();
-    const { user } = useRecoilValue(userState);
-    console.log(user);
-    console.log(cartSummary);
-
-    console.log("data" + data);
-
+ 
 
     const cartItems: CartItemsProps[] = data || [];
     console.log(cartItems);

@@ -14,9 +14,6 @@ import java.util.List;
 
 public interface ProductsRepository extends JpaRepository<Products, Long>{
 
-    // 임의 숫자값을 생성할때 해당 숫자가 이미 DB에 존재하는지 확인하는 메서드
-    boolean existsByProductsNumber(Long productsNumber);
-
     @Query("SELECT p FROM Products p WHERE p.category = :category")
     List<Products> findByCategory(String category);
 
@@ -26,8 +23,8 @@ public interface ProductsRepository extends JpaRepository<Products, Long>{
 //    @Query("SELECT p FROM Products p JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
 //    List<Products> findTop10ProductsByCategory(@Param("category") String category);
 
-//   @Query("SELECT p FROM Products p JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
-//   List<Products> findTop50ProductsByCategory(@Param("category") String category);
+    @Query("SELECT p FROM Products p JOIN ProductsStar ps ON p.productId = ps.productsColor.products.productId WHERE p.category = :category ORDER BY ps.starAvg DESC")
+    List<Products> findTop50ProductsByCategory(@Param("category") String category);
 
     @Query("SELECT p FROM Products p WHERE p.category = :category ORDER BY p.starAvg DESC")
     List<Products> findTop10ByCategoryByStarAvgDesc(@Param("category") String category);

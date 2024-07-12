@@ -35,9 +35,7 @@ public class Products {
 
   private boolean isSale;
 
-  private long starAvg;
-
-  private long productsNumber;
+  private String productNumber;
 
   private String season;
 

@@ -1,7 +1,14 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
-import com.daewon.xeno_z1.dto.review.ReviewDTO;
+import com.daewon.xeno_z1.dto.order.OrdersDTO;
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
+import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.page.PageResponseDTO;
+import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
+import com.daewon.xeno_z1.dto.review.ReviewCreateDTO;
+import com.daewon.xeno_z1.dto.review.ReviewInfoDTO;
+import com.daewon.xeno_z1.dto.review.ReviewUpdateDTO;
 import com.daewon.xeno_z1.repository.*;
 
 import io.jsonwebtoken.io.IOException;
@@ -12,16 +19,19 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
-import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,13 +40,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
-    private final UserRepository usersRepository;
+
     private final ReviewRepository reviewRepository;
     private final ReviewImageRepository reviewImageRepository;
     private final ProductsImageRepository productsImageRepository;
-    private final ProductsColorSizeRepository productsColorSizeRepository;
-    private final CartRepository cartRepository;
     private final OrdersRepository ordersRepository;
+    private final UserRepository userRepository;
+    private final ReplyRepository replyRepository;
+    private final ProductsStarRepository productsStarRepository;
 
     @Value("${uploadPath}")
     private String uploadPath;
@@ -49,238 +60,266 @@ public class ReviewServiceImpl implements ReviewService {
         return image;
     }
 
-    // 리뷰 이미지 총 갯수
-    @Override
-    public Long countReviewImagesByProductId(Long productId) {
-        return reviewImageRepository.countReviewImagesByProductId(productId);
-    }
-
-    @Override
-    public List<byte[]> getAllProductReviewImages(Long productId) {
-        List<ReviewImage> reviewImages = reviewImageRepository.findAllReviewImagesByProductId(productId);
-        List<byte[]> imageBytesList = new ArrayList<>();
-        for (ReviewImage reviewImage : reviewImages) {
-            try {
-                byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
-                imageBytesList.add(imageData);
-            } catch (IOException | java.io.IOException e) {
-                log.error("Error reading review image file", e);
-            }
+    private ReviewInfoDTO convertToDTO(Review review, Users currentUser) {
+        ReviewInfoDTO dto = new ReviewInfoDTO();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+        if (currentUser != null && review.getUsers().equals(currentUser)) {
+            dto.setReview(true);
+        } else {
+            dto.setReview(false);
         }
-        return imageBytesList;
-    }
-
-    @Override
-    public List<Map<String, Object>> getAllReviewImages() {
-        List<ReviewImage> reviewImages = reviewImageRepository.findAll();
-        List<Map<String, Object>> imageList = new ArrayList<>();
-        for (ReviewImage reviewImage : reviewImages) {
-            try {
-                byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
-                Map<String, Object> imageMap = new HashMap<>();
-                imageMap.put("reviewId", reviewImage.getReview().getReviewId());
-                imageMap.put("image", imageData);
-                imageList.add(imageMap);
-            } catch (IOException | java.io.IOException e) {
-                log.error("Error reading review image file", e);
-            }
-        }
-        return imageList;
-    }
-
-
-    // 리뷰 조회
-    @Override
-    public ReviewDTO getReviewDetails(Long reviewId) {
-        log.info("Getting review details for reviewId: {}", reviewId);
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
-        log.info("Found review: {}", review);
-        ReviewDTO dto = new ReviewDTO();
         dto.setReviewId(review.getReviewId());
-        dto.setProductId(review.getProducts().getProductId());
-        dto.setProductName(review.getProducts().getName());
-        dto.setUserId(review.getUsers().getUserId());
+        dto.setProductColorId(review.getOrder().getProductsColorSize().getProductsColor().getProductColorId());
+        dto.setUserName(review.getUsers().getName());
+//        dto.setProductName(review.getOrder().getProductsColorSize().getProductsColor().getProducts().getName());
+//        dto.setColor(review.getOrder().getProductsColorSize().getProductsColor().getColor());
+//        dto.setSize(review.getOrder().getProductsColorSize().getSize().name());
         dto.setText(review.getText());
         dto.setStar(review.getStar());
-        dto.setOrderId(review.getOrder().getOrderId());
-        dto.setReviewDate(review.getCreateAt() != null ? review.getCreateAt().toString() : null);
-        dto.setName(review.getUsers().getName());
-        dto.setProductColorSizeId(review.getProductsColorSize().getProductColorSizeId());
+        int replyIndex = replyRepository.countByReviewId(review.getReviewId());
+        dto.setReplyIndex(replyIndex);
+        dto.setCreateAt(review.getCreateAt().format(formatter));
 
-        List<ReviewImage> reviewImages = reviewImageRepository.findByReview(review);
-        List<byte[]> reviewDetailImages = new ArrayList<>();
-        for (ReviewImage reviewImage : reviewImages) {
+        ReviewImage reviewImage = reviewImageRepository.findByReview(review);
+        if (reviewImage != null) {
             try {
-                byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
-                reviewDetailImages.add(imageData);
-            } catch (IOException | java.io.IOException e) {
-                log.error("Error reading review image file", e);
+                byte[] reviewImageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
+                dto.setReviewImage(reviewImageData);
+            } catch (java.io.IOException e) {
+                throw new RuntimeException(e);
             }
+        } else {
+            dto.setReviewImage(null);
         }
-        dto.setReviewDetailImages(reviewDetailImages);
 
-        // 제품 이미지 설정
-         List<ProductsImage> productImages = productsImageRepository.findByProductColorId(review.getProducts().getProductId());
-         List<byte[]> productImageBytes = new ArrayList<>();
-         for (ProductsImage productImage : productImages) {
-             try {
-                 byte[] imageData = getImage(productImage.getUuid(), productImage.getFileName());
-                 productImageBytes.add(imageData);
-             } catch (IOException | java.io.IOException e) {
-                 log.error("Error reading product image file", e);
-             }
-         }
-         dto.setProductImages(productImageBytes);
+//        ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(review.getOrder().getProductsColorSize().getProductsColor().getProductColorId());
+//        if (productsImage != null) {
+//            try {
+//                byte[] productImageData = getImage(productsImage.getUuid(), productsImage.getFileName());
+//                dto.setProductImage(productImageData);
+//            } catch (java.io.IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        } else {
+//            dto.setReviewImage(null);
+//        }
 
         return dto;
     }
 
-    // 리뷰 생성
     @Override
-    public Review createReview(ReviewDTO reviewDTO, List<MultipartFile> images) {
-        ProductsColorSize productsColorSize = productsColorSizeRepository.findById(reviewDTO.getProductColorSizeId())
-                .orElseThrow(() -> new RuntimeException("ProductColorSize not found"));
+    public String createReview(ReviewCreateDTO reviewCreateDTO, MultipartFile image, UserDetails userDetails) {
 
-        Orders order = ordersRepository.findByOrderId(reviewDTO.getOrderId())
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        String userEmail = userDetails.getUsername();
 
-        ProductsColor productsColor = productsColorSize.getProductsColor();
-        
-        Products products = productsColor.getProducts();
+        Users users = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
-        ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productsColor.getProductColorId());
-                // .orElseThrow(() -> new RuntimeException("ProductImage not found"));
+        Review review = new Review();
+        review.setText(reviewCreateDTO.getText());
+        review.setStar(reviewCreateDTO.getStar());
+        review.setUsers(users.getUserId());
+        review.setOrders(reviewCreateDTO.getOrderId());
+        reviewRepository.save(review);
 
-        Review review = Review.builder()
-                .text(reviewDTO.getText())
-                .star(reviewDTO.getStar())
-                .size(reviewDTO.getSize())
-                .productsColorSize(productsColorSize)
-                .productsColor(productsColor)
-                .products(products)
-                .order(order)
-                .productsImage(productsImage)
-                .users(Users.builder().userId(reviewDTO.getUserId()).build())
-                .build();
+        Orders orders = ordersRepository.findByOrderId(reviewCreateDTO.getOrderId()).orElse(null);
 
-        review = reviewRepository.save(review);
-
-        List<byte[]> reviewDetailImages = new ArrayList<>();
-        if (images != null && !images.isEmpty()) {
-            for (MultipartFile image : images) {
-                try {
-                    String originalFilename = image.getOriginalFilename();
-                    String uuid = UUID.randomUUID().toString();
-                    String savedName = uuid + "_" + originalFilename;
-                    String savePath = uploadPath + File.separator + savedName;
-
-                    File dest = new File(savePath);
-                    image.transferTo(dest);
-
-                    ReviewImage reviewImage = ReviewImage.builder()
-                            .review(review)
-                            .fileName(originalFilename)
-                            .uuid(uuid)
-                            .build();
-                    reviewImageRepository.save(reviewImage);
-
-                    byte[] imageData = Files.readAllBytes(dest.toPath());
-                    reviewDetailImages.add(imageData);
-                } catch (IOException | java.io.IOException e) {
-                    throw new RuntimeException("Failed to save image file", e);
-                }
+        if (orders != null) {
+            ProductsStar productsStar = productsStarRepository
+                    .findByProductColorId(orders.getProductsColorSize().getProductsColor().getProductColorId())
+                    .orElse(null);
+            if (productsStar == null) {
+                productsStar = ProductsStar.builder()
+                        .productsColor(orders.getProductsColorSize().getProductsColor())
+                        .starAvg(reviewCreateDTO.getStar())
+                        .starTotal(reviewCreateDTO.getStar())
+                        .build();
+            } else {
+                productsStar.setStarTotal(productsStar.getStarTotal() + reviewCreateDTO.getStar());
+                double starAvg = Math.round((productsStar.getStarTotal() / reviewRepository.countByProductColorId(orders.getProductsColorSize().getProductsColor().getProductColorId())) * 10.0) / 10.0;
+                productsStar.setStarAvg(starAvg);
             }
+            productsStarRepository.save(productsStar);
+        } else {
+            return "잘못된 주문 내역입니다.";
         }
-        return review;
-    }
+        if (image != null && !image.isEmpty()) {
+            // 원본 파일명 가져오기
+            String originalName = image.getOriginalFilename();
+            // UUID 생성 (파일명 중복 방지)
+            String uuid = UUID.randomUUID().toString();
+            // 파일을 저장할 경로 생성 (컨트롤러에서 @Value로 지정해준 디렉토리에 UUID_원본파일명 형식으로 저장)
+            Path savePath = Paths.get(uploadPath, uuid + "_" + originalName);
 
-    @Override
-    public Page<ReviewDTO> getReviews(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return reviewRepository.findAll(pageable).map(this::convertToDTO);
-    }
-
-    private ReviewDTO convertToDTO(Review review) {
-        ReviewDTO dto = new ReviewDTO();
-        dto.setReviewId(review.getReviewId());
-        dto.setUserId(review.getUsers().getUserId());
-        dto.setText(review.getText());
-        dto.setStar(review.getStar());
-        dto.setReviewDate(review.getCreateAt().toString());
-        dto.setName(usersRepository.findById(review.getUsers().getUserId()).get().getName());
-        dto.setSize(String.valueOf(review.getProductsColorSize().getSize()));
-
-        // ProductsColorSize 관련 필드 설정
-        dto.setProductColorSizeId(review.getProductsColorSize().getProductColorSizeId());
-
-        // 리뷰 이미지 설정
-        List<ReviewImage> reviewImages = reviewImageRepository.findByReview(review);
-        List<byte[]> reviewDetailImages = new ArrayList<>();
-
-        for (ReviewImage reviewImage : reviewImages) {
             try {
-                byte[] imageData = getImage(reviewImage.getUuid(), reviewImage.getFileName());
-                reviewDetailImages.add(imageData);
-            } catch (IOException | java.io.IOException e) {
-                log.error("Error reading review image file", e);
+                // 파일을 지정된 경로에 저장
+                image.transferTo(savePath.toFile());
+
+                // ReviewImage 엔티티 생성 및 저장
+                ReviewImage reviewImage = ReviewImage.builder()
+                        .uuid(uuid)
+                        .fileName(originalName)
+                        .review(review)
+                        .build();
+                reviewImageRepository.save(reviewImage);
+            } catch (IOException e) {
+                // 파일 저장 또는 썸네일 생성 중 오류가 발생할 경우
+                log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);
+                throw new RuntimeException("File processing error", e);
+            } catch (java.io.IOException e) {
+                throw new RuntimeException(e);
             }
+
         }
-        dto.setReviewDetailImages(reviewDetailImages);
-        return dto;
+            return "성공";
     }
 
-    // 리뷰 수정
     @Override
-    public Review updateReview(Long reviewId, ReviewDTO reviewDTO, List<MultipartFile> newImages) {
+    public String updateReview(Long reviewId, ReviewUpdateDTO reviewDTO, MultipartFile image) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
 
         review.setText(reviewDTO.getText());
+
+        Orders orders = ordersRepository.findByOrderId(review.getOrder().getOrderId()).orElse(null);
+
+        ProductsStar productsStar = productsStarRepository
+                .findByProductColorId(orders.getProductsColorSize().getProductsColor().getProductColorId())
+                .orElse(null);
+
+        productsStar.setStarTotal(productsStar.getStarTotal() - review.getStar() + reviewDTO.getStar());
+        double starAvg = Math.round((productsStar.getStarTotal() / reviewRepository.countByProductColorId(orders.getProductsColorSize().getProductsColor().getProductColorId())) * 10.0) / 10.0;
+        productsStar.setStarAvg(starAvg);
         review.setStar(reviewDTO.getStar());
+        reviewRepository.save(review);
 
-        List<ReviewImage> oldImages = reviewImageRepository.findByReview(review);
-        for (ReviewImage oldImage : oldImages) {
-            String filePath = uploadPath + File.separator + oldImage.getUuid() + "_" + oldImage.getFileName();
+        if (image != null && !image.isEmpty()) {
+            // 원본 파일명 가져오기
+            String originalName = image.getOriginalFilename();
+            // UUID 생성 (파일명 중복 방지)
+            String uuid = UUID.randomUUID().toString();
+            // 파일을 저장할 경로 생성 (컨트롤러에서 @Value로 지정해준 디렉토리에 UUID_원본파일명 형식으로 저장)
+            Path savePath = Paths.get(uploadPath, uuid + "_" + originalName);
+
+            log.info(uuid);
+            log.info(originalName);
+            // 파일을 지정된 경로에 저장
             try {
-                Files.deleteIfExists(Paths.get(filePath));
-            } catch (IOException | java.io.IOException e) {
-                log.error("Failed to delete old image file: " + filePath, e);
-            }
-            reviewImageRepository.delete(oldImage);
-        }
+                // 파일을 지정된 경로에 저장
+                ReviewImage reviewImage = reviewImageRepository.findByReview(review);
 
-        List<byte[]> reviewDetailImages = new ArrayList<>();
-        if (newImages != null && !newImages.isEmpty()) {
-            for (MultipartFile image : newImages) {
-                try {
-                    String originalFilename = image.getOriginalFilename();
-                    String uuid = UUID.randomUUID().toString();
-                    String savedName = uuid + "_" + originalFilename;
-                    String savePath = uploadPath + File.separator + savedName;
-
-                    File dest = new File(savePath);
-                    image.transferTo(dest);
-
-                    ReviewImage reviewImage = ReviewImage.builder()
-                            .review(review)
-                            .fileName(originalFilename)
+                image.transferTo(savePath.toFile());
+                log.info(reviewImage);
+                // 기존 객체가 있는 경우 수정
+                if (reviewImage != null) {
+                    String filePath = uploadPath + File.separator + reviewImage.getUuid() + "_" + reviewImage.getFileName();
+                    try {
+                        Files.deleteIfExists(Paths.get(filePath));
+                    } catch (IOException | java.io.IOException e) {
+                        log.error("Failed to delete image file :" + filePath, e);
+                    }
+                    reviewImage.setUuid(uuid);
+                    reviewImage.setFileName(originalName);
+                    // 다른 필드들도 필요에 따라 수정
+                    reviewImageRepository.save(reviewImage);
+                } else {
+                    // 기존 객체가 없는 경우 새로 생성하여 저장
+                    reviewImage = ReviewImage.builder()
                             .uuid(uuid)
+                            .fileName(originalName)
+                            .review(review)
                             .build();
                     reviewImageRepository.save(reviewImage);
-
-                    byte[] imageData = Files.readAllBytes(dest.toPath());
-                    reviewDetailImages.add(imageData);
+                }
+            } catch (IOException | java.io.IOException e) {
+                // 파일 저장 또는 썸네일 생성 중 오류가 발생할 경우
+                log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);
+                throw new RuntimeException("File processing error", e);
+            }
+        } else {
+            ReviewImage reviewImage = reviewImageRepository.findByReview(review);
+            if (reviewImage != null) {
+                String filePath = uploadPath + File.separator + reviewImage.getUuid() + "_" + reviewImage.getFileName();
+                try {
+                    Files.deleteIfExists(Paths.get(filePath));
+                    reviewImageRepository.deleteByReviewId(review.getReviewId());
                 } catch (IOException | java.io.IOException e) {
-                    log.error("Failed to save new image file", e);
-                    throw new RuntimeException("Failed to save new image file", e);
+                    log.error("Failed to delete image file :" + filePath, e);
                 }
             }
-        }
-        reviewDTO.setReviewDetailImages(reviewDetailImages);
 
-        return reviewRepository.save(review);
+        }
+
+        return "성공";
+}
+
+    @Override
+    public PageInfinityResponseDTO<ReviewCardDTO> readAllReviewImageList(PageRequestDTO pageRequestDTO) {
+
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
+                pageRequestDTO.getSize(),
+                Sort.by("reviewImageId").ascending());
+        Page<ReviewImage> result = reviewImageRepository.findAll(pageable);
+        List<ReviewCardDTO> dtoList = new ArrayList<>();
+        for (ReviewImage reviewImage : result.getContent()) {
+            ReviewCardDTO dto = new ReviewCardDTO();
+            dto.setReviewId(reviewImage.getReview().getReviewId());
+            dto.setProductColorId(reviewImage.getReview().getOrder().getProductsColorSize().getProductsColor().getProductColorId());
+            byte[] image = null;
+            if(reviewImage != null) {
+                try {
+                    image = getImage(reviewImage.getUuid(), reviewImage.getFileName());
+                } catch (java.io.IOException e) {
+                    throw new RuntimeException(e);
+                }
+                dto.setReviewImage(image);
+            }
+
+            dtoList.add(dto);
+        }
+      return PageInfinityResponseDTO.<ReviewCardDTO>withAll()
+              .pageRequestDTO(pageRequestDTO)
+              .dtoList(dtoList)
+              .totalIndex((int) result.getTotalElements())
+              .build();
     }
+
+    // 리뷰 조회
+    @Override
+    public ReviewInfoDTO readReviewInfo(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        Users users = userRepository.findByEmail(currentUserName).orElse(null);
+
+        return convertToDTO(review, users);
+    }
+
+    // 리뷰 목록 조회
+    @Override
+    public PageResponseDTO<ReviewInfoDTO> readReviewList(Long productColorId, PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
+                pageRequestDTO.getSize(),
+                Sort.by("reviewId").ascending());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        Users users = userRepository.findByEmail(currentUserName).orElse(null);
+        Page<Review> result = reviewRepository.findByProductColorId(productColorId, pageable);
+        List<ReviewInfoDTO> dtoList = result.getContent().stream()
+                .map(review -> convertToDTO(review, users))
+                .collect(Collectors.toList());
+
+        return PageResponseDTO.<ReviewInfoDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(dtoList)
+                .totalIndex((int) result.getTotalElements())
+                .build();
+    }
+
 
     // 리뷰 삭제
     @Override
@@ -288,21 +327,27 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found with id : " + reviewId));
 
-        // 리뷰와 관련된 이미지 삭제
-        List<ReviewImage> images = reviewImageRepository.findByReview(review);
-        for(ReviewImage image : images) {
-            // 파일 시스템에서 이미지 삭제
-            String filePath = uploadPath + File.separator + image.getUuid() + "_" + image.getFileName();
+        long productColorId = review.getOrder().getProductsColorSize().getProductsColor().getProductColorId();
+        ReviewImage reviewImage = reviewImageRepository.findByReview(review);
+
+        if (reviewImage != null) {
+            String filePath = uploadPath + File.separator + reviewImage.getUuid() + "_" + reviewImage.getFileName();
             try {
                 Files.deleteIfExists(Paths.get(filePath));
+                reviewImageRepository.deleteByReviewId(review.getReviewId());
             } catch (IOException | java.io.IOException e) {
                 log.error("Failed to delete image file :" + filePath, e);
             }
-            // DB에서 이미지 정보 삭제
-            reviewImageRepository.delete(image);
         }
 
-        // 리뷰 삭제
-        reviewRepository.delete(review);
+        ProductsStar productsStar = productsStarRepository.findByProductColorId(productColorId).orElse(null);
+        productsStar.setStarTotal(productsStar.getStarTotal() - review.getStar());
+        reviewRepository.deleteById(reviewId);
+
+        double starAvg = Math.round((productsStar.getStarTotal() / reviewRepository.countByProductColorId(productColorId) * 10.0) / 10.0);
+        log.info(starAvg);
+        productsStar.setStarAvg(starAvg);
+        productsStarRepository.save(productsStar);
+        }
+
     }
-}   

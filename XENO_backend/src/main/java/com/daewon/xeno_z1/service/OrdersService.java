@@ -1,9 +1,10 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Orders;
-import com.daewon.xeno_z1.dto.order.OrdersConfirmDTO;
-import com.daewon.xeno_z1.dto.order.OrdersDTO;
-import com.daewon.xeno_z1.dto.order.OrdersListDTO;
+import com.daewon.xeno_z1.dto.order.*;
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
+import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.product.ProductHeaderDTO;
 
 import java.util.List;
 
@@ -18,4 +19,10 @@ public interface OrdersService {
     OrdersConfirmDTO confirmOrder(Long orderId, String email);
 
     OrdersListDTO convertToDTO(Orders orders);
+
+    PageInfinityResponseDTO<OrdersCardListDTO> getOrderCardList(PageRequestDTO pageRequestDTO,String email);
+
+    ProductHeaderDTO getProductHeader(Long orderId, String email);
+
+
 }

@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import styles from "@/(FSD)/shareds/styles/AuthStyle.module.scss";
 import { UserType } from "@/(FSD)/shareds/types/User.type";
 import { useSetRecoilState } from "recoil";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
+
 import { useAuthSellerSignup } from "../api/useAuthSellerSignup";
 
 const SellerAuthSignupForm = () => {
@@ -22,7 +22,6 @@ const SellerAuthSignupForm = () => {
 
     const [userData, setUserData] = useState<UserType | null>(null);
 
-    const setUser = useSetRecoilState(userState);
     
     const schema = z.object({
         brandName: z.string().regex(brandNameRegex, { message: "알맞은 이름을 입력해주세요." }),
@@ -65,7 +64,6 @@ const SellerAuthSignupForm = () => {
 
     const onSuccess = (data: any) => {
         if(!userData) return;
-        setUser({ user: userData });
         router.push("/");
     }
 

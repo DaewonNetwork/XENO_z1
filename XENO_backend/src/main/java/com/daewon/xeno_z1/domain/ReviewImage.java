@@ -27,7 +27,7 @@ public class ReviewImage {
 
     private String fileName;
 
-    private long ord;
+
 
     private String uuid;
 

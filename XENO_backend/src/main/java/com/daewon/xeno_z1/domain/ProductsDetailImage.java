@@ -27,8 +27,6 @@ public class ProductsDetailImage {
 
   private String fileName;
 
-  private long ord;
-
   private String uuid;
 
 }

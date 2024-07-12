@@ -1,15 +1,16 @@
 package com.daewon.xeno_z1.controller;
 
-import com.daewon.xeno_z1.domain.Orders;
-import com.daewon.xeno_z1.dto.cart.CartDTO;
 import com.daewon.xeno_z1.dto.order.*;
-import com.daewon.xeno_z1.exception.ProductNotFoundException;
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
+import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.exception.UserNotFoundException;
 import com.daewon.xeno_z1.service.OrdersService;
 import com.daewon.xeno_z1.utils.JWTUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -95,6 +96,31 @@ public class OrdersController {
             return ResponseEntity.status(404).body("주문내역을 찾을 수 없습니다.");
         }
     }
+
+
+    @GetMapping("/list")
+    public ResponseEntity<PageInfinityResponseDTO<OrdersCardListDTO>> getOrderCardList(@AuthenticationPrincipal UserDetails userDetails, PageRequestDTO pageRequestDTO) {
+        try {
+            String userEmail = userDetails.getUsername();
+
+            log.info("orderUserEmail : " + userEmail);
+            PageInfinityResponseDTO<OrdersCardListDTO> orderCardList = ordersService.getOrderCardList(pageRequestDTO,userEmail);
+            log.info(orderCardList);
+            return ResponseEntity.ok(orderCardList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 }
 
 /*

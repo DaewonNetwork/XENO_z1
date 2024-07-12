@@ -12,7 +12,6 @@ public interface ProductsColorSizeRepository extends JpaRepository<ProductsColor
     @Query("SELECT p FROM ProductsColorSize p WHERE p.productsColor.productColorId = :productColorId")
     List<ProductsColorSize> findByProductColorId(@Param("productColorId") Long productColorId);
 
-//  Optional<ProductsColorSize> findFirstByProductColorId(Long productColorId);
 
 
 }

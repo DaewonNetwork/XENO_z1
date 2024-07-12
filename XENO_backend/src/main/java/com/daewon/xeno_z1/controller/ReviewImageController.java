@@ -1,13 +1,6 @@
 package com.daewon.xeno_z1.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.daewon.xeno_z1.domain.Review;
-import com.daewon.xeno_z1.domain.ReviewImage;
-import com.daewon.xeno_z1.dto.review.ReviewDTO;
-import com.daewon.xeno_z1.dto.review.ReviewImageDTO;
 
 import com.daewon.xeno_z1.service.ReviewService;
 
@@ -22,11 +15,11 @@ public class ReviewImageController {
 
     private final ReviewService reviewService;
 
-    @Operation(summary = "전체 이미지 총 갯수")
-    @GetMapping("/images/count")
-    public ResponseEntity<Long> getReviewImageCount(@PathVariable Long productId) {
-        Long count = reviewService.countReviewImagesByProductId(productId);
-        return ResponseEntity.ok(count);
-    }
+//    @Operation(summary = "전체 이미지 총 갯수")
+//    @GetMapping("/images/count")
+//    public ResponseEntity<Long> getReviewImageCount(@PathVariable Long productId) {
+//        Long count = reviewService.countReviewImagesByProductId(productId);
+//        return ResponseEntity.ok(count);
+//    }
 
 }

@@ -5,9 +5,9 @@ import { useParams } from "next/navigation";
 import { useProductOrderBarRead } from "@/(FSD)/entities/product/api/useProductOrderBarRead";
 import ProductOrderBar from "@/(FSD)/widgets/product/ui/ProductOrderBar";
 import { useRecoilValue } from "recoil";
-import { userState } from "@/(FSD)/shareds/stores/UserAtom";
 
- export interface orderInfoType {
+
+ export interface ProductOrderInfoType {
     productColorId: number;
     productColorSizeId: number;
     color: string;
@@ -18,7 +18,7 @@ import { userState } from "@/(FSD)/shareds/stores/UserAtom";
 export interface ProductOrderBarType {
     like?: boolean;
     likeIndex?: number;
-    orderInfo: orderInfoType[]
+    orderInfo: ProductOrderInfoType[]
     price: number;
 }
 
@@ -28,14 +28,14 @@ const ProductOrderBarContainer = () => {
     
     const orderBar: ProductOrderBarType = data || { orderInfo: [] };
 
-    const orderInfo: orderInfoType[] = orderBar?.orderInfo || [];
+    const orderInfo: ProductOrderInfoType[] = orderBar?.orderInfo || [];
 
     console.log(orderBar);
     console.log(orderInfo);
     
     useEffect(() => {
         refetch();
-    }, [productColorId, refetch]);
+    }, [productColorId, orderBar, refetch]);
 
     console.log(orderBar.like)
 

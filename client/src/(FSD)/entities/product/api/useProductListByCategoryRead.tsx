@@ -10,7 +10,7 @@ export const useProductListByCategoryRead = (categoryId: string,categorySubId:st
         queryKey: ["product_read_category", categoryId,categorySubId],
         queryFn: () => fetchData({ 
             path: `/product/read/category?categoryId=${categoryId}&categorySubId=${categorySubId}`,
-            isAuthRequired: true, 
+    
           }),
     
     });

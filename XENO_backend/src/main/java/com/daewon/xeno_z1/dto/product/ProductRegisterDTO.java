@@ -13,6 +13,8 @@ import java.util.List;
 @Builder
 public class ProductRegisterDTO {
 
+
+
     private String brandName;
 
     private String category;
@@ -20,19 +22,22 @@ public class ProductRegisterDTO {
     private String categorySub;
 
     private String name;
-
+    
     private Long price;
 
     private boolean isSale;
 
     private Long priceSale;
 
-    private String productsNumber;
+    private String productNumber;
 
     private String season;
 
     private String colors; // 색상
 
     private List<ProductSizeDTO> size; // size 리스트
+
+
+
 
 }

@@ -26,6 +26,8 @@ public class Users extends BaseEntity {
   @Column(unique = true)
   private String email;
 
+  private String brandName;
+
   private String name;
 
   private String address;

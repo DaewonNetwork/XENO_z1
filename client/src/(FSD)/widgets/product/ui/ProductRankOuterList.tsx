@@ -1,3 +1,5 @@
+"use server";
+
 import React from "react";
 import ProductCardSlideList from "./ProductCardSlideList";
 import { productRankList } from "../consts/productRankList";

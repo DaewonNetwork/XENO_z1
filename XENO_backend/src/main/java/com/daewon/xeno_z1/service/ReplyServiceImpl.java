@@ -44,14 +44,14 @@ public class ReplyServiceImpl implements ReplyService {
         Users users = userRepository.findByEmail(currentUserName)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
-        Reply reply = modelMapper.map(replyDTO, Reply.class);
-        reply.setReview(replyDTO.getReplyId());
-        reply.setUsers(users.getUserId());
+        Reply reply = Reply.builder()
+                .users(user)
+                .review(review)
+                .text(replyDTO.getReplyText())
+                .build();
 
-        Long replyId = replyRepository.save(reply).getReplyId();
-        Long reviewId = replyDTO.getReviewId();
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException());
-        review.setReplyIndex(review.getReplyIndex() + 1);
+        Reply savedReply = replyRepository.save(reply);
+        reviewRepository.save(review);
 
         return replyId;
     }
@@ -139,10 +139,18 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public void deleteReply(Long replyId) {
-        Reply reply = replyRepository.findById(replyId).orElseThrow();
-        Long reviewId = reply.getReview().getReviewId();
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException());
-        review.setReplyIndex(review.getReplyIndex() - 1);
+        Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없음"));
+        
+        // userId를 1로 가정
+        Long assumedUserId = 1L;
+
+        if (reply.getUsers().getUserId() != assumedUserId) {
+            throw new RuntimeException("댓글을 수정할 권한이 없습니다.");
+        }
+
+        Review review = reply.getReview();
+
         replyRepository.deleteById(replyId);
     }
 
