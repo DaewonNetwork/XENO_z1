@@ -28,7 +28,7 @@ public interface ProductService {
 
     void addToCart(List<AddToCartDTO> addToCartDTO);
 
-    List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId,String categorySubId);
+//    List<ProductsInfoByCategoryDTO> getProductsInfoByCategory(String categoryId,String categorySubId);
 
     List<ProductsStarRankListDTO> getranktop10(String category);
 

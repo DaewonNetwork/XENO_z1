@@ -88,19 +88,19 @@ public class ProductController {
         }
     }
 
-    @Operation(summary = "카테고리")
-    @GetMapping("/read/category")
-    public ResponseEntity<List<ProductsInfoByCategoryDTO>> readProductsListByCategory(@RequestParam String categoryId, @RequestParam(required = false, defaultValue = "") String categorySubId) {
-
-        try {
-            List<ProductsInfoByCategoryDTO> products = productService.getProductsInfoByCategory(categoryId,categorySubId);
-            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            // 예외 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    @Operation(summary = "카테고리")
+//    @GetMapping("/read/category")
+//    public ResponseEntity<List<ProductsInfoByCategoryDTO>> readProductsListByCategory(@RequestParam String categoryId, @RequestParam(required = false, defaultValue = "") String categorySubId) {
+//
+//        try {
+//            List<ProductsInfoByCategoryDTO> products = productService.getProductsInfoByCategory(categoryId,categorySubId);
+//            // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
+//            return ResponseEntity.ok(products);
+//        } catch (Exception e) {
+//            // 예외 처리
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 
 
     @GetMapping("/readOrderBar")
