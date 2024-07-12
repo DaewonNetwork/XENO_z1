@@ -46,11 +46,33 @@ $width: 520px;
     z-index: 999;
 }
 
+
+.star_list {
+    display: flex;
+
+    .star span {
+        font-size: 16px;
+    }
+}
+
+.star {
+    display: block;
+
+    &.active_star {
+        display: block;
+
+        span {
+            color: #FFD700;
+        }
+    }
+}
+
 .file_container {
     display: block;
     width: 100px;
     height: 100px;
     position: relative;
+    margin-bottom: 10px;
 
     .file_input_box {
         height: 100%;

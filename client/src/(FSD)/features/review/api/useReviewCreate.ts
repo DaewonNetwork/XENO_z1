@@ -8,7 +8,7 @@ const fetchData = useFetchData();
 
     return useMutation({
         mutationFn: (data: FormData) => {
-            return fetchData({ path: "/review", method: "POST", body: data,contentType: "multipart/form-data", isAuthRequired: true,});
+            return fetchData({ path: "/review/create", method: "POST", body: data,isAuthRequired: true,});
         },
         onSuccess: (data: any) => {
             onSuccess(data);

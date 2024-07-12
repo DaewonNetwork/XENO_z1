@@ -55,7 +55,7 @@ public class ReviewController {
             @RequestPart("reviewDTO") String reviewCreateDTOStr,
             // 클라이언트로부터 전달된 파일 리스트를 받음.
             // required = false 로 설정하여 파일이 없어도 요청이 처리됨
-            @RequestPart(name = "image", required = false) MultipartFile image,@AuthenticationPrincipal UserDetails userDetails) {
+            @RequestPart(name = "image", required = false) MultipartFile image ,@AuthenticationPrincipal UserDetails userDetails) {
         log.info("Review DTO String: " + reviewCreateDTOStr);
         log.info("Files: " + image);
 

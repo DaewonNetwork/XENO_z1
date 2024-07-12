@@ -30,3 +30,26 @@
 .review_info {
     display: block;
 }
+
+.form {
+    .star_list {
+        margin-top: 20px;
+        margin-bottom: 30px;
+
+        .star_list_inner {
+            margin: 0 auto;
+            width: 130px;
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+
+    .review_input_box {
+        display: block;
+        margin-bottom: 20px;
+
+        h1 {
+            margin-bottom: 10px;
+        }
+    }
+}
