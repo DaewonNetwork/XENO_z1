@@ -39,7 +39,7 @@ const FormInputShared = ({ name, control, endContent, startContent, readOnly, ra
                         startContent={startContent && startContent}
 
                         endContent={
-                            endContent ? endContent :
+                            readOnly ? null : endContent ? endContent :
                                 <button className={"focus:outline-none"} type={"button"} onClick={() => { onChange(""); }}>
                                     <IconShared iconType={"close"} />
                                 </button>

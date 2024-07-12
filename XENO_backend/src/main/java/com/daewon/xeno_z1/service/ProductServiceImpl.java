@@ -44,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductsStockRepository productsStockRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final ProductsSellerRepository productsSellerRepository;
 
 
     @Value("${uploadPath}")
@@ -103,11 +104,10 @@ public class ProductServiceImpl implements ProductService {
 
         if (productImage != null && !productImage.isEmpty()) {
             for (MultipartFile image : productImage) {
-                String fileName = saveImage(image);
-                String uuid = UUID.randomUUID().toString();
+                String uuid = saveImage(image);
                 ProductsImage productsImage = ProductsImage.builder()
                         .productsColor(productsColor)
-                        .fileName(fileName)
+                        .fileName(image.getOriginalFilename())
                         .uuid(uuid)
                         .build();
                 productsImageRepository.save(productsImage);
@@ -115,11 +115,10 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (productDetailImage != null && !productDetailImage.isEmpty()) {
-            String fileName = saveImage(productDetailImage);
-            String uuid = UUID.randomUUID().toString();
+            String uuid = saveImage(productDetailImage);
             ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
                     .productsColor(productsColor)
-                    .fileName(fileName)
+                    .fileName(productDetailImage.getOriginalFilename())
                     .uuid(uuid)
                     .build();
             productsDetailImageRepository.save(productsDetailImage);
@@ -128,19 +127,84 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    @Override
+    public String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
+
+
+        Products products = productsRepository.findById(dto.getProductId()).orElse(null);
+
+        if (products == null) {
+            return "상품이 존재하지 않습니다."; // 상품이 없을 때 메시지 반환
+        }
+
+        ProductsColor productsColor = ProductsColor.builder()
+                .products(products)
+                .color(dto.getColor())
+                .build();
+        productsColorRepository.save(productsColor);
+
+
+
+//             3. ProductsColorSize 엔티티 생성 및 저장
+        for (ProductSizeDTO size : dto.getSize()) {
+            ProductsColorSize productsColorSize = ProductsColorSize.builder()
+                    .productsColor(productsColor)
+                    .size(Size.valueOf(size.getSize()))
+                    .build();
+            productsColorSizeRepository.save(productsColorSize);
+
+            // ProductsStock 엔티티 생성 및 저장
+            ProductsStock productsStock = ProductsStock.builder()
+                    .productsColorSize(productsColorSize)
+                    .stock(size.getStock())  // 초기 재고를 100으로 설정
+                    .build();
+            productsStockRepository.save(productsStock);
+
+        }
+
+        if (productImage != null && !productImage.isEmpty()) {
+            for (MultipartFile image : productImage) {
+                String uuid = saveImage(image);
+                ProductsImage productsImage = ProductsImage.builder()
+                        .productsColor(productsColor)
+                        .fileName(image.getOriginalFilename())
+                        .uuid(uuid)
+                        .build();
+                productsImageRepository.save(productsImage);
+            }
+        }
+
+        if (productDetailImage != null && !productDetailImage.isEmpty()) {
+            String uuid = saveImage(productDetailImage);
+
+            ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
+                    .productsColor(productsColor)
+                    .fileName(productDetailImage.getOriginalFilename())
+                    .uuid(uuid)
+                    .build();
+            productsDetailImageRepository.save(productsDetailImage);
+        }
+
+        return "상품 색상이 성공적으로 등록되었습니다.";
+    }
+
 
 
     private String saveImage(MultipartFile image) {
-        String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
-        Path filePath = Paths.get(uploadPath, fileName);
-
+        String fileName = image.getOriginalFilename();
+        String uuid = UUID.randomUUID().toString();
+        Path savePath = Paths.get(uploadPath, uuid + "_" + fileName);
         try {
-            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            log.error("이미지 저장 중 오류 발생: " + e.getMessage());
-            throw new RuntimeException("이미지 저장 실패", e);
+            // 파일을 지정된 경로에 저장
+            image.transferTo(savePath.toFile());
+        } catch (io.jsonwebtoken.io.IOException e) {
+            // 파일 저장 또는 썸네일 생성 중 오류가 발생할 경우
+            log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);
+            throw new RuntimeException("File processing error", e);
+        } catch (java.io.IOException e) {
+            throw new RuntimeException(e);
         }
-        return fileName;
+        return uuid;
     }
 
     @Override
@@ -613,4 +677,25 @@ public class ProductServiceImpl implements ProductService {
         return productsInfoCardDTOList;
     }
 
+
+    @Override
+    public List<ProductListBySellerDTO> getProductListBySeller(String email) {
+
+
+        Users users = userRepository.findByEmail(email).orElse(null);
+
+        List<ProductsSeller> list = productsSellerRepository.findByUsers(users);
+        List<ProductListBySellerDTO> dtoList = new ArrayList<>();
+
+        for(ProductsSeller productsSeller: list){
+            ProductListBySellerDTO dto = new ProductListBySellerDTO();
+            dto.setProductId(productsSeller.getProducts().getProductId());
+            dto.setProductNumber(productsSeller.getProducts().getProductNumber());
+            dto.setProductName(productsSeller.getProducts().getName());
+            dtoList.add(dto);
+        }
+
+
+        return dtoList;
+    }
 }

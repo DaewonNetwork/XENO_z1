@@ -1,6 +1,7 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Products;
+import com.daewon.xeno_z1.domain.ProductsColor;
 import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.service.ProductService;
 
@@ -12,6 +13,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,8 +35,8 @@ public class ProductController {
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(
             @RequestPart("productCreateDTO") String productRegisterDTOStr,
-            @RequestPart("productImage") List<MultipartFile> productImage,
-            @RequestPart("productDetailImage") MultipartFile productDetailImage) {
+            @RequestPart(name = "productImage",required = false)  List<MultipartFile> productImage,
+            @RequestPart(name = "productDetailImage",required = false) MultipartFile productDetailImage) {
 
         ProductRegisterDTO productDTO;
 
@@ -55,6 +58,40 @@ public class ProductController {
         } catch (Exception e) {
             log.error("상품 등록 중 오류 발생: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping(value = "/color/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createProductColor(
+            @RequestPart("productColorCreateDTO") String productColorCreateDTOStr,
+            @RequestPart(name = "productImage",required = false)  List<MultipartFile> productImage,
+            @RequestPart(name = "productDetailImage",required = false) MultipartFile productDetailImage) {
+
+        ProductRegisterColorDTO productDTO;
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            productDTO = objectMapper.readValue(productColorCreateDTOStr, ProductRegisterColorDTO.class);
+            log.info(productDTO);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body("유효하지 않은 JSON 형식입니다."); // 400 상태 코드
+        }
+
+        try {
+            String resultMessage = productService.createProductColor(productDTO,
+                    productImage != null && !productImage.isEmpty() ? productImage : null,
+                    productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
+            );
+
+            if ("상품이 존재하지 않습니다.".equals(resultMessage)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resultMessage); // 404 상태 코드
+            }
+
+            return ResponseEntity.ok(resultMessage); // 성공 시 200 상태 코드
+        } catch (Exception e) {
+            log.error("상품 등록 중 오류 발생: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 등록 중 오류가 발생했습니다."); // 500 상태 코드
         }
     }
 
@@ -158,6 +195,21 @@ public class ProductController {
         } catch (Exception e) {
             // 예외 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    @GetMapping("/seller/read")
+    public ResponseEntity<?> getProductListBySeller(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String userEmail = userDetails.getUsername();
+
+            log.info("orderUserEmail : " + userEmail);
+            List<ProductListBySellerDTO> dtoList = productService.getProductListBySeller(userEmail);
+
+            return ResponseEntity.ok(dtoList);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
         }
     }
 

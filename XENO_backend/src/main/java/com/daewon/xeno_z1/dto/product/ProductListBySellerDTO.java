@@ -5,17 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductRegisterColorDTO {
+public class ProductListBySellerDTO {
 
     private long productId;
-
-    private String color; // 색상
-
-    private List<ProductSizeDTO> size; // size 리스트
+    private String productNumber;
+    private String productName;
 }

@@ -13,7 +13,8 @@ import ProductImageCreateModal from "./ProductImageCreateModal";
 import { useParams } from "next/navigation";
 import { useProductRead } from "@/(FSD)/entities/product/api/useProductRead";
 import { ProductCreateGetInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
-import { watch } from "fs";
+
+import { useProductColorCreate } from "../api/useProductColorCreate";
 
 
 
@@ -46,12 +47,28 @@ const ProductColorCreateForm = () => {
         mode: "onChange"
     });
 
+    const sizes = [
+        { size: "M", stock: 10 },
+        { size: "L", stock: 20 }
+    ];
+
+    const onSuccess = (data: any) => {
+        console.log("성공")
+    }
+
+    const { mutate } = useProductColorCreate({ onSuccess });
+
     const onSubmit = (data: any) => {
+    
+
         const formData = new FormData();
+      
+        formData.append("productColorCreateDTO", JSON.stringify({ productId: productId, color: data.color, size:sizes  }));
 
-        formData.append("productDTO", JSON.stringify({ proudctId: productId, color: data.color }));
-
-
+        formData.forEach((value, key) => {
+            console.log(`${key}: ${value}`);
+        });
+        mutate(formData);
 
     }
 
@@ -60,7 +77,7 @@ const ProductColorCreateForm = () => {
 
     return (
         <>
-            <form className={styles.product_create_form} onSubmit={handleSubmit(onSubmit)}>
+            <form           className={styles.product_create_form} onSubmit={handleSubmit(onSubmit)}>
                 <TextMediumShared isLabel={true} htmlFor={"name"}>상품 이름</TextMediumShared>
                 <FormInputShared readOnly={true} name={"name"} control={control} placeholder={productInfo.name} />
                 <TextMediumShared isLabel={true} htmlFor={"category"}>카테고리</TextMediumShared>
@@ -72,9 +89,9 @@ const ProductColorCreateForm = () => {
                 <TextMediumShared isLabel={true} htmlFor={"season"}>시즌</TextMediumShared>
                 <FormInputShared readOnly={true} name={"season"} control={control} placeholder={productInfo.season} />
                 <TextMediumShared isLabel={true} htmlFor={"price"}>가격</TextMediumShared>
-                <FormInputShared readOnly={true} name={"price"} control={control} placeholder={String(productInfo.price)} />
+                <FormInputShared readOnly={true} name={"price"} control={control} placeholder={`${productInfo.price.toLocaleString()}원`}/>
                 <TextMediumShared isLabel={true} htmlFor={"priceSale"}>할인 가격</TextMediumShared>
-                <FormInputShared readOnly={true} name={"priceSale"} control={control} placeholder={String(productInfo.priceSale)} />
+                <FormInputShared readOnly={true} name={"priceSale"} control={control} placeholder={`${productInfo.priceSale.toLocaleString()}원`} />
                 <TextMediumShared>기존 색상입니다.</TextMediumShared>
                 {productInfo.colorType.map((color, index) => (
                     <TextMediumShared key={index}>{color}</TextMediumShared>
@@ -82,18 +99,9 @@ const ProductColorCreateForm = () => {
                 <TextMediumShared isLabel={true} htmlFor={"color"}>색상</TextMediumShared>
                 <FormInputShared isClearable size="lg" variant="flat" isInvalid={!!errors.color} radius="none" errorMessage={errors.color && <>{errors.color.message}</>} name={"color"} control={control} placeholder="색상을 입력해주세요." />
 
-                <Select
-                    label="사이즈 선택"
-                    className="max-w-xs"
-                >
-                    {sizeArray.map((size,index) => (
-                        <SelectItem key={index}>
-                            {size}
-                        </SelectItem>
-                    ))}
-                </Select>
+           
                 <TextMediumShared>이미지</TextMediumShared>
-                <Button
+                <Button     
                     onClick={_ => {
                         setIsOpen(true);
                     }}
