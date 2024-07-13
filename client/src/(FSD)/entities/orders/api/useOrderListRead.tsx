@@ -1,7 +1,6 @@
 
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { OrderInfoType } from "@/(FSD)/shareds/types/orders/OrderInfo.Type";
-import { ReviewCardType } from "@/(FSD)/shareds/types/review/ReviewCard.type";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
