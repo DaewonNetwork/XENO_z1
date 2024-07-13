@@ -9,20 +9,25 @@ import FormInputShared from "@/(FSD)/shareds/ui/FormInputShared";
 import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 import { Button } from "@nextui-org/button";
 import ProductImageCreateModal from "./ProductImageCreateModal";
+import { useRecoilValue } from "recoil";
+import { productDetailImageState, productImageState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
 
 const ProductCreateForm = () => {
     const [category, setCategory] = useState();
     const [subCategory, setSubCategory] = useState();
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
-
+    
+    const productImage = useRecoilValue(productImageState);
+    const productDetailImage = useRecoilValue(productDetailImageState);
 
     const schema = z.object({
         name: z.string(),
         season: z.string(),
-        price: z.number(),
-        priceSale: z.number(),
+        price: z.string(),
+        priceSale: z.string(),
         productNumber: z.string(),
+        color: z.string(),
     });
 
     const { control, handleSubmit, formState: { errors, isValid, submitCount } } = useForm({
@@ -32,6 +37,8 @@ const ProductCreateForm = () => {
 
     const onSubmit = (data: any) => {
         console.log(data);
+        console.log(productImage);
+        console.log(productDetailImage);
     };
 
     return (
@@ -58,7 +65,7 @@ const ProductCreateForm = () => {
                 >
                     이미지 등록하기
                 </Button>
-                <Button fullWidth size={"lg"} type={"submit"} color={"primary"}>등록하기</Button>
+                <Button isDisabled={(!isValid) || (!productImage) || (!productDetailImage)} fullWidth size={"lg"} type={"submit"} color={"primary"}>등록하기</Button>
             </form>
             {isOpen && <ProductImageCreateModal setIsOpen={setIsOpen} />}
         </>

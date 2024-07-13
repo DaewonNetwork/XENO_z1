@@ -10,19 +10,31 @@ import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
 import AppFixedTopBar from "@/(FSD)/widgets/app/ui/AppFixedTopBar";
 import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 import FileInputShared from "@/(FSD)/shareds/ui/FileInputShared";
+import { useSetRecoilState } from "recoil";
+import { productDetailImageState, productImageState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
 
 interface ProductImageCreateModalProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProductImageCreateModal = ({ setIsOpen }: ProductImageCreateModalProps) => {
-    const [img1, setImg1] = useState();
-    const [img2, setImg2] = useState();
-    const [img3, setImg3] = useState();
-    const [img4, setImg4] = useState();
-    const [img5, setImg5] = useState();
-    const [img6, setImg6] = useState();
-    const [bannerImg, setBannerImg] = useState();
+    const setProductImage = useSetRecoilState(productImageState);
+    const setProductDetailImage = useSetRecoilState(productDetailImageState);
+
+    const [img1, setImg1] = useState<File>();
+    const [img2, setImg2] = useState<File>();
+    const [img3, setImg3] = useState<File>();
+    const [img4, setImg4] = useState<File>();
+    const [img5, setImg5] = useState<File>();
+    const [img6, setImg6] = useState<File>();
+    const [productDetailImg, setProductDetailImg] = useState<File>();
+
+    const handleClick = () => {
+        setProductImage([img1, img2, img3, img3, img4, img5, img6]);
+        setProductDetailImage(productDetailImg);
+
+        setIsOpen(false);
+    };
 
     return (
         <div className={`bg-background ${styles.product_image_create_modal}`}>
@@ -45,9 +57,9 @@ const ProductImageCreateModal = ({ setIsOpen }: ProductImageCreateModalProps) =>
                     </div>
 
                     <TextMediumShared>상세 이미지</TextMediumShared>
-                    <FileInputShared inputId={"product_banner_img"} setFile={setBannerImg} height={230} />
+                    <FileInputShared inputId={"product_detail_img"} setFile={setProductDetailImg} height={230} />
 
-                    <Button fullWidth color={"primary"}>등록하기</Button>
+                    <Button isDisabled={!img1 || !productDetailImg} onClick={handleClick} size={"lg"} fullWidth color={"primary"}>완료</Button>
                 </AppInner>
             </AppSection>
         </div>
