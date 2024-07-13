@@ -8,7 +8,7 @@ export const useProductCreate = ({ onSuccess, onError }: MutationType) => {
 
     return useMutation({
         mutationFn: (data: FormData) => {
-            return fetchData({ path: `/product/create`, isAuthRequired: true, body: data, method: "POST" });
+            return fetchData({ path: "/product/create", isAuthRequired: true, body: data, method: "POST" });
         },
         onSuccess: (data: any) => {
             onSuccess(data);
