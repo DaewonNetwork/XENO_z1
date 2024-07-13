@@ -112,6 +112,21 @@ public class OrdersController {
         }
     }
 
+    @GetMapping("/seller/list")
+    public ResponseEntity<List<OrderInfoBySellerDTO>> getOrderListBySeller(@AuthenticationPrincipal UserDetails userDetails, PageRequestDTO pageRequestDTO) {
+        try {
+            String userEmail = userDetails.getUsername();
+
+            log.info("orderUserEmail : " + userEmail);
+            List<OrderInfoBySellerDTO> orderList = ordersService.getOrderListBySeller(userEmail);
+            log.info(orderList);
+            return ResponseEntity.ok(orderList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 
 
 
