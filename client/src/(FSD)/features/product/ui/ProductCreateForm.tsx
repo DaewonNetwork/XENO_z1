@@ -36,7 +36,7 @@ const ProductCreateForm = () => {
         price: z.string(),
         priceSale: z.string(),
         productNumber: z.string(),
-        color: z.string(),
+        colors: z.string(),
     });
 
     const { control, handleSubmit, formState: { errors, isValid, submitCount } } = useForm({
@@ -45,15 +45,22 @@ const ProductCreateForm = () => {
     });
 
     const onSuccess = (data: any) => {
-
+        console.log(data);
     };
 
-    const { mutate } = useProductCreate({ onSuccess });
+    const onError = () => {
+        console.log("error");
+    };
+
+    const { mutate, error } = useProductCreate({ onSuccess, onError });
+
+    console.log(error);
+    
 
     const onSubmit = (data: any) => {
         const formData = new FormData();
 
-        formData.append("productCreateDTO", JSON.stringify({ category: category, categorySub: categorySub, price: +data.price, isSale: !!data.priceSale, priceSale: +data.priceSale, ...data }));
+        formData.append("productCreateDTO", JSON.stringify({ brandName: "영준", category: category, categorySub: categorySub, price: +data.price, isSale: !!data.priceSale, priceSale: +data.priceSale, ...data }));
         formData.append("productImage", productImage);
         formData.append("productDetailImage", productDetailImage);
 
@@ -73,8 +80,8 @@ const ProductCreateForm = () => {
                 <FormInputShared isClearable size={"lg"} variant={"flat"} isInvalid={!!errors.price} radius={"none"} errorMessage={errors.price && <>{errors.price.message}</>} name={"price"} control={control} placeholder={"가격을 입력해주세요."} />
                 <TextMediumShared isLabel={true} htmlFor={"priceSale"}>할인 가격</TextMediumShared>
                 <FormInputShared isClearable size="lg" variant="flat" isInvalid={!!errors.priceSale} radius="none" errorMessage={errors.priceSale && <>{errors.priceSale.message}</>} name={"priceSale"} control={control} placeholder="할인 가격을 입력해주세요." />
-                <TextMediumShared isLabel={true} htmlFor={"color"}>색상</TextMediumShared>
-                <FormInputShared isClearable size="lg" variant="flat" isInvalid={!!errors.color} radius="none" errorMessage={errors.color && <>{errors.color.message}</>} name={"color"} control={control} placeholder="색상을 입력해주세요." />
+                <TextMediumShared isLabel={true} htmlFor={"colors"}>색상</TextMediumShared>
+                <FormInputShared isClearable size="lg" variant="flat" isInvalid={!!errors.colors} radius="none" errorMessage={errors.colors && <>{errors.colors.message}</>} name={"colors"} control={control} placeholder="색상을 입력해주세요." />
                 <TextMediumShared>카테고리</TextMediumShared>
                 <Select
                     size={"lg"}
