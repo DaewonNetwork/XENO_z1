@@ -22,18 +22,19 @@ interface ProductOrdersStatusListBtnType {
 }
 
 const statuses = [
-    "결제 완료",
-    "출고 처리",
-    "배송 중",
-    "배송 완료",
-    "구매 확정",
-    "환불 신청",
-    "환불 완료"
+    { key: "결제 완료", status: "결제 완료" },
+    { key: "출고 처리", status: "출고 처리" },
+    { key: "배송 중", status: "배송 중" },
+    { key: "배송 완료", status: "배송 완료" },
+    { key: "구매 확정", status: "구매 확정" },
+    { key: "환불 신청", status: "환불 신청" },
+    { key: "환불 완료", status: "환불 완료" },
 ];
+
 
 const ProductOrdersStatusListBtn = () => {
     const { data, isError, error, isPending } = useOrderListBySellerRead();
-    const { isOpen: isOrderModalOpen, onOpen: onOpenOrderModal, onOpenChange: onOpenChangeOrderModal } = useDisclosure();
+    const { isOpen: isOrderModalOpen, onOpen: onOpenOrderModal, onOpenChange: onOpenChangeOrderModal, onClose: onCloseOrderModal } = useDisclosure();
     const { isOpen: isStatusModalOpen, onOpen: onOpenStatusModal, onOpenChange: onOpenChangeStatusModal } = useDisclosure();
 
     const [selectedStatus, setSelectedStatus] = useState<string>('');
@@ -42,26 +43,36 @@ const ProductOrdersStatusListBtn = () => {
 
     useEffect(() => {
         console.log(data);
+
     }, [data]);
 
     const orderInfoList: ProductOrdersStatusListBtnType[] = data || [];
+
 
     if (isPending) return <p>Loading...</p>;
     if (isError) return <p>Error: {error.message}</p>;
 
     const handleClick = (order: ProductOrdersStatusListBtnType) => {
+
+
         setSelectedOrder(order);
         setSelectedStatus(order.status);
+        onCloseOrderModal();
         onOpenStatusModal();
     };
 
     const handleSave = () => {
-        console.log(`Order ID: ${selectedOrder?.orderID}, New Status: ${selectedStatus}`);
-        onOpenChangeStatusModal();
-        setShowStatusOptions(false); // 상태 업데이트 후 옵션 숨기기
+        console.log(`Order ID: ${selectedOrder?.orderID}, New Status: ${selectedStatus} `);
+        console.log(isOrderModalOpen)
+
     };
 
-    const availableStatuses = statuses.filter(status => status !== selectedStatus);
+    const availableStatuses = statuses
+        .filter(item => item.status !== selectedStatus)
+        .map(item => ({ key: item.key, value: item.status }));
+
+
+    console.log(availableStatuses)
 
     return (
         <>
@@ -69,7 +80,9 @@ const ProductOrdersStatusListBtn = () => {
 
             {/* 주문 내역 모달 */}
             <Modal isOpen={isOrderModalOpen} onOpenChange={onOpenChangeOrderModal}>
+
                 <ModalContent>
+
                     <ModalHeader>주문 내역</ModalHeader>
                     <ModalBody>
                         {orderInfoList.map(order => (
@@ -83,7 +96,9 @@ const ProductOrdersStatusListBtn = () => {
                     <ModalFooter>
                         <Button onClick={onOpenChangeOrderModal} color="secondary">닫기</Button>
                     </ModalFooter>
+
                 </ModalContent>
+
             </Modal>
 
             {/* 상태 업데이트 모달 */}
@@ -97,34 +112,27 @@ const ProductOrdersStatusListBtn = () => {
                         <p>수량: {selectedOrder?.quantity}</p>
                         <p>색상: {selectedOrder?.color}</p>
                         <p>사이즈: {selectedOrder?.size}</p>
-                        <p>
-                            현재 상태:
-                            <span
-                                onClick={() => setShowStatusOptions(!showStatusOptions)}
-                                style={{
-                                    cursor: 'pointer',
+                        <p>요청 사항: {selectedOrder?.req}</p>
+                        <form onSubmit={(e) => {
 
-                                    display: 'inline-block',
-                                    padding: '4px 8px',
-                                    transition: 'background-color 0.2s'
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                            >
-                                {selectedStatus}
-                            </span>
-                        </p>
-
-                        {showStatusOptions && (
+                        }}>
                             <Select
-                                label={selectedStatus}
-                            > 
-                             {availableStatuses.map((status, index) => (
-                                <SelectItem key={index} onClick={() => setSelectedStatus(status)}>
-                                    {status}
-                                </SelectItem>
-                            ))}</Select>
-                        )}
+                                label="주문 상태 변경"
+                                placeholder={selectedStatus}
+
+                            >
+                                {availableStatuses.map((item) => (
+                                    <SelectItem
+                                        key={item.key}
+                                        value={item.value}
+                                        onClick={() => setSelectedStatus(item.value)}
+                                    >
+                                        {item.value}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                            <Button type="submit">저장</Button>
+                        </form>
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={handleSave}>저장</Button>
@@ -132,6 +140,22 @@ const ProductOrdersStatusListBtn = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+
+            <Select
+                label="주문 상태 변경"
+                placeholder={selectedStatus}
+
+            >
+                {availableStatuses.map((item) => (
+                    <SelectItem
+                        key={item.key}
+                        value={item.value}
+                        onClick={() => setSelectedStatus(item.value)}
+                    >
+                        {item.value}
+                    </SelectItem>
+                ))}
+            </Select>
         </>
     );
 };
