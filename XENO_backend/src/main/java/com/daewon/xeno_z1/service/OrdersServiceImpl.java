@@ -320,4 +320,19 @@ public class OrdersServiceImpl implements OrdersService {
 
         return list;
     }
+
+    @Override
+    public void updateOrderStatusBySeller(OrdersStatusUpdateDTO dto) {
+        Orders orders = ordersRepository.findById(dto.getOrderId()).orElse(null);
+
+        assert orders != null;
+        orders.setStatus(dto.getStatus());
+
+        ordersRepository.save(orders);
+
+        log.info(orders);
+
+
+
+    }
 }

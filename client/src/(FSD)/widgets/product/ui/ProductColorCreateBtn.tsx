@@ -6,6 +6,7 @@ import { Listbox, ListboxItem } from "@nextui-org/listbox";
 import { useRouter } from "next/navigation";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
+import { Select, SelectItem } from "@nextui-org/select";
 interface ProductColorCreateBtnType {
     productId: number;
     productNumber: string;
@@ -43,19 +44,19 @@ const ProductColorCreateBtn = () => {
                         <>
                             <ModalHeader className="flex flex-col gap-1">상품 목록</ModalHeader>
                             <ModalBody>
-                                <div className="w-full max-w-[500px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
-                                    {productInfoList.length > 0 ? (
-                                        <Listbox items={productInfoList} aria-label="Dynamic Actions">
-                                            {(item) => (
-                                                <ListboxItem key={item.productId} onClick={() => handleClick(item.productId)}>
-                                                    품번 : {item.productNumber} 상품 이름 : {item.productName}
-                                                </ListboxItem>
-                                            )}
-                                        </Listbox>
-                                    ) : (
-                                        <p>등록된 상품이 없습니다.</p>
-                                    )}
-                                </div>
+
+                                {productInfoList.length > 0 ? (
+                                    <Select label="기존 상품 목록" >
+                                        {productInfoList.map(product => (
+                                            <SelectItem key={product.productId} onClick={() => handleClick(product.productId)}>
+                                                품번 : {product.productNumber} 상품 이름 : {product.productName}
+                                            </SelectItem>
+                                        ))}
+                                    </Select>
+                                ) : (
+                                    <p>등록된 상품이 없습니다.</p>
+                                )}
+
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>

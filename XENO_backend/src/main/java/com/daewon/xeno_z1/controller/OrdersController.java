@@ -126,6 +126,18 @@ public class OrdersController {
         }
     }
 
+    @PutMapping(value = "/seller/status/update",produces = "application/json")
+    public ResponseEntity<?> updateOrderStatusBySeller(@RequestBody OrdersStatusUpdateDTO dto) {
+        try {
+            log.info(dto);
+             ordersService.updateOrderStatusBySeller(dto);
+
+            return ResponseEntity.ok("\"성공\"");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 
 

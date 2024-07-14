@@ -26,5 +26,7 @@ public interface OrdersService {
 
    List<OrderInfoBySellerDTO> getOrderListBySeller(String email);
 
+    void updateOrderStatusBySeller(OrdersStatusUpdateDTO dto);
+
 
 }
