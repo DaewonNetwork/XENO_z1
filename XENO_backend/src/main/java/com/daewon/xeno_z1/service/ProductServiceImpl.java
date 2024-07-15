@@ -6,7 +6,6 @@ import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 
 import com.daewon.xeno_z1.utils.CategoryUtils;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -47,10 +46,11 @@ public class ProductServiceImpl implements ProductService {
     private final ProductsStockRepository productsStockRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final ProductsSellerRepository productsSellerRepository;
     private final CartRepository cartRepository;
 
 
-    @Value("${org.daewon.upload.path}")
+    @Value("${uploadPath}")
     private String uploadPath;
 
 
@@ -64,7 +64,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
-        log.info("dto : " + dto);
         // 1. Products 엔티티 생성 및 저장
         Products product = Products.builder()
                 .brandName(dto.getBrandName())
@@ -108,24 +107,21 @@ public class ProductServiceImpl implements ProductService {
 
         if (productImage != null && !productImage.isEmpty()) {
             for (MultipartFile image : productImage) {
-                String fileName = saveImage(image);
-                String uuid = UUID.randomUUID().toString();
+                String uuid = saveImage(image);
                 ProductsImage productsImage = ProductsImage.builder()
                         .productsColor(productsColor)
-                        .fileName(fileName)
+                        .fileName(image.getOriginalFilename())
                         .uuid(uuid)
-                        .isMain(true)
                         .build();
                 productsImageRepository.save(productsImage);
             }
         }
 
         if (productDetailImage != null && !productDetailImage.isEmpty()) {
-            String fileName = saveImage(productDetailImage);
-            String uuid = UUID.randomUUID().toString();
+            String uuid = saveImage(productDetailImage);
             ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
                     .productsColor(productsColor)
-                    .fileName(fileName)
+                    .fileName(productDetailImage.getOriginalFilename())
                     .uuid(uuid)
                     .build();
             productsDetailImageRepository.save(productsDetailImage);
@@ -134,21 +130,89 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
-    private String saveImage(MultipartFile image) {
-        String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
-        Path filePath = Paths.get(uploadPath, fileName);
+    @Override
+    public String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
 
-        try {
-            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            log.error("이미지 저장 중 오류 발생: " + e.getMessage());
-            throw new RuntimeException("이미지 저장 실패", e);
+
+        Products products = productsRepository.findById(dto.getProductId()).orElse(null);
+
+        if (products == null) {
+            return "상품이 존재하지 않습니다."; // 상품이 없을 때 메시지 반환
         }
-        return fileName;
+
+        ProductsColor productsColor = ProductsColor.builder()
+                .products(products)
+                .color(dto.getColor())
+                .build();
+        productsColorRepository.save(productsColor);
+
+
+
+//             3. ProductsColorSize 엔티티 생성 및 저장
+        for (ProductSizeDTO size : dto.getSize()) {
+            ProductsColorSize productsColorSize = ProductsColorSize.builder()
+                    .productsColor(productsColor)
+                    .size(Size.valueOf(size.getSize()))
+                    .build();
+            productsColorSizeRepository.save(productsColorSize);
+
+            // ProductsStock 엔티티 생성 및 저장
+            ProductsStock productsStock = ProductsStock.builder()
+                    .productsColorSize(productsColorSize)
+                    .stock(size.getStock())  // 초기 재고를 100으로 설정
+                    .build();
+            productsStockRepository.save(productsStock);
+
+        }
+
+        if (productImage != null && !productImage.isEmpty()) {
+            for (MultipartFile image : productImage) {
+                String uuid = saveImage(image);
+                ProductsImage productsImage = ProductsImage.builder()
+                        .productsColor(productsColor)
+                        .fileName(image.getOriginalFilename())
+                        .uuid(uuid)
+                        .build();
+                productsImageRepository.save(productsImage);
+            }
+        }
+
+        if (productDetailImage != null && !productDetailImage.isEmpty()) {
+            String uuid = saveImage(productDetailImage);
+
+            ProductsDetailImage productsDetailImage = ProductsDetailImage.builder()
+                    .productsColor(productsColor)
+                    .fileName(productDetailImage.getOriginalFilename())
+                    .uuid(uuid)
+                    .build();
+            productsDetailImageRepository.save(productsDetailImage);
+        }
+
+        return "상품 색상이 성공적으로 등록되었습니다.";
+    }
+
+
+
+    private String saveImage(MultipartFile image) {
+        String fileName = image.getOriginalFilename();
+        String uuid = UUID.randomUUID().toString();
+        Path savePath = Paths.get(uploadPath, uuid + "_" + fileName);
+        try {
+            // 파일을 지정된 경로에 저장
+            image.transferTo(savePath.toFile());
+            log.info("이미지 업로드 성공");
+        } catch (io.jsonwebtoken.io.IOException e) {
+            // 파일 저장 또는 썸네일 생성 중 오류가 발생할 경우
+            log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);
+            throw new RuntimeException("File processing error", e);
+        } catch (java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+        return uuid;
     }
 
     @Override
-    public ProductInfoDTO getProductInfo(Long productColorId) {
+    public ProductInfoDTO getProductColorInfo(Long productColorId) {
         log.info(productColorId);
 
         Optional<ProductsColor> result = productsColorRepository.findById(productColorId);
@@ -229,6 +293,36 @@ public class ProductServiceImpl implements ProductService {
         return productInfoDTO;
     }
 
+
+    @Override
+    public ProductCreateGetInfoDTO getProductInfo(Long productId) throws IOException {
+
+        Optional<Products> result = productsRepository.findById(productId);
+        Products products = result.orElseThrow(() -> new ProductNotFoundException()); // Products 객체 생성
+        List<ProductsColor> resultList = productsColorRepository.findByProductId(productId);
+        ProductCreateGetInfoDTO dto = new ProductCreateGetInfoDTO();
+
+        if (resultList.size() >= 1) {
+            List<String> colors = new ArrayList<>();
+            for (ProductsColor productsColor : resultList) {
+                colors.add(productsColor.getColor());
+            }
+            dto.setColorType(colors);
+        }
+
+        dto.setBrandName(products.getBrandName());
+        dto.setName(products.getName());
+        dto.setCategory(products.getCategory());
+        dto.setCategorySub(products.getCategorySub());
+        dto.setPrice(products.getPrice());
+        dto.setPriceSale(products.getPriceSale());
+        dto.setProductNumber(products.getProductNumber());
+        dto.setSeason(products.getSeason());
+        dto.setSale(products.getIsSale());
+
+
+        return dto;
+    }
 
     @Override
     public ProductsInfoCardDTO getProductCardInfo(Long productColorId) {
@@ -587,6 +681,27 @@ public class ProductServiceImpl implements ProductService {
         return productsInfoCardDTOList;
     }
 
+
+    @Override
+    public List<ProductListBySellerDTO> getProductListBySeller(String email) {
+
+
+        Users users = userRepository.findByEmail(email).orElse(null);
+
+        List<ProductsSeller> list = productsSellerRepository.findByUsers(users);
+        List<ProductListBySellerDTO> dtoList = new ArrayList<>();
+
+        for(ProductsSeller productsSeller: list){
+            ProductListBySellerDTO dto = new ProductListBySellerDTO();
+            dto.setProductId(productsSeller.getProducts().getProductId());
+            dto.setProductNumber(productsSeller.getProducts().getProductNumber());
+            dto.setProductName(productsSeller.getProducts().getName());
+            dtoList.add(dto);
+        }
+
+
+        return dtoList;
+    }
 
 
 

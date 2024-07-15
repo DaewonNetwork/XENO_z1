@@ -1,5 +1,6 @@
 .review_info_list {
     display: block;
+
 }
 
 .review_card_list {
@@ -52,4 +53,58 @@
             margin-bottom: 10px;
         }
     }
+}
+
+.review_item {
+    display: block;
+
+    .review_inner {
+        display: block;
+        
+        .review_header {
+            .top_item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+    
+                .writer_item {
+                    display: flex;
+                }
+            }
+    
+            .btm_item {
+                display: flex;
+                align-items: center;
+                margin-top: 5px;
+    
+                p[data-slot="text_medium"] {
+                    margin-left: 20px;
+                }
+            }
+    
+            margin-bottom: 10px;
+        }
+    
+        .review_content {
+            display: block;
+
+            .text_content {
+                display: block;
+                h1 {
+                    margin-bottom: 2px;
+                }
+            }
+
+            .img_content {
+                margin-top: 10px;
+                display: block;
+
+                img {
+                    max-width: 270px;
+                    max-height: 270px;
+                }
+            }
+        }
+    }
+
 }

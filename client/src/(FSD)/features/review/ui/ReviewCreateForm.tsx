@@ -45,7 +45,7 @@ const ReviewCreateForm = () => {
     });
 
     const onSuccess = (data: any) => {
-        router.push(`/seller`);
+       
     }
 
  
@@ -57,10 +57,11 @@ const ReviewCreateForm = () => {
     const onSubmit = (data: any) => {
         const formData = new FormData();
 
+
         formData.append("reviewDTO", JSON.stringify({ text: data.reviewText, orderId: Number(orderId), star: stars.filter(star => star).length }));
 
         formData.append("image", file);
-
+        console.log(Array.from(formData.entries()));
         mutate(formData);
     }
 

@@ -2,23 +2,20 @@ import { useMutation } from "@tanstack/react-query";
 
 import { MutationType } from "../../types/mutation.type";
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
+import { OrderStatusChangeType } from "@/(FSD)/widgets/product/ui/ProductOrdersStatusListBtn";
 
-interface newProductsType {
-    productColorSizeId: number;
-    price: number;
-    quantity: number;
-}
 
-export const useProductAddCart = ({ onSuccess, onError }: MutationType) => {
+
+export const useOrderStatusUpdate = ({ onSuccess, onError }: MutationType) => {
 
     const fetchData = useFetchData();
 
     return useMutation({
-        mutationFn: (newProducts: newProductsType[]) => {
+        mutationFn: (status: OrderStatusChangeType) => {
             return fetchData({
-                path: "/cart",
-                method: "POST",
-                body: newProducts,
+                path: "/orders/seller/status/update",
+                method: "PUT",
+                body: status,
                 isAuthRequired: true
             });
         },

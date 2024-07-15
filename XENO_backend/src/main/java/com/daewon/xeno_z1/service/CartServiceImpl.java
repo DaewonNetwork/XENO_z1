@@ -48,7 +48,6 @@ public class CartServiceImpl implements CartService {
 
         Cart cart = new Cart();
 
-
         for(AddToCartDTO addToCartDTO: addToCartDTOList) {
 
             cart = cartRepository.findByProductColorSizeIdAndUser(addToCartDTO.getProductColorSizeId(),users.getUserId()).orElse(null);

@@ -21,6 +21,9 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     Optional<Orders> findByOrderId(Long orderId);
 
+    @Query("SELECT o FROM Orders o WHERE o.productsColorSize.productsColor.products.productId = :productId ")
+    List<Orders> findByProductId(long productId);
+
 
     @Query("SELECT COUNT(o) FROM Orders o WHERE o.status = :status")
     long countByStatus(String status); // 리뷰 작성한 수

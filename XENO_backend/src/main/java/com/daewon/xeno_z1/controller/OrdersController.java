@@ -112,6 +112,33 @@ public class OrdersController {
         }
     }
 
+    @GetMapping("/seller/list")
+    public ResponseEntity<List<OrderInfoBySellerDTO>> getOrderListBySeller(@AuthenticationPrincipal UserDetails userDetails, PageRequestDTO pageRequestDTO) {
+        try {
+            String userEmail = userDetails.getUsername();
+
+            log.info("orderUserEmail : " + userEmail);
+            List<OrderInfoBySellerDTO> orderList = ordersService.getOrderListBySeller(userEmail);
+            log.info(orderList);
+            return ResponseEntity.ok(orderList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping(value = "/seller/status/update",produces = "application/json")
+    public ResponseEntity<?> updateOrderStatusBySeller(@RequestBody OrdersStatusUpdateDTO dto) {
+        try {
+            log.info(dto);
+             ordersService.updateOrderStatusBySeller(dto);
+
+            return ResponseEntity.ok("\"성공\"");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 
 
 

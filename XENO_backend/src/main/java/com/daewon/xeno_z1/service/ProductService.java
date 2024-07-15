@@ -3,6 +3,7 @@ package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Products;
 
+import com.daewon.xeno_z1.domain.ProductsColor;
 import com.daewon.xeno_z1.dto.product.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,7 +12,8 @@ import java.util.List;
 
 public interface ProductService {
 
-    ProductInfoDTO getProductInfo(Long productId) throws IOException;
+    ProductInfoDTO getProductColorInfo(Long productColorId) throws IOException;
+    ProductCreateGetInfoDTO getProductInfo(Long productId) throws IOException;
 
     ProductsInfoCardDTO getProductCardInfo(Long productColorId);
 
@@ -28,7 +30,9 @@ public interface ProductService {
 
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
+    String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
+     List<ProductListBySellerDTO> getProductListBySeller(String email);
 
 
 }

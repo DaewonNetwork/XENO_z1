@@ -25,8 +25,6 @@ public class ProductsStarRankListDTO {
 
     private String categorySub;
 
-
-
     private byte[] productImage;
     
 }
