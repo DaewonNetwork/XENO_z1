@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -175,6 +178,24 @@ public class ProductController {
         ProductCreateGetInfoDTO productInfoDTO = productService.getProductInfo(productId);
 
         return ResponseEntity.ok(productInfoDTO);
+    }
+
+    @GetMapping("/color/size/read")
+    public ResponseEntity<ProductColorUpdateGetInfoDTO> readProductColorSize(@RequestParam Long productColorId) throws IOException {
+        ProductColorUpdateGetInfoDTO productInfoDTO = productService.getProductColorSizeInfo(productColorId);
+
+        return ResponseEntity.ok(productInfoDTO);
+    }
+    @GetMapping("/color/image/read")
+    public ResponseEntity<byte[]> readImage(@RequestParam Long productColorId) throws IOException {
+        // 실제 파일 데이터를 읽어옴 (파일 경로는 적절하게 설정해야 함)
+        byte[] fileContent = productService.readImage(productColorId);
+
+        log.info(fileContent);
+        // HTTP 응답으로 파일 데이터 전송
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION)
+                .body(fileContent);
     }
 
     @GetMapping("/color/readImages")

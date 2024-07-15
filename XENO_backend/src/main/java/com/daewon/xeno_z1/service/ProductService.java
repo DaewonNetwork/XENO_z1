@@ -43,4 +43,8 @@ public interface ProductService {
 
     List<ProductColorListBySellerDTO> getProductColorListBySeller(String email);
 
+    ProductColorUpdateGetInfoDTO getProductColorSizeInfo(Long productColorId) throws IOException;
+
+    byte[] readImage(Long productColorId) throws IOException;
+
 }

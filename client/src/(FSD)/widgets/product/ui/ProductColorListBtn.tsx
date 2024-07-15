@@ -6,13 +6,21 @@ import { Listbox, ListboxItem } from "@nextui-org/listbox";
 import { useRouter } from "next/navigation";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem, SelectSection } from "@nextui-org/select";
 import { useProductColorBySellerRead } from "@/(FSD)/entities/product/api/useProductColorBySellerRead";
+
+
 interface ProductColorListType {
     productColorId: number;
     productNumber: string;
     productName: string;
     color: string;
+}
+
+
+interface SelectSectionProps {
+    productInfoList: ProductColorListType[];
+    handleClick: (productInfoList: ProductColorListType) => void;
 }
 
 const ProductColorListBtn = () => {
@@ -30,14 +38,57 @@ const ProductColorListBtn = () => {
     if (isPending) return <p>Loading...</p>;
     if (isError) return <p>Error: {error.message}</p>;
 
-    const handleCreate = (id: number) => {
-        router.push(`/seller/product/create/${id}`);
+    const mergedProductInfoList = mergeProductInfoList(productInfoList);
+
+    console.log(mergedProductInfoList)
+
+    // 품번(productNumber)을 기준으로 중복 항목을 합친 새로운 배열 생성하는 함수
+    function mergeProductInfoList(productInfoList: ProductColorListType[]): ProductColorListType[] {
+        const mergedMap = new Map<string, ProductColorListType>();
+
+        // productInfoList를 순회하면서 품번을 기준으로 항목을 합침
+        productInfoList.forEach(product => {
+            const existingProduct = mergedMap.get(product.productNumber);
+
+            if (existingProduct) {
+                // 이미 품번이 존재하면 색상 정보를 추가함
+                existingProduct.color += `, ${product.color}`; // 필요에 따라 수정 가능
+            } else {
+                // 품번이 존재하지 않으면 새 항목으로 추가함
+                mergedMap.set(product.productNumber, { ...product });
+            }
+        });
+
+        // Map을 배열로 변환하여 반환함
+        const mergedList: ProductColorListType[] = Array.from(mergedMap.values());
+        return mergedList;
+    }
+
+    const renderSelectItems = ({ productInfoList, handleClick }: SelectSectionProps) => {
+        return (
+            <Select
+                label="추가 색상 상품 목록 보기"
+                className="max-w-xs"
+                size="lg"
+            >
+                {mergedProductInfoList.map(product => (
+                    <SelectSection key={product.productNumber} showDivider title={product.productName}>
+                        {productInfoList
+                            .filter(item => item.productNumber === product.productNumber)
+                            .map(item => (
+                                <SelectItem key={item.productColorId} onClick={() => handleClick(item)}>
+                                  {item.productName} ({item.color})
+                                </SelectItem>
+                            ))}
+                    </SelectSection>
+                ))}
+            </Select>
+        );
     };
 
-    const handleUpdate = (id: number) => {
-        router.push(`/seller/product/update/${id}`);
+    const handleClick = (product: ProductColorListType) => {
+        router.push(`/seller/product/color/update/${product.productColorId}`);
     };
-
 
 
     return (
@@ -50,22 +101,7 @@ const ProductColorListBtn = () => {
                         <>
                             <ModalHeader className="flex flex-col gap-1">상품 목록</ModalHeader>
                             <ModalBody>
-
-                                {productInfoList.length > 0 ? (
-                                    <Select label="기존 상품에서 색상 추가하기" >
-                                        {productInfoList.map(product => (
-                                            <SelectItem key={product.productColorId} onClick={() => handleCreate(product.productColorId)}>
-                                                품번 : {product.productNumber} 상품 이름 : {product.productName}
-                                                색상: {product.color}
-                                            </SelectItem>
-                                        ))}
-                                    </Select>
-                                ) : (
-                                    <p>등록된 상품이 없습니다.</p>
-                                )}
-
-                            
-
+                                {renderSelectItems({ productInfoList, handleClick })}
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>

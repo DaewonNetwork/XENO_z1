@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,10 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductUpdateColorDTO {
+public class ProductColorUpdateGetInfoDTO {
 
-    private Long productColorId;
+    private String color;
+    private String fileName;
     private List<ProductSizeDTO> size;
-
+    private byte[] image;
 }
-

@@ -71,10 +71,7 @@ const ProductUpdateForm = () => {
 
 
     const onSubmit = (data: any) => {
-        const formData = new FormData();
-
-        formData.append("ProductUpdateDTO", JSON.stringify({productId:productId, category: category, categorySub: categorySub, price: +data.price, sale: !!data.priceSale, priceSale: +data.priceSale, ...data }));
-
+    
         const jsonData = {
             productId: productId,
             category: category,

@@ -255,13 +255,19 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
 
-        ProductsColor productsColor = productsColorRepository.findByProductColorId(dto.getProductColorId())
-                .orElseThrow(() -> new EntityNotFoundException("color: " + dto.getColor()));
 
-        productsColor.setColor(dto.getColor());
+        log.info(dto);
+
+        ProductsColor productsColor = productsColorRepository.findByProductColorId(dto.getProductColorId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        productsColorRepository.save(productsColor);
+
+        List<ProductsColorSize> list = productsColorSizeRepository.findByProductColorId(dto.getProductColorId());
 
         for(ProductSizeDTO sizeDTO : dto.getSize() ) {
-            ProductsColorSize productsColorSize = productsColorSizeRepository.findByProductColorIdAndSize(dto.getProductColorId(), sizeDTO.getSize());
+            Size size = Size.valueOf(sizeDTO.getSize());
+            ProductsColorSize productsColorSize = productsColorSizeRepository.findByProductColorIdAndSize(dto.getProductColorId(), size);
             if (productsColorSize != null) {
                 ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(productsColorSize.getProductColorSizeId());
                 productsStock.setStock(sizeDTO.getStock());
@@ -278,7 +284,32 @@ public class ProductServiceImpl implements ProductService {
                         .build();
                 productsStockRepository.save(productsStock);
             }
+            List<ProductsColorSize> toDeleteColorSizes = new ArrayList<>();
+            List<ProductsStock> toDeleteStocks = new ArrayList<>();
 
+            for (ProductsColorSize colorSize : list) {
+                boolean found = false;
+                for (ProductSizeDTO NewSizeDTO : dto.getSize()) {
+                    if (colorSize.getSize() == Size.valueOf(NewSizeDTO.getSize())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(colorSize.getProductColorSizeId());
+                    if (productsStock != null) {
+                        toDeleteStocks.add(productsStock);
+                    }
+                    toDeleteColorSizes.add(colorSize);
+                }
+            }
+            for (ProductsColorSize colorSize : toDeleteColorSizes) {
+                productsColorSizeRepository.delete(colorSize);
+            }
+
+            for (ProductsStock productsStock : toDeleteStocks) {
+                productsStockRepository.delete(productsStock);
+            }
 
         }
         return "상품 색상 및 수량 수정 완료";
@@ -818,5 +849,38 @@ public class ProductServiceImpl implements ProductService {
 
 
         return dtoList;
+    }
+
+    @Override
+    public ProductColorUpdateGetInfoDTO getProductColorSizeInfo(Long productColorId) throws IOException {
+        ProductColorUpdateGetInfoDTO dto = new ProductColorUpdateGetInfoDTO();
+        List<ProductSizeDTO> dtoList = new ArrayList<>();
+        List<ProductsColorSize> productsColorSize = productsColorSizeRepository.findByProductColorId(productColorId);
+        for(ProductsColorSize size : productsColorSize){
+            ProductSizeDTO productSizeDTO = new ProductSizeDTO();
+            ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(size.getProductColorSizeId());
+            productSizeDTO.setSize(size.getSize().name());
+            productSizeDTO.setStock(productsStock.getStock());
+            dtoList.add(productSizeDTO);
+        }
+
+        dto.setColor(productsColorSize.get(0).getProductsColor().getColor());
+        dto.setSize(dtoList);
+
+        ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productColorId);
+        String filenameWithUuid = productsImage.getUuid() + "_" + productsImage.getFileName();
+        dto.setFileName(filenameWithUuid);
+        log.info(productsImage);
+        byte[] image = getImage(productsImage.getUuid(),productsImage.getFileName());
+        dto.setImage(image);
+
+        return dto;
+    }
+
+    @Override
+    public byte[] readImage(Long productColorId) throws IOException {
+
+
+        return null;
     }
 }
