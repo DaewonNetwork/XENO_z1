@@ -77,3 +77,19 @@ public class ReplyController {
         return replyReadDTO;
     }
 }
+
+/*
+    createReply
+
+    {
+      "reviewId": 해당하는 reviewId,
+      "replyText": "This is a test reply."
+    }
+
+    updateReply
+
+    {
+      "replyId": 해당하는 replyId,
+      "replyText": "siuuuuuu"
+    }
+ */
