@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +36,7 @@ public class CartController {
     @Value("${org.daewon.upload.path}")
     private String uploadPath;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping(produces = "application/json")
     public ResponseEntity<String> addToCart(@RequestBody List<AddToCartDTO> addToCartDTO) {
         try {
