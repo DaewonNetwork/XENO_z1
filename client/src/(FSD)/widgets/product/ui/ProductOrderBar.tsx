@@ -7,7 +7,6 @@ import AppInner from "../../app/ui/AppInner";
 import { Button } from "@nextui-org/button";
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
 
-import { useProductAddCart } from "@/(FSD)/features/product/api/useProductAddCart";
 import { useParams, useRouter } from "next/navigation";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -16,6 +15,7 @@ import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrder
 import { ProductOrderBarType } from "./ProductOrderBarContainer";
 import { ProductImages } from "./ProductOtherColorImageList";
 import { isLoggedInState } from "@/(FSD)/shareds/stores/UserAtom";
+import { useCartListAdd } from "@/(FSD)/entities/cart/api/useCartListAdd";
 
 type SizeAndStockType = {
     size: string;
@@ -179,7 +179,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     }
 
     // useProductAddCart 훅 사용
-    const { mutate } = useProductAddCart({ onSuccess });
+    const { mutate } = useCartListAdd({ onSuccess });
 
     const handleAddToCart = () => {
         if (products.length === 0) {

@@ -29,5 +29,8 @@ public class ProductsColor {
 
     private String color;
 
+    public void setProducts(Long productId) {
+        this.products = Products.builder().productId(productId).build();
+    }
 }
 

@@ -16,7 +16,7 @@ const ReviewCard = ({ review }: ReviewCardProps) => {
     return (
         <div
             onClick={_ => {
-                router.push(`/reviews/info/${review.reviewId}/${review.productColorId}`);
+                router.push(`/reviews/info/${review.reviewId}`);
             }}
             className={styles.review_card}
         >

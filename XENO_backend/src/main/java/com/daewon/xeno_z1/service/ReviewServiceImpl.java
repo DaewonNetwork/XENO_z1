@@ -62,7 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private ReviewInfoDTO convertToDTO(Review review, Users currentUser) {
         ReviewInfoDTO dto = new ReviewInfoDTO();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         if (currentUser != null && review.getUsers().equals(currentUser)) {
             dto.setReview(true);
         } else {

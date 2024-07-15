@@ -14,7 +14,8 @@ import java.util.List;
 
 public interface ProductService {
 
-    ProductInfoDTO getProductInfo(Long productId) throws IOException;
+    ProductInfoDTO getProductColorInfo(Long productColorId) throws IOException;
+    ProductCreateGetInfoDTO getProductInfo(Long productId) throws IOException;
 
     ProductsInfoCardDTO getProductCardInfo(Long productColorId);
 
@@ -34,6 +35,8 @@ public interface ProductService {
 
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
+    String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
+     List<ProductListBySellerDTO> getProductListBySeller(String email);
 
 }

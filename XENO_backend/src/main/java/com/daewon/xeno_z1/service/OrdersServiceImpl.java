@@ -8,10 +8,7 @@ import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.dto.product.ProductHeaderDTO;
 import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
 import com.daewon.xeno_z1.exception.UserNotFoundException;
-import com.daewon.xeno_z1.repository.OrdersRepository;
-import com.daewon.xeno_z1.repository.ProductsColorSizeRepository;
-import com.daewon.xeno_z1.repository.ProductsImageRepository;
-import com.daewon.xeno_z1.repository.UserRepository;
+import com.daewon.xeno_z1.repository.*;
 import io.jsonwebtoken.io.IOException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +44,7 @@ public class OrdersServiceImpl implements OrdersService {
     private final OrdersRepository ordersRepository;
     private final ProductsColorSizeRepository productsColorSizeRepository;
     private final ProductsImageRepository productsImageRepository;
+    private final ProductsSellerRepository productsSellerRepository;
 
 
     @Value("${uploadPath}")
@@ -230,7 +228,7 @@ public class OrdersServiceImpl implements OrdersService {
 
         List<OrdersCardListDTO> dtoList = new ArrayList<>();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
         for(Orders order : orders.getContent()) {
             OrdersCardListDTO dto = new OrdersCardListDTO();
@@ -292,5 +290,49 @@ public class OrdersServiceImpl implements OrdersService {
                 order.getQuantity(),
                 order.getAmount()
         );
+    }
+
+    @Override
+    public List<OrderInfoBySellerDTO> getOrderListBySeller(String email) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+        Users user = userRepository.findByEmail(email).orElse(null);
+
+        List<ProductsSeller> productsSellerList = productsSellerRepository.findByUsers(user);
+        List<OrderInfoBySellerDTO> list = new ArrayList<>();
+        for(ProductsSeller productsSeller : productsSellerList){
+            List<Orders> orders = ordersRepository.findByProductId(productsSeller.getProducts().getProductId());
+            for(Orders order : orders) {
+                OrderInfoBySellerDTO dto = new OrderInfoBySellerDTO();
+                dto.setOrderID(order.getOrderId());
+                dto.setOrderNumber(order.getOrderNumber());
+                dto.setQuantity(order.getQuantity());
+                dto.setSize(order.getProductsColorSize().getSize().name());
+                dto.setColor(order.getProductsColorSize().getProductsColor().getColor());
+                dto.setStatus(order.getStatus());
+                dto.setProductName(order.getProductsColorSize().getProductsColor().getProducts().getName());
+                dto.setOrderDate(order.getCreateAt().format(formatter));
+                dto.setReq(order.getReq());
+                dto.setAmount(order.getAmount());
+                dto.setCustomerName(order.getUser().getName());
+                list.add(dto);
+            }
+        }
+
+        return list;
+    }
+
+    @Override
+    public void updateOrderStatusBySeller(OrdersStatusUpdateDTO dto) {
+        Orders orders = ordersRepository.findById(dto.getOrderId()).orElse(null);
+
+        assert orders != null;
+        orders.setStatus(dto.getStatus());
+
+        ordersRepository.save(orders);
+
+        log.info(orders);
+
+
+
     }
 }

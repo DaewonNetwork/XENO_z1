@@ -2,11 +2,12 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
-import { useProductFirstImegeListRead } from "../../../entities/product/api/useProductFirstImegeListRead";
+
 import { useParams } from "next/navigation";
 import Slider from "react-slick";
 import { useSetRecoilState } from "recoil";
 import { imageState } from "@/(FSD)/shareds/stores/ProductAtom";
+import { useProductColorFirstImegeListRead } from "@/(FSD)/entities/product/api/useProductColorFirstImegeListRead";
 
 export interface ProductImages {
     productColorId: number;          // 상품 색상 ID (숫자)
@@ -15,12 +16,13 @@ export interface ProductImages {
 
 const ProductOtherColorImageList = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
-    const { data, isError, error, isPending, refetch } = useProductFirstImegeListRead(Number(productColorId));
+    const { data, isError, error, isPending, refetch } = useProductColorFirstImegeListRead(Number(productColorId));
 
     const productImages: ProductImages[] = data || [];
 
     const setImages = useSetRecoilState(imageState);
 
+    console.log(productImages);
     useEffect(() => {
         if (productImages) {
             // productImages를 Recoil의 imageState에 설정

@@ -32,14 +32,50 @@ public class ProductPublicController {
 
     // @PreAuthorize("hasRole('USER')")
 
-    @GetMapping("/read")
-    public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productColorId) throws IOException {
-        ProductInfoDTO productInfoDTO = productService.getProductInfo(productColorId);
-        log.info(productColorId);
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createProduct(
+            @RequestPart("productCreateDTO") String productRegisterDTOStr,
+            @RequestPart("productImage") List<MultipartFile> productImage,
+            @RequestPart("productDetailImage") MultipartFile productDetailImage) {
+
+        ProductRegisterDTO productDTO;
+
+        try {
+            // JSON 문자열을 ReviewDTO 객체로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            productDTO = objectMapper.readValue(productRegisterDTOStr, ProductRegisterDTO.class);
+            log.info(productDTO);
+        } catch (IOException e) {
+            // JSON 변환 중 오류가 발생하면 로그를 남기고 예외 발생
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format", e);
+        }
+        try {
+            Products createdProduct = productService.createProduct(productDTO, productImage != null && !productImage.isEmpty() ? productImage : null,
+                    productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
+            );
+            return ResponseEntity.ok("성공");
+        } catch (Exception e) {
+            log.error("상품 등록 중 오류 발생: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/color/read")
+    public ResponseEntity<ProductInfoDTO> readProductColor(@RequestParam Long productColorId) throws IOException {
+        ProductInfoDTO productInfoDTO = productService.getProductColorInfo(productColorId);
+
         return ResponseEntity.ok(productInfoDTO);
     }
 
-    @GetMapping("/readImages")
+    @GetMapping("/read")
+    public ResponseEntity<ProductCreateGetInfoDTO> readProduct(@RequestParam Long productId) throws IOException {
+        ProductCreateGetInfoDTO productInfoDTO = productService.getProductInfo(productId);
+
+        return ResponseEntity.ok(productInfoDTO);
+    }
+
+    @GetMapping("/color/readImages")
     public ResponseEntity<ProductDetailImagesDTO> readProductDetailImages(
             @RequestParam Long productColorId,
             @RequestParam(defaultValue = "0") int page,
@@ -58,9 +94,7 @@ public class ProductPublicController {
         }
     }
 
-
-
-    @GetMapping("/readFirstImages")
+    @GetMapping("/color/readFirstImages")
     public ResponseEntity<List<ProductOtherColorImagesDTO>> readFirstProductImages(@RequestParam Long productColorId) {
 
         try {
@@ -89,7 +123,7 @@ public class ProductPublicController {
         }
     }
 
-    @GetMapping("/readOrderBar")
+    @GetMapping("/color/readOrderBar")
     public ResponseEntity<ProductOrderBarDTO> readOrderBar(@RequestParam Long productColorId) {
 
         try {
@@ -117,7 +151,7 @@ public class ProductPublicController {
     }
 
     @Operation(summary = "상품 카드")
-    @GetMapping("/read/info")
+    @GetMapping("/color/read/info")
     public ResponseEntity<ProductsInfoCardDTO> readProductCardInfo(@RequestParam Long productColorId) {
 
         try {

@@ -1,14 +1,14 @@
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-export const useProductDetailImageListRead = (productColorId: number, size:number) => {
-    
+export const useOrderListBySellerRead = () => {
+
     const fetchData = useFetchData();
     
     return useQuery({
-        queryKey: ["product_detail_image_read", productColorId],
+        queryKey: ["order_list__seller_read"],
         queryFn: () => fetchData({ 
-            path: `/product/readImages?productColorId=${productColorId}`,
+            path: `/orders/seller/list`,
           }),
             
     });
