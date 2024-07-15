@@ -15,5 +15,6 @@ public interface ProductsColorRepository extends JpaRepository<ProductsColor, Lo
     @Query("SELECT p FROM ProductsColor p WHERE p.products.productId = :productId")
     List<ProductsColor> findByProductId(@Param("productId") Long productId);
 
-    Optional<ProductsColor> findFirstByProducts(Products product);
+    Optional<ProductsColor> findByProductColorId(Long productColorId);
+
 }

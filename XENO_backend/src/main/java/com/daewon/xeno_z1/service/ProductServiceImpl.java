@@ -15,6 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -45,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final ProductsSellerRepository productsSellerRepository;
+    private final CartRepository cartRepository;
 
 
     @Value("${uploadPath}")
@@ -698,4 +701,7 @@ public class ProductServiceImpl implements ProductService {
 
         return dtoList;
     }
+
+
+
 }

@@ -28,7 +28,7 @@ public interface ProductService {
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
 
-    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailimage);
+    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
     String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 

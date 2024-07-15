@@ -11,8 +11,6 @@ const ReviewCardList = () => {
     const { reviewList, fetchNextPage, refetch, hasNextPage } = useReviewCardListRead();
     const { ref, inView } = useInView();
 
-    console.log(hasNextPage)
-
     useEffect(() => {
         refetch();
     }, [reviewList]);

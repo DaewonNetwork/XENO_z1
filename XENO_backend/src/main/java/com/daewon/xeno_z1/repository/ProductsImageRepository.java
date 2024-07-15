@@ -19,5 +19,6 @@ public interface ProductsImageRepository extends JpaRepository<ProductsImage, Lo
 
     @Query("SELECT p FROM ProductsImage p WHERE p.productsColor.productColorId = :productColorId and p.isMain=true")
     ProductsImage findFirstByProductColorId(@Param("productColorId") Long productColorId);
+    ProductsImage findByProductsColorProductColorIdAndIsMainTrue(Long productColorId);
 
 }

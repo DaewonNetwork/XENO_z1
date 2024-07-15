@@ -25,4 +25,6 @@ public class ReplyDTO {
 
     private LocalDateTime createAt;
 
+    private LocalDateTime updateAt;
+
 }
