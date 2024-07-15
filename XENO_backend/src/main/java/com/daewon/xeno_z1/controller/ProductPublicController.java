@@ -164,13 +164,14 @@ public class ProductPublicController {
         }
     }
 
+    @Operation(summary = "top10")
     @GetMapping("/rank/{category}")
     public ResponseEntity<List<ProductsStarRankListDTO>> getranktop10(
             @PathVariable String category) {
         List<ProductsStarRankListDTO> result = productService.getranktop10(category);
         return ResponseEntity.ok(result);
     }
-    @Operation(summary = "상품 카드")
+    @Operation(summary = "top50")
     @GetMapping("/rank/page/{category}")
     public ResponseEntity<PageInfinityResponseDTO<ProductsStarRankListDTO>> getrankTop50(
             PageRequestDTO pageRequestDTO,
