@@ -184,6 +184,21 @@ public class ProductController {
             }
     }
 
+    @PutMapping("/color/update")
+    @Operation(summary = "상품 컬러 수정")
+    public ResponseEntity<?> updateProductColor(@RequestBody ProductUpdateColorDTO productUpdateColorDTO) {
+        try {
+            String result = productService.updateProductColor(productUpdateColorDTO);
+            return ResponseEntity.ok(result);
+        } catch (ProductNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("상품에 해당하는 색상 업데이트를 실패했습니다.");
+        }
+    }
+
     @DeleteMapping("/delete")
     @Operation(summary = "상품 삭제")
     public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {

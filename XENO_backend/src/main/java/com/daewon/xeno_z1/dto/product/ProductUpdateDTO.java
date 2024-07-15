@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +24,12 @@ public class ProductUpdateDTO {
     private String season;
     private List<String> size; // size 리스트
     private List<Long> stock;
+
+    private Map<String, List<ProductSizeDTO>> sizesByColor;
+
+    public List<ProductSizeDTO> getSizesForColor(String color) {
+        return sizesByColor.get(color);
+    }
 }
 
 //상품수정 기능

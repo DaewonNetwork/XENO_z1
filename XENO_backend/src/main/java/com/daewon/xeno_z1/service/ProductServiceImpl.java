@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -255,6 +257,44 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return "상품 수정 완료";
+    }
+
+    @Transactional
+    public String updateProductColor(ProductUpdateColorDTO dto) {
+        Products product = productsRepository.findById(dto.getProductId())
+                .orElseThrow(() -> new ProductNotFoundException());
+
+        ProductsColor productsColor = productsColorRepository.findByProductsAndColor(product, dto.getColor())
+                .orElseThrow(() -> new EntityNotFoundException("Color not found for product id: " + dto.getProductId() + " and color: " + dto.getColor()));
+
+        // 기존 사이즈와 재고 정보를 맵으로 저장
+        Map<Size, ProductsColorSize> existingSizes = productsColorSizeRepository.findByProductsColor(productsColor)
+                .stream()
+                .collect(Collectors.toMap(ProductsColorSize::getSize, Function.identity()));
+
+        // 새로운 사이즈와 재고 정보 업데이트
+        for (ProductSizeDTO sizeDTO : dto.getSize()) {
+            Size size = Size.valueOf(sizeDTO.getSize());
+            ProductsColorSize colorSize = existingSizes.getOrDefault(size,
+                    ProductsColorSize.builder().productsColor(productsColor).size(size).build());
+
+            productsColorSizeRepository.save(colorSize);
+
+            ProductsStock stock = productsStockRepository.findByProductsColorSize(colorSize)
+                    .orElse(ProductsStock.builder().productsColorSize(colorSize).build());
+            stock.setStock(sizeDTO.getStock());
+            productsStockRepository.save(stock);
+
+            existingSizes.remove(size);
+        }
+
+        // 남은 사이즈 삭제 (더 이상 사용되지 않는 사이즈)
+        for (ProductsColorSize obsoleteSize : existingSizes.values()) {
+            productsColorSizeRepository.delete(obsoleteSize);
+            // 연관된 ProductsStock은 CASCADE로 자동 삭제됩니다.
+        }
+
+        return "상품 색상 및 수량 수정 완료";
     }
 
     @Override

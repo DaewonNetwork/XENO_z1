@@ -36,6 +36,8 @@ public interface ProductService {
 
     String updateProduct(Long productId, ProductUpdateDTO productUpdateDTO);
 
+    String updateProductColor(ProductUpdateColorDTO productUpdateColorDTO);
+
     void deleteProduct(Long productId);
 
 
