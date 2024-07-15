@@ -8,7 +8,7 @@ import { FormType } from "../types/Form.type";
 interface FormInputProps extends Omit<InputProps, "name">, FormType {
 }
 
-const FormInputShared = ({ name, control, endContent, startContent, readOnly, radius, ...props }: FormInputProps) => {
+const FormInputShared = ({ name, control, endContent, startContent,  radius, ...props }: FormInputProps) => {
     return (
         <Controller
             name={name}
@@ -23,7 +23,7 @@ const FormInputShared = ({ name, control, endContent, startContent, readOnly, ra
                         value={value}
                         isRequired
                         id={name}
-                        readOnly={readOnly}
+                   
 
                         onChange={(e: any) => {
                             onChange(e);
@@ -39,7 +39,7 @@ const FormInputShared = ({ name, control, endContent, startContent, readOnly, ra
                         startContent={startContent && startContent}
 
                         endContent={
-                            readOnly ? null : endContent ? endContent :
+                           endContent ? endContent :
                                 <button className={"focus:outline-none"} type={"button"} onClick={() => { onChange(""); }}>
                                     <IconShared iconType={"close"} />
                                 </button>

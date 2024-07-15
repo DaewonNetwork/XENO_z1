@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import { useOrderListBySellerRead } from "@/(FSD)/entities/orders/api/useOrderListBySellerRead";
-import { Select, SelectItem, SelectSection } from "@nextui-org/react";
+import { Select, SelectItem, SelectSection } from "@nextui-org/select";
 import { useOrderStatusUpdate } from "@/(FSD)/features/orders/api/useOrderStatusUpdate";
 
 interface ProductOrdersStatusListBtnType {
@@ -51,8 +51,6 @@ const ProductOrdersStatusListBtn = () => {
         onOpenUpdateCompleteModal();
 
     }
-
-
 
     const { mutate } = useOrderStatusUpdate({ onSuccess });
     const { isOpen: isOrderModalOpen, onOpen: onOpenOrderModal, onOpenChange: onOpenChangeOrderModal, onClose: onCloseOrderModal } = useDisclosure();
@@ -124,14 +122,10 @@ const ProductOrdersStatusListBtn = () => {
         onOpenStatusModal();
     };
 
-
-
     const handleSave = () => {
         console.log(status)
         mutate(status)
     };
-
-
 
     return (
         <>

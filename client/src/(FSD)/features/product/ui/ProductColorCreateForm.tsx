@@ -79,19 +79,19 @@ const ProductColorCreateForm = () => {
         <>
             <form           className={styles.product_create_form} onSubmit={handleSubmit(onSubmit)}>
                 <TextMediumShared isLabel={true} htmlFor={"name"}>상품 이름</TextMediumShared>
-                <FormInputShared readOnly={true} name={"name"} control={control} placeholder={productInfo.name} />
+                <FormInputShared isClearable readOnly={true} name={"name"} control={control} placeholder={productInfo.name} />
                 <TextMediumShared isLabel={true} htmlFor={"category"}>카테고리</TextMediumShared>
-                <FormInputShared readOnly={true} name={"category"} control={control} placeholder={productInfo.category} />
+                <FormInputShared isClearable readOnly={true} name={"category"} control={control} placeholder={productInfo.category} />
                 <TextMediumShared isLabel={true} htmlFor={"categorySub"}>하위 카테고리</TextMediumShared>
-                <FormInputShared readOnly={true} name={"categorySub"} control={control} placeholder={productInfo.categorySub} />
+                <FormInputShared isClearable readOnly={true} name={"categorySub"} control={control} placeholder={productInfo.categorySub} />
                 <TextMediumShared isLabel={true} htmlFor={"productNumber"}>품번</TextMediumShared>
-                <FormInputShared readOnly={true} name={"productNumber"} control={control} placeholder={productInfo.productNumber} />
+                <FormInputShared isClearable readOnly={true} name={"productNumber"} control={control} placeholder={productInfo.productNumber} />
                 <TextMediumShared isLabel={true} htmlFor={"season"}>시즌</TextMediumShared>
-                <FormInputShared readOnly={true} name={"season"} control={control} placeholder={productInfo.season} />
+                <FormInputShared isClearable readOnly={true} name={"season"} control={control} placeholder={productInfo.season} />
                 <TextMediumShared isLabel={true} htmlFor={"price"}>가격</TextMediumShared>
-                <FormInputShared readOnly={true} name={"price"} control={control} placeholder={`${productInfo.price.toLocaleString()}원`}/>
+                <FormInputShared isClearable readOnly={true} name={"price"} control={control} placeholder={`${productInfo.price.toLocaleString()}원`}/>
                 <TextMediumShared isLabel={true} htmlFor={"priceSale"}>할인 가격</TextMediumShared>
-                <FormInputShared readOnly={true} name={"priceSale"} control={control} placeholder={`${productInfo.priceSale.toLocaleString()}원`} />
+                <FormInputShared isClearable readOnly={true} name={"priceSale"} control={control} placeholder={`${productInfo.priceSale.toLocaleString()}원`} />
                 <TextMediumShared>기존 색상입니다.</TextMediumShared>
                 {productInfo.colorType.map((color, index) => (
                     <TextMediumShared key={index}>{color}</TextMediumShared>
