@@ -241,7 +241,7 @@ public class OrdersServiceImpl implements OrdersService {
             dto.setSize(order.getProductsColorSize().getSize().name());
             dto.setBrandName(order.getProductsColorSize().getProductsColor().getProducts().getBrandName());
             dto.setProductName(order.getProductsColorSize().getProductsColor().getProducts().getName());
-
+            dto.setProductColorId(order.getProductsColorSize().getProductsColor().getProductColorId());
             ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(order.getProductsColorSize().getProductsColor().getProductColorId());
             if (productsImage != null) {
                 try {
