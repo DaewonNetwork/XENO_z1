@@ -152,6 +152,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductListBySellerDTO> getProductListBySeller(String email) {
+
+
+        Users users = userRepository.findByEmail(email).orElse(null);
+
+        List<ProductsSeller> list = productsSellerRepository.findByUsers(users);
+        List<ProductListBySellerDTO> dtoList = new ArrayList<>();
+
+        for(ProductsSeller productsSeller: list){
+            ProductListBySellerDTO dto = new ProductListBySellerDTO();
+            dto.setProductId(productsSeller.getProducts().getProductId());
+            dto.setProductNumber(productsSeller.getProducts().getProductNumber());
+            dto.setProductName(productsSeller.getProducts().getName());
+            dtoList.add(dto);
+        }
+
+
+        return dtoList;
+    }
+
+    @Override
     public String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
 
 
