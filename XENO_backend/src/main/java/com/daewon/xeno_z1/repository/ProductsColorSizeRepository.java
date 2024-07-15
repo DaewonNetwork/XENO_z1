@@ -1,8 +1,6 @@
 package com.daewon.xeno_z1.repository;
 
-import com.daewon.xeno_z1.domain.ProductsColor;
 import com.daewon.xeno_z1.domain.ProductsColorSize;
-import com.daewon.xeno_z1.domain.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +12,8 @@ public interface ProductsColorSizeRepository extends JpaRepository<ProductsColor
     @Query("SELECT p FROM ProductsColorSize p WHERE p.productsColor.productColorId = :productColorId")
     List<ProductsColorSize> findByProductColorId(@Param("productColorId") Long productColorId);
 
-    Optional<ProductsColorSize> findByProductsColorAndSize(ProductsColor productsColor, Size size);
 
-    List<ProductsColorSize> findByProductsColor(ProductsColor productsColor);
+    @Query("SELECT p FROM ProductsColorSize p WHERE p.productsColor.productColorId = :productColorId and p.size = :size ")
+    ProductsColorSize findByProductColorIdAndSize(@Param("productColorId") Long productColorId, String size);
 
 }

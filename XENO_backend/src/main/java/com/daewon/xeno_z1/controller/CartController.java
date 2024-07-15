@@ -52,6 +52,7 @@ public class CartController {
         }
     }
 
+    @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartList.cartId)")
     @GetMapping
     public ResponseEntity<?> getCartItems(@RequestHeader("Authorization") String token) {
         try {
@@ -86,6 +87,7 @@ public class CartController {
         }
     }
 
+    @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartDTO.cartId)")
     @PutMapping
     public ResponseEntity<String> updateCartItem(@RequestBody CartDTO cartDTO) {
         // SecurityContext에서 인증된 사용자 정보를 가져옵니다.
@@ -112,6 +114,7 @@ public class CartController {
         }
     }
 
+    @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartId)")
     @DeleteMapping
     public ResponseEntity<Map<String, String>> removeFromCart(@RequestParam Long cartId) {
         boolean removed = cartService.removeFromCart(cartId);

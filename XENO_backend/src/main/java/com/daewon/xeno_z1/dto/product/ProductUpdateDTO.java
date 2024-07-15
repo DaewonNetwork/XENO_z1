@@ -15,21 +15,15 @@ import java.util.Map;
 @Builder
 public class ProductUpdateDTO {
 
+    private Long productId;
     private String name;
+    private String season;
+    private String productNumber;
     private Long price;
-    private boolean isSale;
+    private boolean sale;
     private Long priceSale;
     private String category;
     private String categorySub;
-    private String season;
-    private List<String> size; // size 리스트
-    private List<Long> stock;
-
-    private Map<String, List<ProductSizeDTO>> sizesByColor;
-
-    public List<ProductSizeDTO> getSizesForColor(String color) {
-        return sizesByColor.get(color);
-    }
 }
 
 //상품수정 기능

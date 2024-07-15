@@ -1,3 +1,4 @@
+
 package com.daewon.xeno_z1.service;
 
 
@@ -5,7 +6,6 @@ import com.daewon.xeno_z1.domain.Products;
 
 import com.daewon.xeno_z1.domain.ProductsColor;
 import com.daewon.xeno_z1.dto.product.*;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -29,17 +29,19 @@ public interface ProductService {
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
 
-    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage, UserDetails userDetails);
+    Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
-    String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
-
-     List<ProductListBySellerDTO> getProductListBySeller(String email);
-
-    String updateProduct(Long productId, ProductUpdateDTO productUpdateDTO);
-
-    String updateProductColor(ProductUpdateColorDTO productUpdateColorDTO);
+    String updateProduct(ProductUpdateDTO productUpdateDTO);
 
     void deleteProduct(Long productId);
 
+
+    String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
+
+    String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
+
+    List<ProductListBySellerDTO> getProductListBySeller(String email);
+
+    List<ProductColorListBySellerDTO> getProductColorListBySeller(String email);
 
 }
