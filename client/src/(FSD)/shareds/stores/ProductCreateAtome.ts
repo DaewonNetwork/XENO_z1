@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-export const productImageState = atom<any>({
+export const productImagesState = atom<any>({
     key: "product_img_state",
     default: null,
 });

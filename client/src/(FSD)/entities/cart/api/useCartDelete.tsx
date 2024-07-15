@@ -2,16 +2,15 @@
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const useAddToCart = () => {
+export const useCartDelete = () => {
     const fetchData = useFetchData();
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (newItem: { userId: number; productColorSizeId: number; productImageId: number; quantity: number }) =>
+        mutationFn: () =>
             fetchData({ 
                 path: "/cart", 
-                method: "POST", 
-                body: newItem, 
+                method: "DELETE", 
                 isAuthRequired: true }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["cart_items"] });

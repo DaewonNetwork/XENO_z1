@@ -200,6 +200,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             // 파일을 지정된 경로에 저장
             image.transferTo(savePath.toFile());
+            log.info("이미지 업로드 성공");
         } catch (io.jsonwebtoken.io.IOException e) {
             // 파일 저장 또는 썸네일 생성 중 오류가 발생할 경우
             log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);

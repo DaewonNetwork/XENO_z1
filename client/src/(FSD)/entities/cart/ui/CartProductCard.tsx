@@ -1,8 +1,8 @@
 /* import React, { useState } from 'react'
 import { useCartProductListRead } from '../api/useCartProductListRead'
 import { ProductType } from '@/(FSD)/shareds/types/product/Product.type';
-import { useUpdateCartItem } from '../api/useUpdateCartItem';
-import { useRemoveFromCart } from '../api/useRemoveFromCart';
+import { useCarttItemUpdate } from '../api/useCarttItemUpdate';
+import { useCartDelete } from '../api/useCartDelete';
 import { CartItemsProps } from './CartProductList';
 
 interface CartProductCardProps {
@@ -13,8 +13,8 @@ const CartProductCard = ({ product}: CartProductCardProps) => {
     const [products, setProducts] = useState(product);
     const [quantity, setQuantity] = useState(product.quantity);
     const [isSelected, setIsSelected] = useState(true);
-    const updateCartItem = useUpdateCartItem();
-    const removeFromCart = useRemoveFromCart();
+    const updateCartItem = useCarttItemUpdate();
+    const removeFromCart = useCartDelete();
     
     console.log();
     

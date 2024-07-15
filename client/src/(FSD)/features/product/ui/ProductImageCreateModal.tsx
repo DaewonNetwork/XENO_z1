@@ -11,14 +11,14 @@ import AppFixedTopBar from "@/(FSD)/widgets/app/ui/AppFixedTopBar";
 import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 import FileInputShared from "@/(FSD)/shareds/ui/FileInputShared";
 import { useSetRecoilState } from "recoil";
-import { productDetailImageState, productImageState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
+import { productDetailImageState, productImagesState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
 
 interface ProductImageCreateModalProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProductImageCreateModal = ({ setIsOpen }: ProductImageCreateModalProps) => {
-    const setProductImage = useSetRecoilState(productImageState);
+    const setProductImages = useSetRecoilState(productImagesState);
     const setProductDetailImage = useSetRecoilState(productDetailImageState);
 
     const [img1, setImg1] = useState<File>();
@@ -30,7 +30,7 @@ const ProductImageCreateModal = ({ setIsOpen }: ProductImageCreateModalProps) =>
     const [productDetailImg, setProductDetailImg] = useState<File>();
 
     const handleClick = () => {
-        setProductImage([img1, img2, img3, img3, img4, img5, img6]);
+        setProductImages([img1, img2, img3, img3, img4, img5, img6]);
         setProductDetailImage(productDetailImg);
 
         setIsOpen(false);
