@@ -8,6 +8,7 @@ const Page = () => {
     <div>
       상품 등록하기
       <ProductColorCreateBtn/>
+      
       <ProductOrdersStatusListBtn/>
     </div>
   )
