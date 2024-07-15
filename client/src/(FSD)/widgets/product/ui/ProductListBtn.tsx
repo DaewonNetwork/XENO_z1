@@ -13,7 +13,7 @@ interface ProductColorCreateBtnType {
     productName: string;
 }
 
-const ProductColorCreateBtn = () => {
+const ProductListBtn = () => {
     const { data, isError, error, isPending } = useProductBySellerRead();
     const router = useRouter();
 
@@ -88,4 +88,4 @@ const ProductColorCreateBtn = () => {
     );
 };
 
-export default ProductColorCreateBtn;
+export default ProductListBtn;

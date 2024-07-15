@@ -12,16 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductUpdateDTO {
+public class ProductUpdateColorDTO {
 
-    private Long productId;
-    private String name;
-    private String season;
-    private String productNumber;
-    private Long price;
-    private boolean sale;
-    private Long priceSale;
-    private String category;
-    private String categorySub;
+    private Long productColorId;
+    private String color;
+    private List<ProductSizeDTO> size;
 }
 

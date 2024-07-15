@@ -66,6 +66,35 @@ public class ProductController {
             }
         }
 
+    @PutMapping("/update")
+    @Operation(summary = "상품 수정")
+    public ResponseEntity<?> updateProduct(
+            @RequestBody ProductUpdateDTO productUpdateDTO) {
+            log.info(productUpdateDTO);
+        try {
+
+            String result = productService.updateProduct(productUpdateDTO);
+            return ResponseEntity.ok("\"수정 성공\"");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("상품 업데이트 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete")
+    @Operation(summary = "상품 삭제")
+    public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {
+        try {
+            productService.deleteProduct(productId);
+            return ResponseEntity.ok().body("상품 삭제 완료");
+        }  catch (RuntimeException e) {
+            log.error("상품 삭제 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
+
+
     @PostMapping(value = "/color/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProductColor(
             @RequestPart("productColorCreateDTO") String productColorCreateDTOStr,
@@ -98,6 +127,40 @@ public class ProductController {
             log.error("상품 등록 중 오류 발생: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 등록 중 오류가 발생했습니다."); // 500 상태 코드
         }
+    }
+
+    @PutMapping("/color/update")
+    @Operation(summary = "상품 컬러 수정")
+    public ResponseEntity<?> updateProductColor(@RequestPart("productColorUpdateDTO") String productColorUpdateDTOStr,
+                                                @RequestPart(name = "productImages",required = false)  List<MultipartFile> productImages,
+                                                @RequestPart(name = "productDetailImage",required = false) MultipartFile productDetailImage) {
+        ProductUpdateColorDTO productDTO;
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            productDTO = objectMapper.readValue(productColorUpdateDTOStr, ProductUpdateColorDTO.class);
+            log.info(productDTO);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body("유효하지 않은 JSON 형식입니다."); // 400 상태 코드
+        }
+
+        try {
+            String resultMessage = productService.updateProductColor(productDTO,
+                    productImages != null && !productImages.isEmpty() ? productImages : null,
+                    productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
+            );
+
+            if ("상품이 존재하지 않습니다.".equals(resultMessage)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resultMessage); // 404 상태 코드
+            }
+
+            return ResponseEntity.ok(resultMessage); // 성공 시 200 상태 코드
+        } catch (Exception e) {
+            log.error("상품 등록 중 오류 발생: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 등록 중 오류가 발생했습니다."); // 500 상태 코드
+        }
+
     }
 
     @GetMapping("/color/read")
@@ -211,6 +274,20 @@ public class ProductController {
 
             log.info("orderUserEmail : " + userEmail);
             List<ProductListBySellerDTO> dtoList = productService.getProductListBySeller(userEmail);
+
+            return ResponseEntity.ok(dtoList);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
+        }
+    }
+
+    @GetMapping("/color/seller/read")
+    public ResponseEntity<?> getProductColorListBySeller(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String userEmail = userDetails.getUsername();
+
+            log.info("orderUserEmail : " + userEmail);
+            List<ProductColorListBySellerDTO> dtoList = productService.getProductColorListBySeller(userEmail);
 
             return ResponseEntity.ok(dtoList);
         } catch (Exception e) {

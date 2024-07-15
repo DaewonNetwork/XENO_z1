@@ -73,10 +73,20 @@ const ProductUpdateForm = () => {
     const onSubmit = (data: any) => {
         const formData = new FormData();
 
-        formData.append("productCreateDTO", JSON.stringify({ brandName: "영준", category: category, categorySub: categorySub, price: +data.price, sale: !!data.priceSale, priceSale: +data.priceSale, ...data }));
+        formData.append("ProductUpdateDTO", JSON.stringify({productId:productId, category: category, categorySub: categorySub, price: +data.price, sale: !!data.priceSale, priceSale: +data.priceSale, ...data }));
+
+        const jsonData = {
+            productId: productId,
+            category: category,
+            categorySub: categorySub,
+            price: +data.price,
+            sale: !!data.priceSale,
+            priceSale: +data.priceSale,
+            ...data
+        };
 
 
-        mutate(formData);
+        mutate(jsonData);
     };
 
     return (
@@ -116,6 +126,10 @@ const ProductUpdateForm = () => {
                     ))}
                 </Select>
                 <Button isDisabled={(!isValid) || (!category) || (!categorySub)} fullWidth size={"lg"} type={"submit"} color={"primary"}>수정하기</Button>
+
+                <Button onClick={() => console.log(category)}>확인</Button>
+                <Button onClick={() => console.log(categorySub)}>확인</Button>
+                <Button onClick={() => console.log(isValid)}>확인</Button>
             </form>
 
         </>

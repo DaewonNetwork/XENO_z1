@@ -30,8 +30,17 @@ public interface ProductService {
 
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
+    String updateProduct(ProductUpdateDTO productUpdateDTO);
+
+    void deleteProduct(Long productId);
+
+
     String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
+    String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
+
      List<ProductListBySellerDTO> getProductListBySeller(String email);
+
+    List<ProductColorListBySellerDTO> getProductColorListBySeller(String email);
 
 }

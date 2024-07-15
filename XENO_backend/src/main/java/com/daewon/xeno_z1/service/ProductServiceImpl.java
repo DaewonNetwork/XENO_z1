@@ -6,6 +6,8 @@ import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 
 import com.daewon.xeno_z1.utils.CategoryUtils;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -21,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,9 +67,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String currentUserName = authentication.getName();
+
+
+
+        Users users = userRepository.findByEmail(currentUserName)
+                .orElse(null);
+
+
         // 1. Products 엔티티 생성 및 저장
         Products product = Products.builder()
-                .brandName(dto.getBrandName())
+                .brandName(users.getBrandName())
                 .name(dto.getName())
                 .category(dto.getCategory())
                 .categorySub(dto.getCategorySub())
@@ -80,14 +94,7 @@ public class ProductServiceImpl implements ProductService {
 
 
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String currentUserName = authentication.getName();
-
-
-
-        Users users = userRepository.findByEmail(currentUserName)
-                .orElse(null);
 
         ProductsSeller productsSeller = ProductsSeller.builder()
                 .products(product)
@@ -148,6 +155,36 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return product;
+    }
+
+    @Override
+    public String updateProduct(ProductUpdateDTO dto) {
+        // productId로 상품을 찾음
+        Products products = productsRepository.findById(dto.getProductId())
+                .orElseThrow(() -> new ProductNotFoundException());
+
+        // 상품 업데이트
+        products.setName(dto.getName());
+        products.setPrice(dto.getPrice());
+        products.setIsSale(dto.isSale());
+        products.setPriceSale(dto.getPriceSale());
+        products.setCategory(dto.getCategory());
+        products.setCategorySub(dto.getCategorySub());
+        products.setSeason(dto.getSeason());
+        dto.setProductNumber(dto.getProductNumber());
+
+        productsRepository.save(products);
+
+        return "상품 수정 완료";
+    }
+
+
+    @Override
+    public void deleteProduct(Long productId) {
+        Products products = productsRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException());
+
+        productsRepository.delete(products);
     }
 
     @Override
@@ -213,6 +250,38 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return "상품 색상이 성공적으로 등록되었습니다.";
+    }
+
+    @Transactional
+    public String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
+
+        ProductsColor productsColor = productsColorRepository.findByProductColorId(dto.getProductColorId())
+                .orElseThrow(() -> new EntityNotFoundException("color: " + dto.getColor()));
+
+        productsColor.setColor(dto.getColor());
+
+        for(ProductSizeDTO sizeDTO : dto.getSize() ) {
+            ProductsColorSize productsColorSize = productsColorSizeRepository.findByProductColorIdAndSize(dto.getProductColorId(), sizeDTO.getSize());
+            if (productsColorSize != null) {
+                ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(productsColorSize.getProductColorSizeId());
+                productsStock.setStock(sizeDTO.getStock());
+                productsStockRepository.save(productsStock);
+            } else {
+                productsColorSize = ProductsColorSize.builder()
+                        .productsColor(productsColor)
+                        .size(Size.valueOf(sizeDTO.getSize()))
+                        .build();
+                productsColorSizeRepository.save(productsColorSize);
+                ProductsStock productsStock = ProductsStock.builder()
+                        .productsColorSize(productsColorSize)
+                        .stock(sizeDTO.getStock())
+                        .build();
+                productsStockRepository.save(productsStock);
+            }
+
+
+        }
+        return "상품 색상 및 수량 수정 완료";
     }
 
 
@@ -728,6 +797,26 @@ public class ProductServiceImpl implements ProductService {
         return dtoList;
     }
 
+    @Override
+    public List<ProductColorListBySellerDTO> getProductColorListBySeller(String email) {
+        Users users = userRepository.findByEmail(email).orElse(null);
+
+        List<ProductsSeller> list = productsSellerRepository.findByUsers(users);
+        List<ProductColorListBySellerDTO> dtoList = new ArrayList<>();
+
+        for(ProductsSeller productsSeller: list){
+            List<ProductsColor> productsColor = productsColorRepository.findByProductId(productsSeller.getProducts().getProductId());
+            for(ProductsColor color : productsColor) {
+                ProductColorListBySellerDTO dto = new ProductColorListBySellerDTO();
+                dto.setProductColorId(color.getProductColorId());
+                dto.setColor(color.getColor());
+                dto.setProductNumber(productsSeller.getProducts().getProductNumber());
+                dto.setProductName(productsSeller.getProducts().getName());
+                dtoList.add(dto);
+            }
+        }
 
 
+        return dtoList;
+    }
 }
