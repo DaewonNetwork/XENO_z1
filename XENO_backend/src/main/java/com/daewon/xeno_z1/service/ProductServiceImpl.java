@@ -78,7 +78,22 @@ public class ProductServiceImpl implements ProductService {
                 .build();
         productsRepository.save(product);
 
-        // 2. ProductsColor 엔티티 생성 및 저장
+
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String currentUserName = authentication.getName();
+
+
+
+        Users users = userRepository.findByEmail(currentUserName)
+                .orElse(null);
+
+        ProductsSeller productsSeller = ProductsSeller.builder()
+                .products(product)
+                .users(users)
+                .build();
+        productsSellerRepository.save(productsSeller);
 
         ProductsColor productsColor = ProductsColor.builder()
                 .products(product)
@@ -106,12 +121,17 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (productImage != null && !productImage.isEmpty()) {
+            boolean isFirstImage = true;
             for (MultipartFile image : productImage) {
                 String uuid = saveImage(image);
+
+                boolean isMain = isFirstImage;
+                isFirstImage = false; // 다음 이미지는 첫 번째 이미지가 아님
                 ProductsImage productsImage = ProductsImage.builder()
                         .productsColor(productsColor)
                         .fileName(image.getOriginalFilename())
                         .uuid(uuid)
+                        .isMain(isMain)
                         .build();
                 productsImageRepository.save(productsImage);
             }
@@ -166,12 +186,16 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (productImage != null && !productImage.isEmpty()) {
+            boolean isFirstImage = true;
             for (MultipartFile image : productImage) {
                 String uuid = saveImage(image);
+                boolean isMain = isFirstImage;
+                isFirstImage = false; // 다음 이미지는 첫 번째 이미지가 아님
                 ProductsImage productsImage = ProductsImage.builder()
                         .productsColor(productsColor)
                         .fileName(image.getOriginalFilename())
                         .uuid(uuid)
+                        .isMain(isMain)
                         .build();
                 productsImageRepository.save(productsImage);
             }
@@ -251,7 +275,7 @@ public class ProductServiceImpl implements ProductService {
         String currentUserName = authentication.getName();
 
         log.info(currentUserName);
-        String email = "joohyeongzz@naver.com";
+
 
         Users users = userRepository.findByEmail(currentUserName)
                 .orElse(null);
@@ -466,6 +490,7 @@ public class ProductServiceImpl implements ProductService {
             }
 
         }
+        log.info(colorImagesList);
         return colorImagesList;
     }
 

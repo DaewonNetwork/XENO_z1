@@ -30,10 +30,11 @@ const ProductImageCreateModal = ({ setIsOpen }: ProductImageCreateModalProps) =>
     const [productDetailImg, setProductDetailImg] = useState<File>();
 
     const handleClick = () => {
-        setProductImages([img1, img2, img3, img3, img4, img5, img6]);
+        setProductImages([img1, img2, img3, img4, img5, img6]);
         setProductDetailImage(productDetailImg);
 
         setIsOpen(false);
+
     };
 
     return (

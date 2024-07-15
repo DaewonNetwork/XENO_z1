@@ -69,8 +69,8 @@ public class ProductController {
     @PostMapping(value = "/color/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProductColor(
             @RequestPart("productColorCreateDTO") String productColorCreateDTOStr,
-            @RequestPart(name = "productImage",required = false)  List<MultipartFile> productImage,
-            @RequestPart(name = "productDetailImage",required = false) MultipartFile productDetailImage) {
+            @RequestPart(name = "productImages")  List<MultipartFile> productImages,
+            @RequestPart(name = "productDetailImage") MultipartFile productDetailImage) {
 
         ProductRegisterColorDTO productDTO;
 
@@ -85,7 +85,7 @@ public class ProductController {
 
         try {
             String resultMessage = productService.createProductColor(productDTO,
-                    productImage != null && !productImage.isEmpty() ? productImage : null,
+                    productImages != null && !productImages.isEmpty() ? productImages : null,
                     productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
             );
 
