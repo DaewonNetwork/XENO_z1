@@ -94,6 +94,31 @@ public class ProductController {
             }
         }
 
+        /*
+            createProductColor 값 넘겨주는법
+
+            productColorCreateDTO :
+
+            {
+              "productId": 해당하는 productId 값,
+              "color": "Red",
+              "size": [
+                {
+                  "size": "S",
+                  "stock": 50
+                },
+                {
+                  "size": "M",
+                  "stock": 75
+                },
+                {
+                  "size": "L",
+                  "stock": 100
+                }
+              ]
+            }
+         */
+
     @PostMapping(value = "/color/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProductColor(
             @RequestPart("productColorCreateDTO") String productColorCreateDTOStr,
@@ -154,12 +179,6 @@ public class ProductController {
             try {
                 String result = productService.updateProduct(productId, productUpdateDTO);
                 return ResponseEntity.ok("\"수정 성공\"");
-//            } catch (ProductNotFoundException e) {
-//                return ResponseEntity.notFound().build();
-//            } catch (EntityNotFoundException e) {
-//                return ResponseEntity.notFound().;
-//            } catch (IllegalArgumentException e) {
-//                return ResponseEntity.badRequest().body(e.getMessage());
             } catch (Exception e) {
                 return ResponseEntity.status(500).body("상품 업데이트 중 오류가 발생했습니다: " + e.getMessage());
             }
