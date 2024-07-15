@@ -1,11 +1,13 @@
 package com.daewon.xeno_z1.repository;
 
 
+import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.domain.ProductsImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.print.Pageable;
 import java.util.List;
@@ -19,6 +21,19 @@ public interface ProductsImageRepository extends JpaRepository<ProductsImage, Lo
 
     @Query("SELECT p FROM ProductsImage p WHERE p.productsColor.productColorId = :productColorId and p.isMain=true")
     ProductsImage findFirstByProductColorId(@Param("productColorId") Long productColorId);
-    ProductsImage findByProductsColorProductColorIdAndIsMainTrue(Long productColorId);
+//    ProductsImage findByProductsColorProductColorIdAndIsMainTrue(Long productColorId);
+//
+//    Optional<Long> findByProductImageId(List<MultipartFile> productImage);
+
+    // 단일 이미지 ID로 조회
+    Optional<ProductsImage> findByProductImageId(Long productImageId);
+
+    // 또는 여러 이미지 ID로 조회
+    List<ProductsImage> findByProductImageIdIn(List<Long> productImageIds);
+
+    void deleteByProductsColorProducts(Products products);
+
+
+
 
 }

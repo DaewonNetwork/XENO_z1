@@ -6,6 +6,7 @@ import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 
 import com.daewon.xeno_z1.utils.CategoryUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -27,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
     private final CartRepository cartRepository;
 
 
-    @Value("${uploadPath}")
+    @Value("${org.daewon.upload.path}")
     private String uploadPath;
 
 
@@ -191,7 +194,116 @@ public class ProductServiceImpl implements ProductService {
         return "상품 색상이 성공적으로 등록되었습니다.";
     }
 
+    @Override
+    public String updateProduct(Long productId, ProductUpdateDTO productUpdateDTO) {
+        // productId로 상품을 찾음
+        Products products = productsRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException());
 
+        // 상품 업데이트
+        products.setName(productUpdateDTO.getName());
+        products.setPrice(productUpdateDTO.getPrice());
+        products.setIsSale(productUpdateDTO.isSale());
+        products.setPriceSale(productUpdateDTO.getPriceSale());
+        products.setCategory(productUpdateDTO.getCategory());
+        products.setCategorySub(productUpdateDTO.getCategorySub());
+        products.setSeason(productUpdateDTO.getSeason());
+
+        productsRepository.save(products);
+
+        // 사이즈, 수량 변경
+        if (productUpdateDTO.getSize() != null && productUpdateDTO.getStock() != null
+                && productUpdateDTO.getSize().size() == productUpdateDTO.getStock().size()) {
+
+            ProductsColor productsColor = productsColorRepository.findByProducts(products)
+                    .orElseThrow(() -> new EntityNotFoundException("ProductColor not found for product id : " + productId));
+
+            Map<String, Long> sizeStockMap = new HashMap<>();
+            for (int i = 0; i < productUpdateDTO.getSize().size(); i++) {
+                sizeStockMap.put(productUpdateDTO.getSize().get(i), productUpdateDTO.getStock().get(i));
+            }
+
+            for(Map.Entry<String, Long> entry : sizeStockMap.entrySet()) {
+                String sizeKey = entry.getKey();
+                Long stockValue = entry.getValue();
+
+                // 사이즈 변경
+                ProductsColorSize productsColorSize = productsColorSizeRepository.findByProductsColorAndSize(productsColor, Size.valueOf(sizeKey))
+                        .orElseGet(() -> {
+                            ProductsColorSize updateSize = ProductsColorSize.builder()
+                                    .productsColor(productsColor)
+                                    .size(Size.valueOf(sizeKey))
+                                    .build();
+                            return productsColorSizeRepository.save(updateSize);
+                        });
+
+                // 사이즈에 해당하는 수량 변경
+                ProductsStock productsStock = productsStockRepository.findByProductsColorSize(productsColorSize)
+                        .orElseGet(() -> new ProductsStock());
+
+                productsStock.setProductsColorSize(productsColorSize);
+                productsStock.setStock(stockValue);
+                productsStockRepository.save(productsStock);
+
+                // 존재하지 않는 사이즈 제거
+                List<ProductsColorSize> existingSizes = productsColorSizeRepository.findByProductsColor(productsColor);
+                for (ProductsColorSize existingSize : existingSizes) {
+                    if (!sizeStockMap.containsKey(existingSize.getSize().name())) {
+                        productsColorSizeRepository.delete(existingSize);
+                        // 사이즈에 해당하는 ProductsStock는 CASCADE로 인해 자동 삭제
+                    }
+                }
+            }
+        }
+
+        return "상품 수정 완료";
+    }
+
+    @Transactional
+    public String updateProductColor(ProductUpdateColorDTO dto) {
+        Products product = productsRepository.findById(dto.getProductId())
+                .orElseThrow(() -> new ProductNotFoundException());
+
+        ProductsColor productsColor = productsColorRepository.findByProductsAndColor(product, dto.getColor())
+                .orElseThrow(() -> new EntityNotFoundException("Color not found for product id: " + dto.getProductId() + " and color: " + dto.getColor()));
+
+        // 기존 사이즈와 재고 정보를 맵으로 저장
+        Map<Size, ProductsColorSize> existingSizes = productsColorSizeRepository.findByProductsColor(productsColor)
+                .stream()
+                .collect(Collectors.toMap(ProductsColorSize::getSize, Function.identity()));
+
+        // 새로운 사이즈와 재고 정보 업데이트
+        for (ProductSizeDTO sizeDTO : dto.getSize()) {
+            Size size = Size.valueOf(sizeDTO.getSize());
+            ProductsColorSize colorSize = existingSizes.getOrDefault(size,
+                    ProductsColorSize.builder().productsColor(productsColor).size(size).build());
+
+            productsColorSizeRepository.save(colorSize);
+
+            ProductsStock stock = productsStockRepository.findByProductsColorSize(colorSize)
+                    .orElse(ProductsStock.builder().productsColorSize(colorSize).build());
+            stock.setStock(sizeDTO.getStock());
+            productsStockRepository.save(stock);
+
+            existingSizes.remove(size);
+        }
+
+        // 남은 사이즈 삭제 (더 이상 사용되지 않는 사이즈)
+        for (ProductsColorSize obsoleteSize : existingSizes.values()) {
+            productsColorSizeRepository.delete(obsoleteSize);
+            // 연관된 ProductsStock은 CASCADE로 자동 삭제됩니다.
+        }
+
+        return "상품 색상 및 수량 수정 완료";
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        Products products = productsRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException());
+
+        productsRepository.delete(products);
+    }
 
     private String saveImage(MultipartFile image) {
         String fileName = image.getOriginalFilename();
