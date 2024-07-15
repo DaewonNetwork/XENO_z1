@@ -28,6 +28,7 @@ public interface ProductService {
 
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
-    void deleteProduct(Long productId);
+
+
 
 }

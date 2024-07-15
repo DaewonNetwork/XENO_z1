@@ -14,14 +14,15 @@ import java.util.List;
 @Builder
 public class ProductUpdateDTO {
 
-    private String productName;
+    private String name;
     private List<MultipartFile> productImages;
     private List<MultipartFile> productDetailImages;
     private Long price;
     private boolean isSale;
-    private String priceSale;
+    private Long priceSale;
     private String category;
     private String categorySub;
+    private String season;
     private List<String> size; // size 리스트
     private List<Long> stock;
 }

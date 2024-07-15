@@ -97,18 +97,6 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/delete")
-    @Operation(summary = "상품 삭제")
-    public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {
-        try {
-            productService.deleteProduct(productId);
-            return ResponseEntity.ok().body("상품 삭제 완료");
-        }  catch (RuntimeException e) {
-            log.error("상품 삭제 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
     @GetMapping("/read")
     public ResponseEntity<ProductInfoDTO> readProduct(@RequestParam Long productColorId) throws IOException {
         ProductInfoDTO productInfoDTO = productService.getProductInfo(productColorId);

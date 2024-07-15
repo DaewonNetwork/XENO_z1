@@ -6,6 +6,7 @@ import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 
 import com.daewon.xeno_z1.utils.CategoryUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -131,14 +132,6 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return product;
-    }
-
-    @Override
-    public void deleteProduct(Long productId) {
-        Products products = productsRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException());
-
-        productsRepository.delete(products);
     }
 
     private String saveImage(MultipartFile image) {
