@@ -161,11 +161,9 @@ public class ProductController {
     }
 
     @GetMapping("/rank/{category}")
-    public ResponseEntity<Page<ProductsStarRankListDTO>> getranktop10(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+    public ResponseEntity<List<ProductsStarRankListDTO>> getranktop10(
             @PathVariable String category) {
-        Page<ProductsStarRankListDTO> result = productService.getranktop10(category, page, size);
+        List<ProductsStarRankListDTO> result = productService.getranktop10(category);
         return ResponseEntity.ok(result);
     }
 

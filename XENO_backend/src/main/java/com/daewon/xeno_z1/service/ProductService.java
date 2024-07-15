@@ -28,7 +28,7 @@ public interface ProductService {
 
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
-    Page<ProductsStarRankListDTO> getranktop10(String category, int page, int size);
+    List<ProductsStarRankListDTO> getranktop10(String category);
 
     PageInfinityResponseDTO<ProductsStarRankListDTO> getrankTop50(String category, PageRequestDTO pageRequestDTO);
 

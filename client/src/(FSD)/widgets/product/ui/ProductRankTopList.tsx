@@ -6,7 +6,7 @@ import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import TextLargeShared from "@/(FSD)/shareds/ui/TextLargeShared";
 import Link from "next/link";
 import TextSmallShared from "@/(FSD)/shareds/ui/TextSmallShared";
-import { fetchServerData } from "@/(FSD)/shareds/fetch/fetchServerData";
+import { fetchServerData } from "@/(FSD)/shareds/fetch/fetchServerData" ;
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import { productRankList } from "../consts/productRankList";
 

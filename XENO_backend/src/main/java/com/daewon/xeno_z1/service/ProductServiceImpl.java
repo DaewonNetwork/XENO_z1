@@ -586,53 +586,68 @@ public class ProductServiceImpl implements ProductService {
         return productsInfoCardDTOList;
     }
 
-    // 랭크 10개
+    // 카테고리 별 랭크 10개
     @Override
-    public Page<ProductsStarRankListDTO> getranktop10(String category, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("starAvg").descending());
-        Page<ProductsStar> productsPage = productsStarRepository.findByStarAvgDesc(category, pageable);
+    public List<ProductsStarRankListDTO> getranktop10(String category) {
+        List<ProductsStar> top10Products = productsStarRepository.findByTop10StarAvgDesc(category);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        Users users = userRepository.findByEmail(currentUserName).orElse(null);
 
-        return productsPage.map(productsStar -> {
+        return top10Products.stream()
+                .map(productsStar -> {
 
-            Products product = productsStar.getProductsColor().getProducts();
-            Long productColorId = productsStar.getProductsColor().getProductColorId();
+                    Products product = productsStar.getProductsColor().getProducts();
+                    Long productColorId = productsStar.getProductsColor().getProductColorId();
 
-            ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
-                    .productColorId(productColorId)
-                    .brandName(product.getBrandName())
-                    .price(product.getPrice())
-                    .priceSale(product.getPriceSale())
-                    .isSale(product.getIsSale())
-                    .category(product.getCategory())
-                    .categorySub(product.getCategorySub())
-                    .build();
+                    ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                            .productColorId(productColorId)
+                            .brandName(product.getBrandName())
+                            .price(product.getPrice())
+                            .priceSale(product.getPriceSale())
+                            .isSale(product.getIsSale())
+                            .category(product.getCategory())
+                            .categorySub(product.getCategorySub())
+                            .build();
 
-            // isMain이 true인 이미지만 처리
-            if (productColorId != null) {
-                ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
-                if (productImage != null) {
-                    try {
-                        String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
-                        Path path = Paths.get(filePath);
-                        if (Files.exists(path)) {
-                            byte[] imageData = Files.readAllBytes(path);
-                            dto.setProductImage(imageData);
-                        } else {
-                            log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
-                        }
-                    } catch (IOException e) {
-                        log.error("이미지 로딩 중 오류 발생", e);
+                    if (users != null) {
+                        LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId, users.getUserId());
+                        dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+                    }else {
+                        dto.setLike(false);
                     }
-                }
-            }
-            return dto;
-        });
+
+                    // isMain이 true인 이미지만 처리
+                    if (productColorId != null) {
+                        ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                        if (productImage != null) {
+                            try {
+                                String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                                Path path = Paths.get(filePath);
+                                if (Files.exists(path)) {
+                                    byte[] imageData = Files.readAllBytes(path);
+                                    dto.setProductImage(imageData);
+                                } else {
+                                    log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
+                                }
+                            } catch (IOException e) {
+                                log.error("이미지 로딩 중 오류 발생", e);
+                            }
+                        }
+                    }
+                    return dto;
+                })
+                .limit(10)
+                .collect(Collectors.toList());
     }
 
     @Override
     public PageInfinityResponseDTO<ProductsStarRankListDTO> getrankTop50(String category, PageRequestDTO pageRequestDTO) {
         Pageable pageable = pageRequestDTO.getPageable();
         Page<ProductsStar> productsStarPage = productsStarRepository.findByStarAvgDesc(category, pageable);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        Users users = userRepository.findByEmail(currentUserName).orElse(null);
 
         List<ProductsStarRankListDTO> dtoList = productsStarPage.getContent().stream()
                 .map(productsStar -> {
@@ -648,6 +663,13 @@ public class ProductServiceImpl implements ProductService {
                             .category(product.getCategory())
                             .categorySub(product.getCategorySub())
                             .build();
+
+                    if (users != null) {
+                        LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId, users.getUserId());
+                        dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+                    }else {
+                        dto.setLike(false);
+                    }
 
                     ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
                     if (productImage != null) {
