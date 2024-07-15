@@ -184,6 +184,31 @@ public class ProductController {
             }
     }
 
+    /*
+        updateProductColor 값 넘기는법
+
+        productUpdateColorDTO =
+
+        {
+          "productId": 해당하는 productId,
+          "color": "productId에 해당하는 color명",
+          "size": [
+            {
+              "size": "S",
+              "stock": 1000
+            },
+            {
+              "size": "M",
+              "stock": 2000
+            },
+            {
+              "size": "L",
+              "stock": 3000
+            }
+          ]
+        }
+     */
+
     @PutMapping("/color/update")
     @Operation(summary = "상품 컬러 수정")
     public ResponseEntity<?> updateProductColor(@RequestBody ProductUpdateColorDTO productUpdateColorDTO) {
