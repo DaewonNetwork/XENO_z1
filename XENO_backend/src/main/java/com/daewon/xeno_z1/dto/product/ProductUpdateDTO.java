@@ -15,8 +15,6 @@ import java.util.List;
 public class ProductUpdateDTO {
 
     private String name;
-    private List<MultipartFile> productImages;
-    private List<MultipartFile> productDetailImages;
     private Long price;
     private boolean isSale;
     private Long priceSale;

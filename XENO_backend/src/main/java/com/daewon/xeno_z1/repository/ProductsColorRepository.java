@@ -17,4 +17,6 @@ public interface ProductsColorRepository extends JpaRepository<ProductsColor, Lo
 
     Optional<ProductsColor> findByProductColorId(Long productColorId);
 
+    Optional<ProductsColor> findByProducts(Products products);
+
 }

@@ -34,5 +34,9 @@ public interface ProductService {
 
      List<ProductListBySellerDTO> getProductListBySeller(String email);
 
+    String updateProduct(Long productId, ProductUpdateDTO productUpdateDTO);
+
+    void deleteProduct(Long productId);
+
 
 }

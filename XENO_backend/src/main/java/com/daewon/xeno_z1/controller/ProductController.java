@@ -3,10 +3,12 @@ package com.daewon.xeno_z1.controller;
 import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.domain.ProductsColor;
 import com.daewon.xeno_z1.dto.product.*;
+import com.daewon.xeno_z1.exception.ProductNotFoundException;
 import com.daewon.xeno_z1.service.ProductService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -33,6 +35,32 @@ public class ProductController {
     private final ProductService productService;
 
     // @PreAuthorize("hasRole('USER')")
+
+    /*
+    productCreateDTO 해당 형식으로 값 넘기면 됨.
+        {
+            "brandName": "브랜드",
+            "category": "옷",
+            "categorySub": "티셔츠",
+            "name": "쿨 티셔츠",
+            "price": 40000,
+            "sale": true,
+            "priceSale": 15000,
+            "productNumber": "1234",
+            "season": "여름",
+            "colors": "Blue",
+            "size": [
+                {
+                    "size": "S",
+                    "stock": 100
+                },
+                {
+                    "size": "M",
+                    "stock": 150
+                }
+            ]
+        }
+ */
 
         @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
         public ResponseEntity<?> createProduct(
@@ -99,6 +127,56 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 등록 중 오류가 발생했습니다."); // 500 상태 코드
         }
     }
+
+    /*
+        updateProduct 값 넘기는법
+        수정해야 하는 productId값 넘겨주고
+
+        productUpdateDTO는 해당하는 형식으로 넘겨주면 됨.
+        {
+          "name": "Updated Product Name",
+          "price": 15000,
+          "isSale": true,
+          "priceSale": 12000,
+          "category": "Electronics",
+          "categorySub": "Smartphones",
+          "season": "Summer",
+          "size": ["S", "M", "L"],
+          "stock": [10, 20, 30]
+        }
+     */
+
+    @PutMapping("/update")
+    @Operation(summary = "상품 수정")
+    public ResponseEntity<?> updateProduct(
+                    @RequestParam Long productId,
+                    @RequestBody ProductUpdateDTO productUpdateDTO) {
+            try {
+                String result = productService.updateProduct(productId, productUpdateDTO);
+                return ResponseEntity.ok("\"수정 성공\"");
+//            } catch (ProductNotFoundException e) {
+//                return ResponseEntity.notFound().build();
+//            } catch (EntityNotFoundException e) {
+//                return ResponseEntity.notFound().;
+//            } catch (IllegalArgumentException e) {
+//                return ResponseEntity.badRequest().body(e.getMessage());
+            } catch (Exception e) {
+                return ResponseEntity.status(500).body("상품 업데이트 중 오류가 발생했습니다: " + e.getMessage());
+            }
+    }
+
+    @DeleteMapping("/delete")
+    @Operation(summary = "상품 삭제")
+    public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {
+        try {
+            productService.deleteProduct(productId);
+            return ResponseEntity.ok().body("상품 삭제 완료");
+        }  catch (RuntimeException e) {
+            log.error("상품 삭제 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 
     @GetMapping("/color/read")
     public ResponseEntity<ProductInfoDTO> readProductColor(@RequestParam Long productColorId) throws IOException {
