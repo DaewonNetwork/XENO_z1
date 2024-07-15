@@ -13,22 +13,14 @@ const useAuthStatus = () => {
     const isLoggedIn: boolean = !!data;
 
     useEffect(() => {
-        if(isLoggedIn) {
-            set(true);
-        } else {
-            set(false);
-        }
+        set(isLoggedIn);
     }, [data]);
 
     useEffect(() => {
-        console.log(error);
-        console.log(isError);
-        
-        
-        // if (isError) {
-        //     localStorage.removeItem("access_token");
-        //     localStorage.removeItem("refresh_token");
-        // }
+        if (isError) {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+        }
     }, [isError]);
 
     useEffect(() => {

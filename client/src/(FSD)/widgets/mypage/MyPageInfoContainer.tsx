@@ -1,23 +1,16 @@
-'use client'
+"use client"
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import UserInfo from "./UserInfo";
 import { isLoggedInState } from "@/(FSD)/shareds/stores/UserAtom";
 
 const MyPageInfoContainer = () => {
-
     const isLoggedIn = useRecoilValue(isLoggedInState);
 
     const router = useRouter();
-
-    const redirectToOrderInfo = () => {
-        router.push('/mypage/orders')
-    }
-
-
 
     return (
         <>
@@ -31,8 +24,10 @@ const MyPageInfoContainer = () => {
 
             ) : (
                 <div>
-                <UserInfo />
-                <button onClick={redirectToOrderInfo}>주문내역 확인</button>
+                    <UserInfo />
+                    <button onClick={_ => {
+                        router.push("/mypage/orders");
+                    }}>주문내역 확인</button>
                 </div>
             )}
 

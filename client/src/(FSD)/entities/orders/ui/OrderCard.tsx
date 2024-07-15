@@ -1,40 +1,30 @@
-import { ReviewCardType } from "@/(FSD)/shareds/types/review/ReviewCard.type";
 import React from "react";
-import styles from "@/(FSD)/shareds/styles/ReviewStyle.module.scss";
-import { Skeleton } from "@nextui-org/skeleton";
 import { useRouter } from "next/navigation";
 import { OrderInfoType } from "@/(FSD)/shareds/types/orders/OrderInfo.Type";
+import styles from "@/(FSD)/shareds/styles/OrderStyle.module.scss";
+import TextLargeShared from "@/(FSD)/shareds/ui/TextLargeShared";
+import { Button } from "@nextui-org/button";
+import IconShared from "@/(FSD)/shareds/ui/IconShared";
 
 interface OrderCardProps {
     order: OrderInfoType;
-
 }
 
 const OrderCard = ({ order }: OrderCardProps) => {
-    if(!order) return <></>
     const router = useRouter();
 
-    const redirectToReviewCreate = () => {
-        router.push(`/reviews/create/${order.orderId}`)
-    }
+    console.log(order);
+    
 
     return (
-       <div>
-        {order.orderDate}
-        {order.status}
-        {order.brandName}
-        {order.productName}
-        {order.color}
-        {order.size}
-        {order.quantity}
-        {order.amount}
-        <img
-                    src={`data:image/jpeg;base64,${order.productImage}`}
-        />
-        <button onClick={redirectToReviewCreate}> 후기 작성</button>
+        <div className={styles.order_card}>
+            <div className={styles.card_header}>
+                <TextLargeShared>{order.amount.toLocaleString()}원</TextLargeShared>
+                <Button size={"sm"} variant={"light"} isIconOnly><IconShared iconType={"right"} /></Button>
+            </div>
+            <div className={styles.card_body}>
 
-        
-        
+            </div>
         </div>
     );
 };

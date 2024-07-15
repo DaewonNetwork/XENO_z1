@@ -2,13 +2,10 @@
 
 import { useOrderListRead } from "@/(FSD)/entities/orders/api/useOrderListRead";
 import OrderCard from "@/(FSD)/entities/orders/ui/OrderCard";
-import { useReviewCardListRead } from "@/(FSD)/entities/review/api/useReviewCardListRead";
-import ReviewCard from "@/(FSD)/entities/review/ui/ReviewCard";
-import styles from "@/(FSD)/shareds/styles/ReviewStyle.module.scss";
 import { OrderInfoType } from "@/(FSD)/shareds/types/orders/OrderInfo.Type";
-import { ReviewCardType } from "@/(FSD)/shareds/types/review/ReviewCard.type";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
+import styles from "@/(FSD)/shareds/styles/OrderStyle.module.scss";
 
 const OrderCardList = () => {
     const { orderList, fetchNextPage, refetch, hasNextPage } = useOrderListRead();
@@ -18,10 +15,8 @@ const OrderCardList = () => {
         refetch();
     }, [orderList]);
 
-
     useEffect(() => {
         if (inView) {
-            console.log("asd")
             fetchNextPage();
         }
     }, [inView]);
@@ -31,7 +26,7 @@ const OrderCardList = () => {
     if (!orderCardList) return <></>;
 
     return (
-        <div >
+        <div className={styles.order_list}>
             {
                 orderCardList.map(order => (
                     <React.Fragment key={order.orderId}>
