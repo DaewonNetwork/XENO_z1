@@ -416,7 +416,7 @@ public class ProductServiceImpl implements ProductService {
             byte[] currentImageData = null;
             try {
                 // 서버 파일 시스템에서 파일 존재 여부 확인
-                Path filePath = Paths.get("C:/upload",
+                Path filePath = Paths.get("/Users/cyjoon/Downloads/upload",
                         currentProductsImage.getUuid() + "_" + currentProductsImage.getFileName());
                 if (Files.exists(filePath)) {
                     currentImageData = getImage(currentProductsImage.getUuid(), currentProductsImage.getFileName());
@@ -451,7 +451,7 @@ public class ProductServiceImpl implements ProductService {
                     .findFirstByProductColorId(productsColor.getProductColorId());
             if (otherProductsImage != null) {
                 // 서버 파일 시스템에서 파일 존재 여부 확인
-                Path filePath = Paths.get("C:/upload",
+                Path filePath = Paths.get("/Users/cyjoon/Downloads/upload",
                         otherProductsImage.getUuid() + "_" + otherProductsImage.getFileName());
                 if (Files.exists(filePath)) {
                     byte[] otherImageData = getImage(otherProductsImage.getUuid(), otherProductsImage.getFileName());
