@@ -1,20 +1,36 @@
+import { useMutation } from "@tanstack/react-query";
+
 
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { MutationType } from "@/(FSD)/features/types/mutation.type";
 
-export const useCartListAdd = () => {
+interface newProductsType {
+    productColorSizeId: number;
+    price: number;
+    quantity: number;
+}
+
+export const useCartListAdd = ({ onSuccess, onError }: MutationType) => {
+
     const fetchData = useFetchData();
-    const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (newItem: { userId: number; productColorSizeId: number; productImageId: number; quantity: number }) =>
-            fetchData({ 
-                path: "/cart", 
-                method: "POST", 
-                body: newItem, 
-                isAuthRequired: true }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["cart_items"] });
+        mutationFn: (newProducts: newProductsType[]) => {
+            return fetchData({
+                path: "/cart",
+                method: "POST",
+                body: newProducts,
+                isAuthRequired: true
+            });
         },
+        onSuccess: (data:any) => {
+            console.log(data)
+            onSuccess(data);
+        },
+        onError: () => {
+            if (onError) {
+                onError();
+            }
+        }
     });
 };

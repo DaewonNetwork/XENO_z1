@@ -68,16 +68,10 @@ const ProductCreateForm = () => {
         formData.append("productCreateDTO", JSON.stringify({ brandName: "영준", category: category, categorySub: categorySub, price: +data.price, sale: !!data.priceSale, priceSale: +data.priceSale, size: sizes , ...data }));
         productImages.forEach((image:File) => {
             if (image) {
-                formData.append("productImages", image); // "productImages"로 각 이미지 추가
+                formData.append("productImages", image);
             }
         });
         formData.append("productDetailImage", productDetailImage);
-
-        console.log(productImages)
-        console.log(productImages)
-        console.log(formData.get("productImages"))
-        console.log(productImages.filter((image:File) => !!image))
-
 
         mutate(formData);
     };
