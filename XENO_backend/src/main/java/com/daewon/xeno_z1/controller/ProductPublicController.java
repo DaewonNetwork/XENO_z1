@@ -12,6 +12,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +36,8 @@ public class ProductPublicController {
     public ResponseEntity<?> createProduct(
             @RequestPart("productCreateDTO") String productRegisterDTOStr,
             @RequestPart("productImage") List<MultipartFile> productImage,
-            @RequestPart("productDetailImage") MultipartFile productDetailImage) {
+            @RequestPart("productDetailImage") MultipartFile productDetailImage,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         ProductRegisterDTO productDTO;
 
@@ -50,7 +53,7 @@ public class ProductPublicController {
         }
         try {
             Products createdProduct = productService.createProduct(productDTO, productImage != null && !productImage.isEmpty() ? productImage : null,
-                    productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
+                    productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null, userDetails
             );
             return ResponseEntity.ok("성공");
         } catch (Exception e) {

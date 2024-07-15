@@ -2,6 +2,7 @@ package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
 import com.daewon.xeno_z1.dto.product.*;
+import com.daewon.xeno_z1.exception.UserNotFoundException;
 import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,8 +67,9 @@ public class ProductServiceImpl implements ProductService {
         return image;
     }
 
+    @Transactional
     @Override
-    public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
+    public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage, UserDetails userDetails) {
         // 1. Products 엔티티 생성 및 저장
         Products product = Products.builder()
                 .brandName(dto.getBrandName())
@@ -80,6 +83,18 @@ public class ProductServiceImpl implements ProductService {
                 .season(dto.getSeason())
                 .build();
         productsRepository.save(product);
+
+        // UserDetails에서 사용자 정보를 가져와 Users 엔티티 조회
+        String email = userDetails.getUsername();
+        Users user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("해당하는 유저를 찾을 수 없음 : " + email));
+
+        // ProductsSeller 엔티티 생성 및 저장
+        ProductsSeller productsSeller = ProductsSeller.builder()
+                .products(product)
+                .users(user)
+                .build();
+        productsSellerRepository.save(productsSeller);
 
         // 2. ProductsColor 엔티티 생성 및 저장
 
@@ -109,12 +124,17 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (productImage != null && !productImage.isEmpty()) {
+            boolean isFirstImage = true;
+
             for (MultipartFile image : productImage) {
                 String uuid = saveImage(image);
+                boolean isMain = isFirstImage;
+                isFirstImage = false; // 다음 이미지는 첫 번째 이미지가 아님
                 ProductsImage productsImage = ProductsImage.builder()
                         .productsColor(productsColor)
                         .fileName(image.getOriginalFilename())
                         .uuid(uuid)
+                        .isMain(isMain)
                         .build();
                 productsImageRepository.save(productsImage);
             }

@@ -4,6 +4,7 @@ import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.domain.ProductsColor;
 import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.exception.ProductNotFoundException;
+import com.daewon.xeno_z1.service.AuthService;
 import com.daewon.xeno_z1.service.ProductService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,7 +68,8 @@ public class ProductController {
         public ResponseEntity<?> createProduct(
                 @RequestPart("productCreateDTO") String productRegisterDTOStr,
                 @RequestPart(name = "productImages")  List<MultipartFile> productImages,
-                @RequestPart(name = "productDetailImage") MultipartFile productDetailImage) {
+                @RequestPart(name = "productDetailImage") MultipartFile productDetailImage,
+                @AuthenticationPrincipal UserDetails userDetails) {
 
             ProductRegisterDTO productDTO;
             log.info(productRegisterDTOStr);
@@ -85,7 +88,7 @@ public class ProductController {
             }
             try {
                 Products createdProduct = productService.createProduct(productDTO, productImages != null && !productImages.isEmpty() ? productImages : null,
-                        productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
+                        productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null, userDetails
                 );
                 return ResponseEntity.ok("\"성공\"");
             } catch (Exception e) {
