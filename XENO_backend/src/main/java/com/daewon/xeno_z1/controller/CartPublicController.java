@@ -5,7 +5,6 @@ import com.daewon.xeno_z1.dto.cart.AddToCartDTO;
 import com.daewon.xeno_z1.dto.cart.CartDTO;
 import com.daewon.xeno_z1.dto.cart.CartSummaryDTO;
 import com.daewon.xeno_z1.repository.UserRepository;
-import com.daewon.xeno_z1.security.filter.TokenCheckFilter;
 import com.daewon.xeno_z1.service.CartService;
 import com.daewon.xeno_z1.utils.JWTUtil;
 import io.jsonwebtoken.JwtException;
@@ -20,10 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

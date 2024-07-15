@@ -49,7 +49,7 @@ public class ProductServiceImpl implements ProductService {
     private final CartRepository cartRepository;
 
 
-    @Value("${uploadPath}")
+    @Value("${org.daewon.upload.path}")
     private String uploadPath;
 
 
@@ -63,6 +63,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Products createProduct(ProductRegisterDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
+        log.info("dto : " + dto);
         // 1. Products 엔티티 생성 및 저장
         Products product = Products.builder()
                 .brandName(dto.getBrandName())
@@ -112,6 +113,7 @@ public class ProductServiceImpl implements ProductService {
                         .productsColor(productsColor)
                         .fileName(fileName)
                         .uuid(uuid)
+                        .isMain(true)
                         .build();
                 productsImageRepository.save(productsImage);
             }
@@ -131,7 +133,13 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    @Override
+    public void deleteProduct(Long productId) {
+        Products products = productsRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException());
 
+        productsRepository.delete(products);
+    }
 
     private String saveImage(MultipartFile image) {
         String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();

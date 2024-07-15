@@ -9,7 +9,10 @@ import com.daewon.xeno_z1.dto.product.ProductRegisterDTO;
 import com.daewon.xeno_z1.dto.product.ProductsInfoCardDTO;
 import com.daewon.xeno_z1.service.ProductService;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +39,32 @@ public class ProductController {
 
     // @PreAuthorize("hasRole('USER')")
 
+    /*
+    productCreateDTO 해당 형식으로 값 넘기면 됨.
+        {
+            "brandName": "브랜드",
+            "category": "옷",
+            "categorySub": "티셔츠",
+            "name": "쿨 티셔츠",
+            "price": 40000,
+            "sale": true,
+            "priceSale": 15000,
+            "productsNumber": "1234",
+            "season": "여름",
+            "colors": "Blue",
+            "size": [
+                {
+                    "size": "S",
+                    "stock": 100
+                },
+                {
+                    "size": "M",
+                    "stock": 150
+                }
+            ]
+        }
+     */
+
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(
             @RequestPart("productCreateDTO") String productRegisterDTOStr,
@@ -47,6 +76,9 @@ public class ProductController {
         try {
             // JSON 문자열을 ReviewDTO 객체로 변환
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             productDTO = objectMapper.readValue(productRegisterDTOStr, ProductRegisterDTO.class);
             log.info(productDTO);
         } catch (IOException e) {
@@ -62,6 +94,18 @@ public class ProductController {
         } catch (Exception e) {
             log.error("상품 등록 중 오류 발생: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DeleteMapping("/delete")
+    @Operation(summary = "상품 삭제")
+    public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {
+        try {
+            productService.deleteProduct(productId);
+            return ResponseEntity.ok().body("상품 삭제 완료");
+        }  catch (RuntimeException e) {
+            log.error("상품 삭제 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 

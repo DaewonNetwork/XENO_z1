@@ -1,9 +1,11 @@
 package com.daewon.xeno_z1.dto.product;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
 
@@ -25,10 +27,11 @@ public class ProductRegisterDTO {
     
     private Long price;
 
-    private boolean isSale;
+    private boolean sale;
 
     private Long priceSale;
 
+    @ColumnDefault("1234")
     private String productNumber;
 
     private String season;
@@ -37,7 +40,15 @@ public class ProductRegisterDTO {
 
     private List<ProductSizeDTO> size; // size 리스트
 
-
+//    @JsonProperty("isSale")
+//    public boolean isSale() {
+//        return isSale;
+//    }
+//
+//    @JsonProperty("isSale")
+//    public void setSale(boolean sale) {
+//        isSale = sale;
+//    }
 
 
 }
