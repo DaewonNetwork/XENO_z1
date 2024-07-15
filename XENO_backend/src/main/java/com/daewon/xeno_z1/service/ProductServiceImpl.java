@@ -3,6 +3,7 @@ package com.daewon.xeno_z1.service;
 import com.daewon.xeno_z1.domain.*;
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
@@ -17,7 +18,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,6 +49,7 @@ public class ProductServiceImpl implements ProductService {
     private final LikeRepository likeRepository;
     private final ProductsSellerRepository productsSellerRepository;
     private final CartRepository cartRepository;
+    private final ProductsSearchRepository productsSearchRepository;
 
 
     @Value("${uploadPath}")
@@ -170,6 +170,31 @@ public class ProductServiceImpl implements ProductService {
 
 
         return dtoList;
+    }
+
+    public PageResponseDTO<ProductsSearchDTO> productCategorySearch(String category, PageRequestDTO pageRequestDTO) {
+        // 페이지 요청 객체 생성
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
+                pageRequestDTO.getSize());
+    
+        // 카테고리를 기준으로 상품을 검색
+        Page<Products> result = productsSearchRepository.findByCategory(category, pageable);
+        log.info(result);
+    
+        // 검색 결과를 DTO로 변환
+        List<ProductsSearchDTO> productList = result.getContent().stream().map(product -> {
+            ProductsSearchDTO productsSearchDTO = modelMapper.map(product, ProductsSearchDTO.class);
+            return productsSearchDTO;
+        }).collect(Collectors.toList());
+        log.info(productList);
+    
+        // 페이지 응답 객체 생성 및 반환
+        return PageResponseDTO.<ProductsSearchDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(productList)
+                .totalIndex((int) result.getTotalElements())
+                .build();
     }
 
     @Override

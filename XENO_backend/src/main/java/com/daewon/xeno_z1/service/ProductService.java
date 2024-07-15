@@ -5,6 +5,7 @@ import com.daewon.xeno_z1.domain.Products;
 
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.product.*;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,5 +39,7 @@ public interface ProductService {
     String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
      List<ProductListBySellerDTO> getProductListBySeller(String email);
+
+    PageResponseDTO<ProductsSearchDTO> productCategorySearch(String category, PageRequestDTO pageRequestDTO);
 
 }

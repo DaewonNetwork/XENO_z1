@@ -221,4 +221,11 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "카테고리별 검색")
+    @GetMapping("/search/{category}")
+    public PageResponseDTO<ProductsSearchDTO> productCategorySearch(@PathVariable String category, PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<ProductsSearchDTO> responseDTO = productService.productCategorySearch(category, pageRequestDTO);
+        return responseDTO;
+    }
+
 }

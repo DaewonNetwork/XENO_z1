@@ -3,6 +3,7 @@ package com.daewon.xeno_z1.controller;
 import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.service.ProductService;
 
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
+//@RestController
 @Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/product")
@@ -181,4 +184,17 @@ public class ProductPublicController {
         return ResponseEntity.ok(result);
     }
 
+//    @Operation(summary = "카테고리별 검색")
+//    @GetMapping("/search/{category}")
+//    public PageResponseDTO<ProductsSearchDTO> productCategorySearch(@PathVariable String category, PageRequestDTO pageRequestDTO) {
+//        PageResponseDTO<ProductsSearchDTO> responseDTO = productService.productCategorySearch(category, pageRequestDTO);
+//        return responseDTO;
+//    }
+
+    @Operation(summary = "카테고리별 검색")
+    @GetMapping("/search/{category}")
+    public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> productCategorySearch(@PathVariable String category, PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<ProductsSearchDTO> responseDTO = productService.productCategorySearch(category, pageRequestDTO);
+        return ResponseEntity.ok(responseDTO);
+    }
 }
