@@ -1,12 +1,9 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Products;
-import com.daewon.xeno_z1.dto.product.ProductDetailImagesDTO;
-import com.daewon.xeno_z1.dto.product.ProductInfoDTO;
-import com.daewon.xeno_z1.dto.product.ProductOrderBarDTO;
-import com.daewon.xeno_z1.dto.product.ProductOtherColorImagesDTO;
-import com.daewon.xeno_z1.dto.product.ProductRegisterDTO;
-import com.daewon.xeno_z1.dto.product.ProductsInfoCardDTO;
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
+import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.service.ProductService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -133,6 +130,20 @@ public class ProductPublicController {
         }
     }
 
-
+    @GetMapping("/rank/{category}")
+    public ResponseEntity<List<ProductsStarRankListDTO>> getranktop10(
+            @PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getranktop10(category);
+        return ResponseEntity.ok(result);
+    }
+    @Operation(summary = "상품 카드")
+    @GetMapping("/rank/page/{category}")
+    public ResponseEntity<PageInfinityResponseDTO<ProductsStarRankListDTO>> getrankTop50(
+            PageRequestDTO pageRequestDTO,
+            @PathVariable String category) {
+        log.info(category);
+            PageInfinityResponseDTO<ProductsStarRankListDTO> result = productService.getrankTop50(category, pageRequestDTO);
+        return ResponseEntity.ok(result);
+    }
 
 }

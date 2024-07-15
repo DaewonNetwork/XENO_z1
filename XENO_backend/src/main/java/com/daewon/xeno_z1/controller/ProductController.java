@@ -160,19 +160,4 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/rank/{category}")
-    public ResponseEntity<List<ProductsStarRankListDTO>> getranktop10(
-            @PathVariable String category) {
-        List<ProductsStarRankListDTO> result = productService.getranktop10(category);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/rank/page/{category}")
-    public ResponseEntity<PageInfinityResponseDTO<ProductsStarRankListDTO>> getrankTop50(
-            PageRequestDTO pageRequestDTO,
-            @PathVariable String category) {
-        PageInfinityResponseDTO<ProductsStarRankListDTO> result = productService.getrankTop50(category, pageRequestDTO);
-        return ResponseEntity.ok(result);
-    }
-
 }

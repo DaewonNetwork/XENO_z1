@@ -645,9 +645,16 @@ public class ProductServiceImpl implements ProductService {
     public PageInfinityResponseDTO<ProductsStarRankListDTO> getrankTop50(String category, PageRequestDTO pageRequestDTO) {
         Pageable pageable = pageRequestDTO.getPageable();
         Page<ProductsStar> productsStarPage = productsStarRepository.findByStarAvgDesc(category, pageable);
+
+        log.info(category);
+        log.info(productsStarPage);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
+        log.info(currentUserName);
+
         Users users = userRepository.findByEmail(currentUserName).orElse(null);
+
+        log.info(users);
 
         List<ProductsStarRankListDTO> dtoList = productsStarPage.getContent().stream()
                 .map(productsStar -> {
@@ -671,6 +678,8 @@ public class ProductServiceImpl implements ProductService {
                         dto.setLike(false);
                     }
 
+                    log.info(dto.isLike());
+
                     ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
                     if (productImage != null) {
                         try {
@@ -686,9 +695,12 @@ public class ProductServiceImpl implements ProductService {
                             log.error("이미지 로딩 중 오류 발생", e);
                         }
                     }
+                    log.info(dto);
                     return dto;
                 })
                 .collect(Collectors.toList());
+
+        log.info(dtoList);
 
         return PageInfinityResponseDTO.<ProductsStarRankListDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
