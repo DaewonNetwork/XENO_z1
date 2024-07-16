@@ -7,6 +7,7 @@ import { z } from "zod";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import FormInputShared from "@/(FSD)/shareds/ui/FormInputShared";
 import IconShared from "@/(FSD)/shareds/ui/IconShared";
+import { useRouter } from "next/navigation";
 
 const ProductSearchForm = () => {
 
@@ -19,9 +20,13 @@ const ProductSearchForm = () => {
         mode: "onChange"
     });
 
+    const router = useRouter();
+    
     const onSubmit = (data: any) => {
-        console.log(data);
-    };
+        if(data.keyword) {
+            router.push(`/search?keyword=${data.keyword}`); 
+        }
+    }
 
     return (
         <form className={styles.product_search_form} onSubmit={handleSubmit(onSubmit)}>
