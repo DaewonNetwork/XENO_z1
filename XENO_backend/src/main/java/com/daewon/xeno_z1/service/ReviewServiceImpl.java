@@ -49,7 +49,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReplyRepository replyRepository;
     private final ProductsStarRepository productsStarRepository;
 
-    @Value("${uploadPath}")
+    @Value("${org.daewon.upload.path}")
     private String uploadPath;
 
     public byte[] getImage(String uuid, String fileName) throws IOException, java.io.IOException {
