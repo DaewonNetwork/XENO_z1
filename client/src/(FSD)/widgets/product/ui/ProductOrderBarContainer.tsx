@@ -29,11 +29,14 @@ const ProductOrderBarContainer = () => {
     
     const orderBar: ProductOrderBarType = data || { orderInfo: [] };
 
-    const orderInfo: ProductOrderInfoType[] = orderBar?.orderInfo || [];
     
     useEffect(() => {
         refetch();
     }, [productColorId, orderBar, refetch]);
+
+    if(!data && !orderBar) return <></>
+
+    console.log(orderBar)
    
     return (
         <ProductOrderBar orderBar={orderBar} parentRefetch={refetch}/>
