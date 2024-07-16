@@ -4,17 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductUpdateColorDTO {
+public class ProductColorListBySellerDTO {
 
-    private Long productColorId;
+    private long productColorId;
+    private String productNumber;
+    private String productName;
     private String color;
-    private List<ProductSizeDTO> size;
 }
+

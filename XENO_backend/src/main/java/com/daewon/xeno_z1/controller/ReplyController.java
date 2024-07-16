@@ -42,7 +42,7 @@ public class ReplyController {
     }
 
     // 작성한 유저만 삭제 가능
-    //    @PreAuthorize("@reviewAndReplySecurity.isReplyOwner(#replyId)")
+    @PreAuthorize("@reviewAndReplySecurityUtils.isReplyOwner(#replyId)")
     @DeleteMapping()
     public Map<String, String> deleteReply(@RequestParam(name = "replyId") Long replyId) {
         replyService.deleteReply(replyId);
@@ -50,7 +50,7 @@ public class ReplyController {
     }
 
     // 작성한 유저만 수정 가능
-    //    @PreAuthorize("@reviewAndReplySecurity.isReplyOwner(#replyUpdateDTO.replyId)")
+    @PreAuthorize("@reviewAndReplySecurityUtils.isReplyOwner(#replyUpdateDTO.replyId)")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> modifyReply(@RequestBody ReplyUpdateDTO replyUpdateDTO) {
         log.info(replyUpdateDTO);
@@ -77,3 +77,19 @@ public class ReplyController {
         return replyReadDTO;
     }
 }
+
+/*
+    createReply
+
+    {
+      "reviewId": 해당하는 reviewId,
+      "replyText": "This is a test reply."
+    }
+
+    updateReply
+
+    {
+      "replyId": 해당하는 replyId,
+      "replyText": "siuuuuuu"
+    }
+ */

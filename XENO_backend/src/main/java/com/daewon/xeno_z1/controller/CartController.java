@@ -1,6 +1,7 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Users;
+import com.daewon.xeno_z1.dto.auth.AuthSigninDTO;
 import com.daewon.xeno_z1.dto.cart.AddToCartDTO;
 import com.daewon.xeno_z1.dto.cart.CartDTO;
 import com.daewon.xeno_z1.dto.cart.CartSummaryDTO;
@@ -13,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +37,7 @@ public class CartController {
     @Value("${org.daewon.upload.path}")
     private String uploadPath;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping(produces = "application/json")
     public ResponseEntity<String> addToCart(@RequestBody List<AddToCartDTO> addToCartDTO) {
         try {
@@ -64,6 +67,18 @@ public class CartController {
 
             List<CartDTO> cartList = cartService.getCartItems(userId);
 
+            // 현재 인증된 사용자의 ID를 가져옴
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuthSigninDTO authSigninDTO = (AuthSigninDTO) authentication.getPrincipal();
+            Long authenticatedUserId = authSigninDTO.getUserId();
+
+            log.info("인증된 유저 ID: " + authenticatedUserId);
+
+            // 요청한 사용자 ID와 인증된 사용자 ID가 일치하는지 확인
+            if (!userId.equals(authenticatedUserId)) {
+                return ResponseEntity.status(403).body("접근 권한이 없습니다.");
+            }
+
 //            // 이미지 데이터 로드
 //            for (CartDTO cart : cartList) {
 //                if (cart.getImageUuid() != null && cart.getImageFileName() != null) {
@@ -84,6 +99,7 @@ public class CartController {
         }
     }
 
+    @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartDTO.cartId)")
     @PutMapping
     public ResponseEntity<String> updateCartItem(@RequestBody CartDTO cartDTO) {
         // SecurityContext에서 인증된 사용자 정보를 가져옵니다.
@@ -110,6 +126,7 @@ public class CartController {
         }
     }
 
+    @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartId)")
     @DeleteMapping
     public ResponseEntity<Map<String, String>> removeFromCart(@RequestParam Long cartId) {
         boolean removed = cartService.removeFromCart(cartId);
@@ -119,7 +136,7 @@ public class CartController {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Cart item not found with id: " + cartId);
             return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(404)
                     .body(errorResponse);
         }
     }
@@ -135,6 +152,18 @@ public class CartController {
             Long userId = Long.parseLong(claims.get("userId").toString());
 
             log.info("유저 ID: " + userId);
+
+            // 현재 인증된 사용자의 ID를 가져옴
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuthSigninDTO authSigninDTO = (AuthSigninDTO) authentication.getPrincipal();
+            Long authenticatedUserId = authSigninDTO.getUserId();
+
+            log.info("인증된 유저 ID: " + authenticatedUserId);
+
+            // 요청한 사용자 ID와 인증된 사용자 ID가 일치하는지 확인
+            if (!userId.equals(authenticatedUserId)) {
+                return ResponseEntity.status(403).body("접근 권한이 없습니다.");
+            }
 
             CartSummaryDTO cartSummary = cartService.getCartSummary(userId);
 

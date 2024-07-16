@@ -47,7 +47,7 @@ public class OrdersServiceImpl implements OrdersService {
     private final ProductsSellerRepository productsSellerRepository;
 
 
-    @Value("${uploadPath}")
+    @Value("${org.daewon.upload.path}")
     private String uploadPath;
 
     public byte[] getImage(String uuid, String fileName) throws IOException, java.io.IOException {

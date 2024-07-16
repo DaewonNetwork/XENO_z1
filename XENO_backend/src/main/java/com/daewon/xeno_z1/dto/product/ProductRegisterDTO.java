@@ -31,7 +31,6 @@ public class ProductRegisterDTO {
 
     private Long priceSale;
 
-    @ColumnDefault("1234")
     private String productNumber;
 
     private String season;
