@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-//@RestController
 @Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/product")
@@ -183,13 +182,6 @@ public class ProductPublicController {
             PageInfinityResponseDTO<ProductsStarRankListDTO> result = productService.getrankTop50(category, pageRequestDTO);
         return ResponseEntity.ok(result);
     }
-
-//    @Operation(summary = "카테고리별 검색")
-//    @GetMapping("/search/{category}")
-//    public PageResponseDTO<ProductsSearchDTO> productCategorySearch(@PathVariable String category, PageRequestDTO pageRequestDTO) {
-//        PageResponseDTO<ProductsSearchDTO> responseDTO = productService.productCategorySearch(category, pageRequestDTO);
-//        return responseDTO;
-//    }
 
     @Operation(summary = "카테고리별 검색")
     @GetMapping("/search/{category}")
