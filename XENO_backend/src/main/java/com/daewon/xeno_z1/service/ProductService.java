@@ -38,8 +38,12 @@ public interface ProductService {
 
     String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
-     List<ProductListBySellerDTO> getProductListBySeller(String email);
+    List<ProductListBySellerDTO> getProductListBySeller(String email);
 
     PageResponseDTO<ProductsSearchDTO> productCategorySearch(String category, PageRequestDTO pageRequestDTO);
+
+    PageResponseDTO<ProductsSearchDTO> productOrBrandNameSearch(String keyword,PageRequestDTO pageRequestDTO);
+
+    PageResponseDTO<ProductsSearchDTO> allSearch(PageRequestDTO pageRequestDTO);
 
 }

@@ -181,14 +181,81 @@ public class ProductServiceImpl implements ProductService {
         // 카테고리를 기준으로 상품을 검색
         Page<Products> result = productsSearchRepository.findByCategory(category, pageable);
         log.info(result);
-    
+
         // 검색 결과를 DTO로 변환
         List<ProductsSearchDTO> productList = result.getContent().stream().map(product -> {
             ProductsSearchDTO productsSearchDTO = modelMapper.map(product, ProductsSearchDTO.class);
+        
+            List<ProductsColor> colors = productsColorRepository.findByProducts(product);
+            if (!colors.isEmpty()) {
+                productsSearchDTO.setProductColorId(colors.get(0).getProductColorId());
+            }
+        
             return productsSearchDTO;
         }).collect(Collectors.toList());
-        log.info(productList);
     
+        // 페이지 응답 객체 생성 및 반환
+        return PageResponseDTO.<ProductsSearchDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(productList)
+                .totalIndex((int) result.getTotalElements())
+                .build();
+    }
+
+    @Override
+    public PageResponseDTO<ProductsSearchDTO> productOrBrandNameSearch(String keyword, PageRequestDTO pageRequestDTO) {
+        // 페이지 요청 객체 생성
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
+                pageRequestDTO.getSize());
+
+        // 카테고리를 기준으로 상품을 검색
+        Page<Products> result = productsSearchRepository.findbrandNameOrNameBykeyword(keyword, pageable);
+        log.info(result);
+
+        // 검색 결과를 DTO로 변환
+        List<ProductsSearchDTO> productList = result.getContent().stream().map(product -> {
+            ProductsSearchDTO productsSearchDTO = modelMapper.map(product, ProductsSearchDTO.class);
+
+            List<ProductsColor> colors = productsColorRepository.findByProducts(product);
+            if (!colors.isEmpty()) {
+                productsSearchDTO.setProductColorId(colors.get(0).getProductColorId());
+            }
+
+            return productsSearchDTO;
+        }).collect(Collectors.toList());
+
+        // 페이지 응답 객체 생성 및 반환
+        return PageResponseDTO.<ProductsSearchDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(productList)
+                .totalIndex((int) result.getTotalElements())
+                .build();
+    }
+
+    @Override
+    public PageResponseDTO<ProductsSearchDTO> allSearch(PageRequestDTO pageRequestDTO) {
+        // 페이지 요청 객체 생성
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
+                pageRequestDTO.getSize());
+
+        // 카테고리를 기준으로 상품을 검색
+        Page<Products> result = productsSearchRepository.findAll(pageable);
+        log.info(result);
+
+        // 검색 결과를 DTO로 변환
+        List<ProductsSearchDTO> productList = result.getContent().stream().map(product -> {
+            ProductsSearchDTO productsSearchDTO = modelMapper.map(product, ProductsSearchDTO.class);
+
+            List<ProductsColor> colors = productsColorRepository.findByProducts(product);
+            if (!colors.isEmpty()) {
+                productsSearchDTO.setProductColorId(colors.get(0).getProductColorId());
+            }
+
+            return productsSearchDTO;
+        }).collect(Collectors.toList());
+
         // 페이지 응답 객체 생성 및 반환
         return PageResponseDTO.<ProductsSearchDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
@@ -275,7 +342,7 @@ public class ProductServiceImpl implements ProductService {
             // 파일 저장 또는 썸네일 생성 중 오류가 발생할 경우
             log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);
             throw new RuntimeException("File processing error", e);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return uuid;
