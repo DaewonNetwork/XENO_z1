@@ -10,7 +10,7 @@ const ProductCardSkeletonShared = () => {
             <Skeleton className={`rounded-small ${styles.product_img}`} />
             <Skeleton className={`rounded-small ${styles.product_brand}`} />
             <Skeleton className={`rounded-small ${styles.product_name}`} />
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ display: "flex", flexDirection: "row" }}>
             <Skeleton className={`rounded-small ${styles.product_sale}`} />
             <Skeleton className={`rounded-small ${styles.product_price}`} />
             </div>

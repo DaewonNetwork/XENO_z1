@@ -1,4 +1,58 @@
-.order_list {
+.order_form {
+    display: block;
+    padding: 20px 0;
+    margin: 10px 0;
+
+    .form_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+    .form_body {
+        display: block;
+
+        .input_box {
+            p {
+                margin-bottom: 8px;
+            }
+
+            display: block;
+            margin-bottom: 10px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+.order_product_info_list {
+    display: block;
+    padding: 20px 0;
+
+    .list_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+    .list_body {
+        display: block;
+
+        .order_product_info {
+            margin-bottom: 10px;
+            
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+.order_info_list {
     display: block;
 }
 
@@ -15,4 +69,46 @@
     .card_body {
         display: block;
     }
+}
+
+.order_product_info {
+    display: flex;
+
+    .info_image {
+        display: block;
+        margin-right: 20px;
+
+        img {
+            display: block;
+            width: 120px;
+            height: 120px;
+        }
+    }
+
+    .info_text {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .text_top {
+            display: block;
+
+            p {
+                margin-bottom: 2px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        .text_btm {
+            display: block;
+        }
+    }
+}
+
+.order_btn_bar {
+    display: block;
+    padding: 10px 0;
 }

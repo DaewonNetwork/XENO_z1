@@ -53,7 +53,7 @@ const ProductOtherColorImageList = () => {
                 {shouldEnableSlider ? (<div className={style.product_detail_slide_list}>
                     <Slider {...sliderSettings}>
                         {productImages.map((p, index) => (
-                            <div key={index} className={style.different_color_images} style={{ cursor: 'pointer' }}>
+                            <div key={index} className={style.different_color_images} style={{ cursor: "pointer" }}>
                                 <a href={`/products/${p.productColorId}`}>
                                     <img
                                         src={`data:image/jpeg;base64,${p.productColorImage}`}
@@ -67,7 +67,7 @@ const ProductOtherColorImageList = () => {
                 ) : (
                     // Slider를 사용하지 않고 이미지를 그대로 표시
                     productImages.map((p, index) => (
-                        <div key={index} className={style.different_color_images} style={{ cursor: 'pointer' }}>
+                        <div key={index} className={style.different_color_images} style={{ cursor: "pointer" }}>
                             <a href={`/products/${p.productColorId}`}>
                                 <img
                                     src={`data:image/jpeg;base64,${p.productColorImage}`}

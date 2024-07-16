@@ -1,4 +1,4 @@
-export type ProductOrderInfoType = {
+export type OrderProductInfoType = {
     productColorSizeId: number;
     productColorId?: number;
     color: string;

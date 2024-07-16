@@ -11,11 +11,11 @@ import { useReviewDelete } from "@/(FSD)/features/review/api/useReviewDelete";
 import StarListShared from "@/(FSD)/shareds/ui/StarListShared";
 import TextSmallShared from "@/(FSD)/shareds/ui/TextSmallShared";
 
-interface ReviewInfoTypeProp {
-    review: ReviewInfoType
+interface ReviewInfoProps {
+    review: ReviewInfoType;
 }
 
-const ReviewInfo = ({ review }: ReviewInfoTypeProp) => {
+const ReviewInfo = ({ review }: ReviewInfoProps) => {
     const router = useRouter();
     if (!review) return <></>;
 

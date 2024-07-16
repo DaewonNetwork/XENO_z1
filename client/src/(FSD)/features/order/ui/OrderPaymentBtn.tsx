@@ -2,22 +2,12 @@
 
 import { Button } from "@nextui-org/button";
 import React from "react";
-
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
-
 import { useRecoilValue } from "recoil";
-
-
-import { useProductOrder } from "../api/useProductAddOrder";
+import { useProductOrder } from "../../product/api/useProductAddOrder";
 import { reqState } from "@/(FSD)/shareds/stores/ProductAtom";
-import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
+import { OrderProductInfoType } from "@/(FSD)/shareds/types/product/OrderProductInfo.type";
 import { useRouter } from "next/navigation";
-
-
-interface ProductPaymentBtnType {
-    productList: ProductOrderInfoType[];
-}
-
 
 export interface ProductOrderType {
     orderPayId: string;
@@ -28,14 +18,18 @@ export interface ProductOrderType {
     orderNumber?: number;
 }
 
-const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
+interface OrderPaymentBtnProps {
+    productList: OrderProductInfoType[];
+}
+
+const OrderPaymentBtn = ({ productList }: OrderPaymentBtnProps) => {
     const req = useRecoilValue(reqState);
     const router = useRouter();
 
     const onSuccess = (data: any) => {
         console.log("post 성공");
-        localStorage.removeItem('newProducts');
-        router.push('/order/complete')
+        localStorage.removeItem("newProducts");
+        router.push("/order/complete")
     }
 
     const { mutate } = useProductOrder({ onSuccess });
@@ -55,11 +49,11 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     const orderName: string =
         productList.length > 1
             ? `${productList[0]?.name} 외 ${productList.length - 1}건`
-            : productList[0]?.name ?? '';
+            : productList[0]?.name ?? "";
 
     const totalPrice = productList.reduce((accumulator, product) => accumulator + product.price, 0);
 
-    const productOrderList: ProductOrderType[] = productList.map(product => ({
+    const OrderInfoList: ProductOrderType[] = productList.map(product => ({
         orderPayId: orderId,
         productColorSizeId: product.productColorSizeId,
         req: req,
@@ -70,12 +64,10 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
   
 
     const handleClick = async () => {
-        
         const tossPayments = await loadTossPayments("test_ck_Z1aOwX7K8m4b7av0xO6WryQxzvNP");
-        console.log(productOrderList)
         const payment = tossPayments.payment({ customerKey: "a8s7d8asd" });
 
-        mutate(productOrderList);
+        mutate(OrderInfoList);
 
         await payment.requestPayment({
             method: "CARD",
@@ -92,10 +84,10 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
                 useCardPoint: false,
                 useAppCardOnly: false,
             },
-        }).then(data => {
+        }).then((data :any) => {
           
 
-        }).catch(error => {
+        }).catch((error: any) => {
             console.log("결제오류", error)
         });
     };
@@ -105,4 +97,4 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     );
 };
 
-export default ProductPaymentBtn;
+export default OrderPaymentBtn;

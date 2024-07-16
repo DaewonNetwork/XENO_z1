@@ -37,11 +37,11 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
     return (
         <>
             <div className={styles.product_category}>
-            <span onClick={handleCategoryClick} style={{cursor:'pointer'}} >
+            <span onClick={handleCategoryClick} style={{cursor:"pointer"}} >
                 {product.category}
             </span>
             &nbsp;&gt;&nbsp;
-            <span onClick={handleSubCategoryClick} style={{cursor:'pointer'}}>
+            <span onClick={handleSubCategoryClick} style={{cursor:"pointer"}}>
                 {product.categorySub}
             </span>
             &nbsp;({product.brandName})

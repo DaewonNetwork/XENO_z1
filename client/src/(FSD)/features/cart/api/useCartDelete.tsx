@@ -1,15 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import { MutationType } from "../../types/mutation.type";
-import { UserType } from "@/(FSD)/shareds/types/User.type";
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 
 
-export const useAuthSignin = ({ onSuccess, onError }: MutationType) => {
+export const useCartListAdd = ({ onSuccess, onError }: MutationType) => {
     const fetchData = useFetchData();
     
     return useMutation({
-        mutationFn: (userData: UserType) => {
-            return fetchData({ path: "/auth/signin", method: "POST", body: userData, isNotAuthRequired: true });
+        mutationFn: (data: any) => {
+            return fetchData({ path: "/cart", method: "DELETE", body: data, isAuthRequired: true });
         },
         onSuccess: (data: any) => {
             onSuccess(data);

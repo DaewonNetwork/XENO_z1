@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import React, { useEffect } from "react";
@@ -29,9 +29,9 @@ const ProductCategoryList = ( ) => {
 
     if (isLoading) {
         return (
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
                 {Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} style={{ flex: '0 0 calc(25% - 10px)', marginRight: index % 2 === 0 ? '15px' : '0', marginBottom: '10px' }}>
+                    <div key={index} style={{ flex: "0 0 calc(25% - 10px)", marginRight: index % 2 === 0 ? "15px" : "0", marginBottom: "10px" }}>
                         <ProductCardSkeletonShared />
                     </div>
                 ))}

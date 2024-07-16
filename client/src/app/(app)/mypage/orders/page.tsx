@@ -1,5 +1,5 @@
 import React from "react";
-import OrderCardList from '@/(FSD)/widgets/mypage/OrderCardList';
+import OrderInfoList from "@/(FSD)/widgets/mypage/OrderInfoList";
 import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
 import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
 
@@ -8,7 +8,7 @@ const Page = () => {
     return (
         <AppSection>
             <AppInner>
-                <OrderCardList />
+                <OrderInfoList />
             </AppInner>
         </AppSection>
     );

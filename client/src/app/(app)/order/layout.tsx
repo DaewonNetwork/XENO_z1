@@ -1,28 +1,19 @@
-'use client'
-
-
-
 import AppFixedBtmBar from "@/(FSD)/widgets/app/ui/AppFixedBtmBar";
 import AppFixedTopBar from "@/(FSD)/widgets/app/ui/AppFixedTopBar";
-import ProductHeader from "@/(FSD)/widgets/product/ui/ProductHeader";
-import ProductOrderFooter from "@/(FSD)/widgets/product/ui/ProductOrderFooter";
-import ProductOrderHeader from "@/(FSD)/widgets/product/ui/ProductOrderHeader";
-import React, { useState } from "react";
-import { useRecoilState } from "recoil";
+import AppTitleHeader from "@/(FSD)/widgets/app/ui/AppTitleHeader";
+import OrderBtnBar from "@/(FSD)/widgets/order/ui/OrderBtnBar";
+import React from "react";
 
 const Layout = ({ children, }: { children: React.ReactNode }) => {
-
-
     return (
         <>
             <AppFixedTopBar>
-                <ProductOrderHeader />
+                <AppTitleHeader title={"결제하기"} />
             </AppFixedTopBar>
             {children}
             <AppFixedBtmBar>
-                <ProductOrderFooter />
+                <OrderBtnBar />
             </AppFixedBtmBar>
-          
         </>
     );
 };

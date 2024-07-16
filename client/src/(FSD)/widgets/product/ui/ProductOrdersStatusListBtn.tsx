@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
 import React, { useEffect, useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
-import { useOrderListBySellerRead } from "@/(FSD)/entities/orders/api/useOrderListBySellerRead";
-import { Select, SelectItem, SelectSection } from "@nextui-org/select";
-import { useOrderStatusUpdate } from "@/(FSD)/features/orders/api/useOrderStatusUpdate";
+import { useOrderListSellerRead } from "@/(FSD)/entities/order/api/useOrderListSellerRead";
+import { Select, SelectItem } from "@nextui-org/select";
+import { useOrderStatusUpdate } from "@/(FSD)/features/order/api/useOrderStatusUpdate";
 
 interface ProductOrdersStatusListBtnType {
     orderID: number;
@@ -43,7 +43,7 @@ const statuses = [
 ];
 
 const ProductOrdersStatusListBtn = () => {
-    const { data, isError, error, isPending, refetch } = useOrderListBySellerRead();
+    const { data, isError, error, isPending, refetch } = useOrderListSellerRead();
     const onSuccess = (data: any) => {
         console.log("post 성공");
         refetch();
@@ -59,7 +59,7 @@ const ProductOrdersStatusListBtn = () => {
 
 
     const [selectedOrder, setSelectedOrder] = useState<ProductOrdersStatusListBtnType | null>(null);
-    const [status, setStatus] = useState<OrderStatusChangeType>({ orderId: 0, status: '' });
+    const [status, setStatus] = useState<OrderStatusChangeType>({ orderId: 0, status: "" });
 
     useEffect(() => {
         console.log(data);
@@ -72,13 +72,13 @@ const ProductOrdersStatusListBtn = () => {
 
 
 
-    // const statusCompleted: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === '결제 완료');
-    // const statusShipping: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === '출고 처리');
-    // const statusShippingInProgress: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === '배송 중');
-    // const statusDelivered: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === '배송 완료');
-    // const statusConfirmed: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === '구매 확정');
-    // const statusRefundRequested: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === '환불 신청');
-    // const statusRefunded: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === '환불 완료');
+    // const statusCompleted: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === "결제 완료");
+    // const statusShipping: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === "출고 처리");
+    // const statusShippingInProgress: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === "배송 중");
+    // const statusDelivered: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === "배송 완료");
+    // const statusConfirmed: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === "구매 확정");
+    // const statusRefundRequested: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === "환불 신청");
+    // const statusRefunded: ProductOrdersStatusListBtnType[] = orderInfoList.filter(order => order.status === "환불 완료");
 
 
 

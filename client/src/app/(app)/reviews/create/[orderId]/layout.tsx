@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useReviewHeaderRead } from "@/(FSD)/entities/review/api/useReviewHeaderRead";
 import AppFixedBtmBar from "@/(FSD)/widgets/app/ui/AppFixedBtmBar";

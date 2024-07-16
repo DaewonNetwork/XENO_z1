@@ -1,7 +1,9 @@
-import React from 'react';
-import { useRecoilState } from 'recoil';
+"use client";
 
-import {reqState } from '@/(FSD)/shareds/stores/ProductAtom';
+import React from "react";
+import { useRecoilState } from "recoil";
+
+import {reqState } from "@/(FSD)/shareds/stores/ProductAtom";
 
 const ProductOrderUserInfo = () => {
   const [req, setReq] = useRecoilState(reqState);

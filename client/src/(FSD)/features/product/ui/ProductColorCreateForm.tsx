@@ -51,7 +51,7 @@ const ProductColorCreateForm = () => {
 
     const schema = z.object({
         color: z.string().refine(value => !productInfo.colorType.includes(value), {
-            message: '중복된 색상입니다.'
+            message: "중복된 색상입니다."
         }),
     });
 
@@ -91,7 +91,7 @@ const ProductColorCreateForm = () => {
 
     const handleAddSizeStock = () => {
         const newId = sizeStocks.length > 0 ? sizeStocks[sizeStocks.length - 1].id + 1 : 1;
-        setSizeStocks([...sizeStocks, { id: newId, size: '', stock: 0 }]);
+        setSizeStocks([...sizeStocks, { id: newId, size: "", stock: 0 }]);
     };
 
     const handleRemoveSizeStock = (idToRemove: number) => {

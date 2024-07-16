@@ -1,6 +1,6 @@
-import ProductColorCreateBtn from '@/(FSD)/widgets/product/ui/ProductColorCreateBtn'
-import ProductOrdersStatusListBtn from '@/(FSD)/widgets/product/ui/ProductOrdersStatusListBtn'
-import React from 'react'
+import ProductColorCreateBtn from "@/(FSD)/widgets/product/ui/ProductColorCreateBtn"
+import ProductOrdersStatusListBtn from "@/(FSD)/widgets/product/ui/ProductOrdersStatusListBtn"
+import React from "react"
 
 const Page = () => {
 
