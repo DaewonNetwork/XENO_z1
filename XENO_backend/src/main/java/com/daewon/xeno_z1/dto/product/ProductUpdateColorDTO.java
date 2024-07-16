@@ -15,6 +15,13 @@ import java.util.List;
 public class ProductUpdateColorDTO {
 
     private Long productColorId;
+<<<<<<< HEAD
     private String color;
     private List<ProductSizeDTO> size;
 }
+=======
+    private List<ProductSizeDTO> size;
+
+}
+
+>>>>>>> Product_Detail_Page2

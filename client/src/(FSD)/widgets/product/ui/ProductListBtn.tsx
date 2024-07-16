@@ -13,7 +13,7 @@ interface ProductColorCreateBtnType {
     productName: string;
 }
 
-const ProductColorCreateBtn = () => {
+const ProductListBtn = () => {
     const { data, isError, error, isPending } = useProductBySellerRead();
     const router = useRouter();
 
@@ -28,8 +28,12 @@ const ProductColorCreateBtn = () => {
     if (isPending) return <p>Loading...</p>;
     if (isError) return <p>Error: {error.message}</p>;
 
-    const handleClick = (id: number) => {
+    const handleCreate = (id: number) => {
         router.push(`/seller/product/create/${id}`);
+    };
+
+    const handleUpdate = (id: number) => {
+        router.push(`/seller/product/update/${id}`);
     };
 
 
@@ -37,7 +41,7 @@ const ProductColorCreateBtn = () => {
     return (
         <>
 
-            <Button onPress={onOpen}>기존 상품에서 색상 추가</Button>
+            <Button onPress={onOpen}>기존 상품 목록 보기</Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
@@ -46,15 +50,27 @@ const ProductColorCreateBtn = () => {
                             <ModalBody>
 
                                 {productInfoList.length > 0 ? (
-                                    <Select label="기존 상품 목록" >
+                                    <Select label="기존 상품에서 색상 추가하기" >
                                         {productInfoList.map(product => (
-                                            <SelectItem key={product.productId} onClick={() => handleClick(product.productId)}>
+                                            <SelectItem key={product.productId} onClick={() => handleCreate(product.productId)}>
                                                 품번 : {product.productNumber} 상품 이름 : {product.productName}
                                             </SelectItem>
                                         ))}
                                     </Select>
                                 ) : (
                                     <p>등록된 상품이 없습니다.</p>
+                                )}
+
+                                {productInfoList.length > 0 ? (
+                                    <Select label="기존 상품 정보 수정하기" >
+                                        {productInfoList.map(product => (
+                                            <SelectItem key={product.productId} onClick={() => handleUpdate(product.productId)}>
+                                                품번 : {product.productNumber} 상품 이름 : {product.productName}
+                                            </SelectItem>
+                                        ))}
+                                    </Select>
+                                ) : (
+                                   ""
                                 )}
 
                             </ModalBody>
@@ -72,4 +88,4 @@ const ProductColorCreateBtn = () => {
     );
 };
 
-export default ProductColorCreateBtn;
+export default ProductListBtn;

@@ -182,6 +182,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long productId) {
+<<<<<<< HEAD
         Products products = productsRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException());
 
@@ -190,6 +191,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage) {
+=======
+
+        productsRepository.deleteById(productId);
+    }
+
+    @Override
+    public void deleteProductColor(Long productColorId) {
+
+        productsColorRepository.deleteById(productColorId);
+    }
+
+    @Override
+    public String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImages, MultipartFile productDetailImage) {
+>>>>>>> Product_Detail_Page2
 
 
         Products products = productsRepository.findById(dto.getProductId()).orElse(null);
@@ -206,7 +221,7 @@ public class ProductServiceImpl implements ProductService {
 
 
 
-//             3. ProductsColorSize 엔티티 생성 및 저장
+
         for (ProductSizeDTO size : dto.getSize()) {
             ProductsColorSize productsColorSize = ProductsColorSize.builder()
                     .productsColor(productsColor)
@@ -214,18 +229,23 @@ public class ProductServiceImpl implements ProductService {
                     .build();
             productsColorSizeRepository.save(productsColorSize);
 
-            // ProductsStock 엔티티 생성 및 저장
             ProductsStock productsStock = ProductsStock.builder()
                     .productsColorSize(productsColorSize)
-                    .stock(size.getStock())  // 초기 재고를 100으로 설정
+                    .stock(size.getStock())
                     .build();
             productsStockRepository.save(productsStock);
 
         }
 
+<<<<<<< HEAD
         if (productImage != null && !productImage.isEmpty()) {
             boolean isFirstImage = true;
             for (MultipartFile image : productImage) {
+=======
+        if (productImages != null && !productImages.isEmpty()) {
+            boolean isFirstImage = true;
+            for (MultipartFile image : productImages) {
+>>>>>>> Product_Detail_Page2
                 String uuid = saveImage(image);
                 boolean isMain = isFirstImage;
                 isFirstImage = false; // 다음 이미지는 첫 번째 이미지가 아님
@@ -249,7 +269,6 @@ public class ProductServiceImpl implements ProductService {
                     .build();
             productsDetailImageRepository.save(productsDetailImage);
         }
-
         return "상품 색상이 성공적으로 등록되었습니다.";
     }
 
@@ -282,6 +301,123 @@ public class ProductServiceImpl implements ProductService {
 
 
         }
+        return "상품 색상 및 수량 수정 완료";
+    }
+
+
+
+
+
+    @Transactional
+    public String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImages, MultipartFile productDetailImage) {
+
+
+        log.info(dto);
+
+        ProductsColor productsColor = productsColorRepository.findByProductColorId(dto.getProductColorId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        productsColorRepository.save(productsColor);
+
+        List<ProductsColorSize> list = productsColorSizeRepository.findByProductColorId(dto.getProductColorId());
+
+        for(ProductSizeDTO sizeDTO : dto.getSize() ) {
+            Size size = Size.valueOf(sizeDTO.getSize());
+            ProductsColorSize productsColorSize = productsColorSizeRepository.findByProductColorIdAndSize(dto.getProductColorId(), size);
+            if (productsColorSize != null) {
+                ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(productsColorSize.getProductColorSizeId());
+                productsStock.setStock(sizeDTO.getStock());
+                productsStockRepository.save(productsStock);
+            } else {
+                productsColorSize = ProductsColorSize.builder()
+                        .productsColor(productsColor)
+                        .size(Size.valueOf(sizeDTO.getSize()))
+                        .build();
+                productsColorSizeRepository.save(productsColorSize);
+                ProductsStock productsStock = ProductsStock.builder()
+                        .productsColorSize(productsColorSize)
+                        .stock(sizeDTO.getStock())
+                        .build();
+                productsStockRepository.save(productsStock);
+            }
+            List<ProductsColorSize> toDeleteColorSizes = new ArrayList<>();
+            List<ProductsStock> toDeleteStocks = new ArrayList<>();
+
+            for (ProductsColorSize colorSize : list) {
+                boolean found = false;
+                for (ProductSizeDTO NewSizeDTO : dto.getSize()) {
+                    if (colorSize.getSize() == Size.valueOf(NewSizeDTO.getSize())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(colorSize.getProductColorSizeId());
+                    if (productsStock != null) {
+                        toDeleteStocks.add(productsStock);
+                    }
+                    toDeleteColorSizes.add(colorSize);
+                }
+            }
+            for (ProductsColorSize colorSize : toDeleteColorSizes) {
+                productsColorSizeRepository.delete(colorSize);
+            }
+
+            for (ProductsStock productsStock : toDeleteStocks) {
+                productsStockRepository.delete(productsStock);
+            }
+
+        }
+
+
+        List<ProductsImage> productsImageList = productsImageRepository.findByProductColorId(dto.getProductColorId());
+        for (ProductsImage productsImage : productsImageList) {
+            String filePath = uploadPath + File.separator + productsImage.getUuid() + "_" + productsImage.getFileName();
+            try {
+                Files.deleteIfExists(Paths.get(filePath));
+                productsImageRepository.deleteById(productsImage.getProductImageId());
+            } catch (IOException e) {
+                log.error("Failed to delete image file: " + filePath, e);
+            }
+        }
+
+
+        ProductsDetailImage productsDetailImage = productsDetailImageRepository.findOneByProductColorId(dto.getProductColorId());
+        String filePath = uploadPath + File.separator + productsDetailImage.getUuid() + "_" + productsDetailImage.getFileName();
+        try {
+            Files.deleteIfExists(Paths.get(filePath));
+            productsDetailImageRepository.deleteById(productsDetailImage.getProductsDetailImageId());
+        } catch (IOException e) {
+            log.error("Failed to delete image file: " + filePath, e);
+        }
+
+        boolean isFirstImage = true;
+        for (MultipartFile image : productImages) {
+                String uuid = saveImage(image);
+                ProductsImage productsImage = ProductsImage.builder()
+                        .productsColor(productsColor)
+                        .fileName(image.getOriginalFilename())
+                        .uuid(uuid)
+                        .isMain(isFirstImage)
+                        .build();
+                productsImageRepository.save(productsImage);
+                isFirstImage = false;
+        }
+
+        String uuid = saveImage(productDetailImage);
+        ProductsDetailImage image = ProductsDetailImage.builder()
+                .productsColor(productsColor)
+                .fileName(productDetailImage.getOriginalFilename())
+                .uuid(uuid)
+                .build();
+        productsDetailImageRepository.save(image);
+
+
+
+
+
+
+
         return "상품 색상 및 수량 수정 완료";
     }
 
@@ -820,4 +956,51 @@ public class ProductServiceImpl implements ProductService {
 
         return dtoList;
     }
+<<<<<<< HEAD
 }
+=======
+
+    @Override
+    public ProductColorUpdateGetInfoDTO getProductColorSizeInfo(Long productColorId) throws IOException {
+        ProductColorUpdateGetInfoDTO dto = new ProductColorUpdateGetInfoDTO();
+        List<ProductSizeDTO> dtoList = new ArrayList<>();
+        List<ProductsColorSize> productsColorSize = productsColorSizeRepository.findByProductColorId(productColorId);
+        for(ProductsColorSize size : productsColorSize){
+            ProductSizeDTO productSizeDTO = new ProductSizeDTO();
+            ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(size.getProductColorSizeId());
+            productSizeDTO.setSize(size.getSize().name());
+            productSizeDTO.setStock(productsStock.getStock());
+            dtoList.add(productSizeDTO);
+        }
+
+        dto.setColor(productsColorSize.get(0).getProductsColor().getColor());
+        dto.setSize(dtoList);
+
+        List<ProductsImage> productsImage = productsImageRepository.findByProductColorId(productColorId);
+
+        List<ProductImageInfoDTO> imageList = new ArrayList<>();
+     for(ProductsImage image : productsImage){
+         ProductImageInfoDTO productImageInfoDTO = new ProductImageInfoDTO();
+         productImageInfoDTO.setFilename(image.getFileName());
+         byte[] imageData = getImage(image.getUuid(),image.getFileName());
+         productImageInfoDTO.setProductColorImage(imageData);
+         imageList.add(productImageInfoDTO);
+     }
+       dto.setImages(imageList);
+        ProductImageInfoDTO productImageInfoDTO = new ProductImageInfoDTO();
+        ProductsDetailImage productsDetailImage = productsDetailImageRepository.findOneByProductColorId(productColorId);
+        productImageInfoDTO.setFilename(productsDetailImage.getFileName());
+        byte[] imageData = getImage(productsDetailImage.getUuid(),productsDetailImage.getFileName());
+        productImageInfoDTO.setProductColorImage(imageData);
+        dto.setDetailImage(productImageInfoDTO);
+        return dto;
+    }
+
+    @Override
+    public byte[] readImage(Long productColorId) throws IOException {
+
+
+        return null;
+    }
+}
+>>>>>>> Product_Detail_Page2

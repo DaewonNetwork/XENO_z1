@@ -23,6 +23,7 @@ type SizeAndStockType = {
 };
 
 const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBarType, parentRefetch?: any }) => {
+    if(!orderBar) return <></>
     const {productColorId } = useParams<{ productColorId: string }>();
     const [isOpenOrder, setisOpenOrder] = useState(false);
     const [isSelectedColor, setIsSelectedColor] = useState(false);
@@ -39,7 +40,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     const  isLoggedIn  = useRecoilValue(isLoggedInState);
     
 
-    const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
+    
 
     const desiredOrder = ['S', 'M', 'L', 'XL'];
 
@@ -80,6 +81,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     }, [products]);
 
     
+    const uniqueColors = Array.from(new Set(orderBar.orderInfo.map(item => item.color)));
 
     const getProductColorSizeId = (color: string, size: string): number | undefined => {
         const orderItem = orderBar.orderInfo.find(item => item.color === color && item.size === size);
@@ -262,13 +264,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     };
 
 
-    const handleBuyClick1 = () => {
-        onOpen();
-        // 5초 후에 Modal이 자동으로 닫히도록 설정
-        setTimeout(() => {
-            onClose();
-        }, 2500); // 5000 밀리초 = 5초
-    };
+
 
     return (
         <>

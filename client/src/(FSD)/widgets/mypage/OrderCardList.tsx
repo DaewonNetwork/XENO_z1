@@ -13,6 +13,7 @@ const OrderCardList = () => {
 
     useEffect(() => {
         refetch();
+        console.log(orderList)
     }, [orderList]);
 
     useEffect(() => {

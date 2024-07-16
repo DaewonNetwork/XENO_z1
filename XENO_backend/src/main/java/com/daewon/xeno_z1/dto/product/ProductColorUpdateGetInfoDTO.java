@@ -5,18 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductColorListBySellerDTO {
+public class ProductColorUpdateGetInfoDTO {
 
-    private long productColorId;
-    private String productNumber;
-    private String productName;
     private String color;
+    private String fileName;
+    private List<ProductSizeDTO> size;
+    private List<ProductImageInfoDTO> images;
+    private ProductImageInfoDTO detailImage;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> Product_Detail_Page2

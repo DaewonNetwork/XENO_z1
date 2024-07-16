@@ -35,13 +35,30 @@ public interface ProductService {
 
     void deleteProduct(Long productId);
 
+<<<<<<< HEAD
+=======
+    void deleteProductColor(Long productColorId);
+>>>>>>> Product_Detail_Page2
 
     String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
     String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
+<<<<<<< HEAD
 
     List<ProductListBySellerDTO> getProductListBySeller(String email);
 
     List<ProductColorListBySellerDTO> getProductColorListBySeller(String email);
 
 }
+=======
+
+     List<ProductListBySellerDTO> getProductListBySeller(String email);
+
+    List<ProductColorListBySellerDTO> getProductColorListBySeller(String email);
+
+    ProductColorUpdateGetInfoDTO getProductColorSizeInfo(Long productColorId) throws IOException;
+
+    byte[] readImage(Long productColorId) throws IOException;
+
+}
+>>>>>>> Product_Detail_Page2

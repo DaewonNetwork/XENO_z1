@@ -36,4 +36,7 @@ public interface ProductsImageRepository extends JpaRepository<ProductsImage, Lo
 
 
 
+    @Query("delete from ProductsImage p WHERE p.productsColor.productColorId = :productColorId ")
+    void deleteAllByProductColorId(Long productColorId);
+
 }

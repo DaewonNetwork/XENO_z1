@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import AppTitleHeader from "@/(FSD)/widgets/app/ui/AppTitleHeader";
 import { Button } from "@nextui-org/button";
@@ -10,8 +10,14 @@ import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
 import AppFixedTopBar from "@/(FSD)/widgets/app/ui/AppFixedTopBar";
 import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 import FileInputShared from "@/(FSD)/shareds/ui/FileInputShared";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { productDetailImageState, productImagesState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
+import FileInputShared1 from "@/(FSD)/shareds/ui/FileInputShared1";
+import { ProductImageInfoType } from "./ProductColorUpdateForm";
+import { detailImageState, imagesState } from "@/(FSD)/shareds/stores/PreviewAtom";
+import FileInputShared2 from "@/(FSD)/shareds/ui/FileDetailImageInputShared";
+import FileDetailImageInputShared from "@/(FSD)/shareds/ui/FileDetailImageInputShared";
+
 
 interface ProductImageCreateModalProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,7 +25,9 @@ interface ProductImageCreateModalProps {
     detailFile: File | null;
 }
 
-const ProductImageCreateModal = ({ setIsOpen ,files, detailFile}: ProductImageCreateModalProps) => {
+
+
+const ProductImageUpdateModal = ({ setIsOpen, files, detailFile }: ProductImageCreateModalProps) => {
     const setProductImages = useSetRecoilState(productImagesState);
     const setProductDetailImage = useSetRecoilState(productDetailImageState);
 
@@ -30,6 +38,7 @@ const ProductImageCreateModal = ({ setIsOpen ,files, detailFile}: ProductImageCr
     const [img5, setImg5] = useState<File>();
     const [img6, setImg6] = useState<File>();
     const [productDetailImg, setProductDetailImg] = useState<File>();
+
 
     const handleClick = () => {
         setProductImages([img1, img2, img3, img4, img5, img6]);
@@ -49,16 +58,53 @@ const ProductImageCreateModal = ({ setIsOpen ,files, detailFile}: ProductImageCr
                 <AppInner>
                     <TextMediumShared>상품 이미지</TextMediumShared>
                     <div className={styles.img_input_box}>
-                        <FileInputShared inputId={"product_img1"} setFile={setImg1} file={files?.[0] || undefined} />
-                        <FileInputShared inputId={"product_img2"} setFile={setImg2} file={files?.[1] || undefined} />
-                        <FileInputShared inputId={"product_img3"} setFile={setImg3} file={files?.[2] || undefined} />
-                        <FileInputShared inputId={"product_img4"} setFile={setImg4} file={files?.[3] || undefined} />
-                        <FileInputShared inputId={"product_img5"} setFile={setImg5} file={files?.[4] || undefined} />
-                        <FileInputShared inputId={"product_img6"} setFile={setImg6} file={files?.[5] || undefined} />
+
+                        <FileInputShared1
+                            inputId={"product_img1"}
+                            setFile={setImg1}
+
+                            imageId={1}
+                            file={files?.[0] || undefined}
+                        />
+                        <FileInputShared1
+                            inputId={"product_img2"}
+                            setFile={setImg2}
+
+                            imageId={2}
+                            file={files?.[1] || undefined}
+                        />
+                        <FileInputShared1
+                            inputId={"product_img3"}
+                            setFile={setImg3}
+
+                            imageId={3}
+                            file={files?.[2] || undefined}
+                        />
+                        <FileInputShared1
+                            inputId={"product_img4"}
+                            setFile={setImg4}
+
+                            imageId={4}
+                            file={files?.[3] || undefined}
+                        />
+                        <FileInputShared1
+                            inputId={"product_img5"}
+                            setFile={setImg5}
+
+                            imageId={5}
+                            file={files?.[4] || undefined}
+                        />
+                        <FileInputShared1
+                            inputId={"product_img6"}
+                            setFile={setImg6}
+
+                            imageId={6}
+                            file={files?.[5] || undefined}
+                        />
                     </div>
 
                     <TextMediumShared>상세 이미지</TextMediumShared>
-                    <FileInputShared inputId={"product_detail_img"} setFile={setProductDetailImg} height={230} file={detailFile || undefined}/>
+                    <FileDetailImageInputShared inputId={"product_detail_img"} setFile={setProductDetailImg} file={detailFile || undefined} height={230} />
 
                     <Button isDisabled={!img1 || !productDetailImg} onClick={handleClick} size={"lg"} fullWidth color={"primary"}>완료</Button>
                 </AppInner>
@@ -67,4 +113,4 @@ const ProductImageCreateModal = ({ setIsOpen ,files, detailFile}: ProductImageCr
     )
 }
 
-export default ProductImageCreateModal;
+export default ProductImageUpdateModal;

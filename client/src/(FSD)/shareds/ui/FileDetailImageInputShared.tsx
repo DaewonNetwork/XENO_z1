@@ -3,23 +3,42 @@ import React, { ReactNode, useEffect, useRef, useState } from "react";
 import styles from "@/(FSD)/shareds/styles/ComponentStyle.module.scss";
 import Image from "next/image";
 import IconShared from "./IconShared";
+import { useRecoilState } from "recoil";
+import { detailImageState, imagesState } from "../stores/PreviewAtom";
+import { ProductImageInfoType } from "@/(FSD)/features/product/ui/ProductColorUpdateForm";
+import { base64toBlob } from "../uitll/base64toBlob";
 
 interface FileInputSharedProps extends ButtonProps {
     inputId: string;
     setFile: any;
     children?: ReactNode;
     height?: number;
-    file?: File | null
+    image?: ProductImageInfoType;
+    file?: File | null;
 }
 
-const FileInputShared = ({ inputId, setFile, height = 160, file}: FileInputSharedProps) => {
+
+
+const FileDetailImageInputShared = ({ inputId, setFile, height = 160, file }: FileInputSharedProps) => {
     const [preview, setPreview] = useState<string | null>(null);
+    const [detailImage, setDetailImage] = useRecoilState(detailImageState);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    console.log(file)
-
     useEffect(() => {
-        if (file) {
+    
+        if (detailImage && !file && detailImage.productColorImage && detailImage.filename) {
+            setPreview(`data:image/jpeg;base64,${detailImage.productColorImage}`);
+            const base64String = `data:image/jpeg;base64,${detailImage.productColorImage}`;
+            const base64Data = base64String.split(',')[1];
+            const mimeType = 'image/jpeg';
+            const blob = base64toBlob(base64Data, mimeType);
+          
+            const newFile = new File([blob], detailImage.filename, { type: mimeType });
+
+            setFile(newFile);
+
+        }
+        if ((!detailImage.filename && file) || (detailImage && file && detailImage.productColorImage && detailImage.filename)) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 const result = reader.result as string;
@@ -28,9 +47,9 @@ const FileInputShared = ({ inputId, setFile, height = 160, file}: FileInputShare
             reader.readAsDataURL(file);
             setFile(file);
         }
-    }, [file, setFile, setPreview]);
-
-
+       
+      
+    }, [ file, setFile, setPreview]);
 
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,9 +64,15 @@ const FileInputShared = ({ inputId, setFile, height = 160, file}: FileInputShare
         }
     };
 
+
     const handleDeletePreview = () => {
         setPreview(null);
         setFile(null);
+        setDetailImage({
+            imageId: 1,
+            productColorImage: null,
+            filename: null,
+        });
 
         if (inputRef.current) {
             inputRef.current.value = "";
@@ -79,4 +104,5 @@ const FileInputShared = ({ inputId, setFile, height = 160, file}: FileInputShare
     );
 };
 
-export default FileInputShared;
+export default FileDetailImageInputShared;
+

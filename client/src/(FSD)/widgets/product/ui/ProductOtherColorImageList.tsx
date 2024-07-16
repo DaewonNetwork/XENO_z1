@@ -22,6 +22,7 @@ const ProductOtherColorImageList = () => {
 
     const setImages = useSetRecoilState(imageState);
 
+    console.log(productImages);
     useEffect(() => {
         if (productImages) {
             // productImages를 Recoil의 imageState에 설정

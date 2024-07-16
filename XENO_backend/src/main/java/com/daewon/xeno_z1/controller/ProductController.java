@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -68,12 +71,19 @@ public class ProductController {
         }
     }
 
+<<<<<<< HEAD
     @PreAuthorize("@productSecurityUtils.isProductOwner(#productUpdateDTO.productId)")
+=======
+>>>>>>> Product_Detail_Page2
     @PutMapping("/update")
     @Operation(summary = "상품 수정")
     public ResponseEntity<?> updateProduct(
             @RequestBody ProductUpdateDTO productUpdateDTO) {
+<<<<<<< HEAD
         log.info(productUpdateDTO);
+=======
+            log.info(productUpdateDTO);
+>>>>>>> Product_Detail_Page2
         try {
 
             String result = productService.updateProduct(productUpdateDTO);
@@ -83,13 +93,32 @@ public class ProductController {
         }
     }
 
+<<<<<<< HEAD
     @PreAuthorize("@productSecurityUtils.isProductOwner(#productId)")
+=======
+>>>>>>> Product_Detail_Page2
     @DeleteMapping("/delete")
     @Operation(summary = "상품 삭제")
     public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {
         try {
             productService.deleteProduct(productId);
+<<<<<<< HEAD
             return ResponseEntity.ok().body("상품 삭제 완료");
+=======
+            return ResponseEntity.ok("\"삭제 성공\"");
+        }  catch (RuntimeException e) {
+            log.error("상품 삭제 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/color/delete")
+    @Operation(summary = "상품 삭제")
+    public ResponseEntity<?> deleteProductColor(@RequestParam Long productColorId) {
+        try {
+            productService.deleteProductColor(productColorId);
+            return ResponseEntity.ok("\"삭제 성공\"");
+>>>>>>> Product_Detail_Page2
         }  catch (RuntimeException e) {
             log.error("상품 삭제 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -99,7 +128,10 @@ public class ProductController {
 
 
 
+<<<<<<< HEAD
 //    @PreAuthorize("@productSecurityUtils.isProductOwner(#productDTO.productId)")
+=======
+>>>>>>> Product_Detail_Page2
     @PostMapping(value = "/color/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProductColor(
             @RequestPart("productColorCreateDTO") String productColorCreateDTOStr,
@@ -140,12 +172,20 @@ public class ProductController {
         }
     }
 
+<<<<<<< HEAD
 //    @PreAuthorize("@productSecurityUtils.isProductOwner(#productDTO.productId)")
     @PutMapping("/color/update")
     @Operation(summary = "상품 컬러 수정")
     public ResponseEntity<?> updateProductColor(@RequestPart("productColorUpdateDTO") String productColorUpdateDTOStr,
                                                 @RequestPart(name = "productImages",required = false)  List<MultipartFile> productImages,
                                                 @RequestPart(name = "productDetailImage",required = false) MultipartFile productDetailImage) {
+=======
+    @PutMapping("/color/update")
+    @Operation(summary = "상품 컬러 수정")
+    public ResponseEntity<?> updateProductColor(@RequestPart("productColorUpdateDTO") String productColorUpdateDTOStr,
+                                                @RequestPart(name = "productImages")  List<MultipartFile> productImages,
+                                                @RequestPart(name = "productDetailImage") MultipartFile productDetailImage) {
+>>>>>>> Product_Detail_Page2
         ProductUpdateColorDTO productDTO;
 
         try {
@@ -187,6 +227,24 @@ public class ProductController {
         ProductCreateGetInfoDTO productInfoDTO = productService.getProductInfo(productId);
 
         return ResponseEntity.ok(productInfoDTO);
+    }
+
+    @GetMapping("/color/size/read")
+    public ResponseEntity<ProductColorUpdateGetInfoDTO> readProductColorSize(@RequestParam Long productColorId) throws IOException {
+        ProductColorUpdateGetInfoDTO productInfoDTO = productService.getProductColorSizeInfo(productColorId);
+
+        return ResponseEntity.ok(productInfoDTO);
+    }
+    @GetMapping("/color/image/read")
+    public ResponseEntity<byte[]> readImage(@RequestParam Long productColorId) throws IOException {
+        // 실제 파일 데이터를 읽어옴 (파일 경로는 적절하게 설정해야 함)
+        byte[] fileContent = productService.readImage(productColorId);
+
+        log.info(fileContent);
+        // HTTP 응답으로 파일 데이터 전송
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION)
+                .body(fileContent);
     }
 
     @GetMapping("/color/readImages")
@@ -307,6 +365,7 @@ public class ProductController {
         }
     }
 
+<<<<<<< HEAD
 }
 
 /*
@@ -402,3 +461,6 @@ productUpdateColorDTO =
 
 
  */
+=======
+}
+>>>>>>> Product_Detail_Page2

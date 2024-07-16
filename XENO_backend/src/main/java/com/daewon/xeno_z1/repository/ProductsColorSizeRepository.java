@@ -1,6 +1,7 @@
 package com.daewon.xeno_z1.repository;
 
 import com.daewon.xeno_z1.domain.ProductsColorSize;
+import com.daewon.xeno_z1.domain.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +15,10 @@ public interface ProductsColorSizeRepository extends JpaRepository<ProductsColor
 
 
     @Query("SELECT p FROM ProductsColorSize p WHERE p.productsColor.productColorId = :productColorId and p.size = :size ")
+<<<<<<< HEAD
     ProductsColorSize findByProductColorIdAndSize(@Param("productColorId") Long productColorId, String size);
+=======
+    ProductsColorSize findByProductColorIdAndSize(@Param("productColorId") Long productColorId, Size size);
+>>>>>>> Product_Detail_Page2
 
 }
