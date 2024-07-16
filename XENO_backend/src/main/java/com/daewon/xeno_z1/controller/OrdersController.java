@@ -1,5 +1,6 @@
 package com.daewon.xeno_z1.controller;
 
+import com.daewon.xeno_z1.dto.auth.AuthSigninDTO;
 import com.daewon.xeno_z1.dto.order.*;
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
@@ -13,7 +14,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +43,18 @@ public class OrdersController {
             Long userId = Long.parseLong(claims.get("userId").toString());
 
             log.info("유저 ID: " + userId);
+
+            // 현재 인증된 사용자의 ID를 가져옴
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AuthSigninDTO authSigninDTO = (AuthSigninDTO) authentication.getPrincipal();
+            Long authenticatedUserId = authSigninDTO.getUserId();
+
+            log.info("인증된 유저 ID: " + authenticatedUserId);
+
+            // 요청한 사용자 ID와 인증된 사용자 ID가 일치하는지 확인
+            if (!userId.equals(authenticatedUserId)) {
+                return ResponseEntity.status(403).body("접근 권한이 없습니다.");
+            }
 
             List<OrdersListDTO> ordersList = ordersService.getAllOrders(userId);
 
@@ -130,6 +145,7 @@ public class OrdersController {
     @PutMapping(value = "/seller/status/update",produces = "application/json")
     public ResponseEntity<?> updateOrderStatusBySeller(@RequestBody OrdersStatusUpdateDTO dto) {
         try {
+
             log.info(dto);
              ordersService.updateOrderStatusBySeller(dto);
 
