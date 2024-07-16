@@ -95,6 +95,18 @@ public class ProductController {
         }
     }
 
+    @DeleteMapping("/color/delete")
+    @Operation(summary = "상품 삭제")
+    public ResponseEntity<?> deleteProductColor(@RequestParam Long productColorId) {
+        try {
+            productService.deleteProductColor(productColorId);
+            return ResponseEntity.ok("\"삭제 성공\"");
+        }  catch (RuntimeException e) {
+            log.error("상품 삭제 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 
 
 

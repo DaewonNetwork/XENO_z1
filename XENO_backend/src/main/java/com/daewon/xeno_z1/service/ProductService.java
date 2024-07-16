@@ -34,6 +34,7 @@ public interface ProductService {
 
     void deleteProduct(Long productId);
 
+    void deleteProductColor(Long productColorId);
 
     String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 

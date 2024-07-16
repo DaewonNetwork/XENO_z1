@@ -24,10 +24,6 @@ import ProductImageUpdateModal from "./ProductImageUpdateModal";
 import { detailImageState, imagesState } from "@/(FSD)/shareds/stores/PreviewAtom";
 import { useProductColorDelete } from "../api/useProductColorDelete";
 
-
-
-
-
 interface SizeStocksType {
     id: number;
     size: string;
@@ -49,7 +45,6 @@ interface ProductColorSizeType {
     images: ProductImageInfoType[];
     detailImage: ProductImageInfoType;
 }
-
 
 const ProductColorUpdateForm = () => {
 
