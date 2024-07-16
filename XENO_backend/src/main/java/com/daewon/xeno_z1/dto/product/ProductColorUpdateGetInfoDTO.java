@@ -16,5 +16,6 @@ public class ProductColorUpdateGetInfoDTO {
     private String color;
     private String fileName;
     private List<ProductSizeDTO> size;
-    private byte[] image;
+    private List<ProductImageInfoDTO> images;
+    private ProductImageInfoDTO detailImage;
 }

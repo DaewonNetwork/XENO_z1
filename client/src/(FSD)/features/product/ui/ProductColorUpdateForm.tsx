@@ -10,17 +10,20 @@ import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 import { Button } from "@nextui-org/button";
 import { Select, SelectItem } from "@nextui-org/select"
 import ProductImageCreateModal from "./ProductImageCreateModal";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useProductRead } from "@/(FSD)/entities/product/api/useProductRead";
 import { ProductCreateGetInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 
 import { useProductColorCreate } from "../api/useProductColorCreate";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { productDetailImageState, productImagesState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
 import { Input } from "@nextui-org/input";
 import { useProductColorSizeStockRead } from "@/(FSD)/entities/product/api/useProductColorSizeStockRead";
 import { useProductColorUpdate } from "../api/useProductColorUpdate";
 import ProductImageUpdateModal from "./ProductImageUpdateModal";
+import { detailImageState, imagesState } from "@/(FSD)/shareds/stores/PreviewAtom";
+import { useProductColorDelete } from "../api/useProductColorDelete";
+
 
 
 
@@ -31,34 +34,36 @@ interface SizeStocksType {
     stock: number;
 }
 
+export interface ProductImageInfoType {
+    imageId: number;
+    productColorImage: Uint8Array | null;
+    filename: string | null;
+}
+
 interface ProductColorSizeType {
     color: string;
     size: {
         size: string;
         stock: number;
-    }[]
-    image: Uint8Array
-    fileName: string;
+    }[];
+    images: ProductImageInfoType[];
+    detailImage: ProductImageInfoType;
 }
 
 
 const ProductColorUpdateForm = () => {
 
     const { productColorId } = useParams<{ productColorId: string }>();
-
-
     const { data } = useProductColorSizeStockRead(+productColorId)
-
     const productImages = useRecoilValue(productImagesState);
     const productDetailImage = useRecoilValue(productDetailImageState);
-
-
-
+    const [images,setImages] = useRecoilState(imagesState)
+    const [detailImage,setDetailImage] =useRecoilState(detailImageState)
     const [sizeStocks, setSizeStocks] = useState<SizeStocksType[]>([]);
+    const router = useRouter();
     const sizeArray = ["S", "M", "L", "XL"];
 
     useEffect(() => {
-        console.log(data)
         if (data) {
             const sizeStocksNew: SizeStocksType[] = data.size.map((item:SizeStocksType, index:number) => ({
                 id: index + 1,
@@ -66,6 +71,16 @@ const ProductColorUpdateForm = () => {
                 stock: item.stock
             }));
             setSizeStocks(sizeStocksNew);
+            if (data.images && data.detailImage && data.images.length > 0) {
+                const imagesWithId = data.images.map((image: any, index: number) => ({
+                    ...image,
+                    imageId: index + 1, 
+                }));
+                setImages(imagesWithId); 
+            }
+            if(data.detailImage && !detailImage.filename ) {
+                setDetailImage(data.detailImage)
+            }
         }
     }, [data]);
 
@@ -83,18 +98,22 @@ const ProductColorUpdateForm = () => {
     });
 
     const onSuccess = (data: any) => {
-        console.log("성공")
+        router.push('/seller')
     }
 
     const { mutate } = useProductColorUpdate({ onSuccess });
+    const { mutate:deleteProductColor } = useProductColorDelete({ onSuccess });
 
     const onSubmit = (data: any) => {
         const formData = new FormData();
         const sizeStocksToSend = sizeStocks.map(({ id, ...rest }) => rest);
-        console.log(sizeStocksToSend)
-        
         formData.append("productColorUpdateDTO", JSON.stringify({ productColorId: productColorId, size: sizeStocksToSend }));
-        console.log(formData.get("productColorUpdateDTO"))
+        productImages.forEach((image: File) => {
+            if (image) {
+                formData.append("productImages", image);
+            }
+        });
+        formData.append("productDetailImage", productDetailImage);
         mutate(formData);
     }
 
@@ -125,9 +144,6 @@ const ProductColorUpdateForm = () => {
         setSizeStocks(updatedSizeStocks);
     };
 
-
-    const isSizeStockValid: boolean = sizeStocks.length === 0 || sizeStocks.some(item => !item.size || item.stock === 0);
-
     return (
         <>
             <form style={{ display: isOpen ? "none" : "block" }} className={styles.product_create_form} onSubmit={handleSubmit(onSubmit)}>
@@ -142,7 +158,6 @@ const ProductColorUpdateForm = () => {
                 </Button>
                 {sizeStocks.map((sizeStock) => (
                     <div key={sizeStock.id} style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-start" }} >
-
                         <Select
                             placeholder={sizeStock.size}
                             aria-label="사이즈 선택창"
@@ -187,17 +202,30 @@ const ProductColorUpdateForm = () => {
                 <Button
                     onClick={_ => {
                         setIsOpen(true);
+            
                     }}
                     fullWidth size={"lg"} type={"button"} variant={"ghost"}
                 >
                     이미지 수정하기
                 </Button>
-                <Button isDisabled={(!isValid) || (isSizeStockValid)} fullWidth size={"lg"} type={"submit"}>수정하기</Button>
-                <Button fullWidth size={"lg"} type={"submit"} >삭제하기</Button>
+                <Button isDisabled={(!isValid) || (!productImages) || (!productDetailImage)} fullWidth size={"lg"} type={"submit"}>수정하기</Button>
+                <Button fullWidth size={"lg"} onClick={() => deleteProductColor(+productColorId)} >삭제하기</Button>
             </form>
-            {isOpen && <ProductImageUpdateModal image={productInfo.image} fileName={productInfo.fileName} setIsOpen={setIsOpen} />}
+            {isOpen && <ProductImageUpdateModal setIsOpen={setIsOpen} files={productImages} detailFile={productDetailImage} />}
         </>
     );
+};
+
+const compareUint8Arrays = (arr1: Uint8Array, arr2: Uint8Array): boolean => {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+    return true;
 };
 
 export default ProductColorUpdateForm;

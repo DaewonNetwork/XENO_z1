@@ -4,7 +4,7 @@ import { useRecoilValue } from "recoil";
 import { FetchType } from "../types/FetchData.type";
 import { isLoggedInState } from "../stores/UserAtom";
 
-const useFetchData = () => {
+const useFetchData = () => {``
     const isLoggedIn = useRecoilValue(isLoggedInState);
     const accessToken = localStorage.getItem("access_token");
 

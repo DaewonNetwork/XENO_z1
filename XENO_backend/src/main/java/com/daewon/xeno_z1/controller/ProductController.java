@@ -88,7 +88,7 @@ public class ProductController {
     public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {
         try {
             productService.deleteProduct(productId);
-            return ResponseEntity.ok().body("상품 삭제 완료");
+            return ResponseEntity.ok("\"삭제 성공\"");
         }  catch (RuntimeException e) {
             log.error("상품 삭제 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -135,8 +135,8 @@ public class ProductController {
     @PutMapping("/color/update")
     @Operation(summary = "상품 컬러 수정")
     public ResponseEntity<?> updateProductColor(@RequestPart("productColorUpdateDTO") String productColorUpdateDTOStr,
-                                                @RequestPart(name = "productImages",required = false)  List<MultipartFile> productImages,
-                                                @RequestPart(name = "productDetailImage",required = false) MultipartFile productDetailImage) {
+                                                @RequestPart(name = "productImages")  List<MultipartFile> productImages,
+                                                @RequestPart(name = "productDetailImage") MultipartFile productDetailImage) {
         ProductUpdateColorDTO productDTO;
 
         try {

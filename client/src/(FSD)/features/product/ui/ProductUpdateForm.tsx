@@ -11,18 +11,18 @@ import { Button } from "@nextui-org/button";
 import { Select, SelectItem, } from "@nextui-org/select";
 
 import { useProductCreate } from "../api/useProductCreate";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useProductRead } from "@/(FSD)/entities/product/api/useProductRead";
 import { ProductCreateGetInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 import { useProductUpdate } from "../api/useProductUpdate";
+import { useProductDelete } from "../api/useProductDelete";
 
 const ProductUpdateForm = () => {
 
 
     const { productId } = useParams<{ productId: string }>();
-
     const { data } = useProductRead(+productId)
-
+    const router = useRouter();
     const [category, setCategory] = useState<string>("");
     const [categorySub, setCategorySub] = useState<string>("");
 
@@ -55,7 +55,9 @@ const ProductUpdateForm = () => {
     });
 
     const onSuccess = (data: any) => {
-        console.log(data);
+       
+            router.push('/seller')
+        
     };
 
     const onError = () => {
@@ -63,7 +65,7 @@ const ProductUpdateForm = () => {
     };
 
     const { mutate, error } = useProductUpdate({ onSuccess, onError });
-
+    const { mutate:deleteProduct } = useProductDelete({ onSuccess, onError });
     console.log(error);
 
     
@@ -123,10 +125,8 @@ const ProductUpdateForm = () => {
                     ))}
                 </Select>
                 <Button isDisabled={(!isValid) || (!category) || (!categorySub)} fullWidth size={"lg"} type={"submit"} color={"primary"}>수정하기</Button>
-
-                <Button onClick={() => console.log(category)}>확인</Button>
-                <Button onClick={() => console.log(categorySub)}>확인</Button>
-                <Button onClick={() => console.log(isValid)}>확인</Button>
+                <Button fullWidth size={"lg"} onClick={() => deleteProduct(+productId)} >삭제하기</Button>
+            
             </form>
 
         </>

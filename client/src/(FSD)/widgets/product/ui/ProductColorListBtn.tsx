@@ -87,7 +87,7 @@ const ProductColorListBtn = () => {
     };
 
     const handleClick = (product: ProductColorListType) => {
-        router.push(`/seller/product/color/update/${product.productColorId}`);
+        router.push(`/seller/productColor/update/${product.productColorId}`);
     };
 
 

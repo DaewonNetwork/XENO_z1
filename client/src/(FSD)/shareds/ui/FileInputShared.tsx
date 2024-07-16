@@ -9,11 +9,29 @@ interface FileInputSharedProps extends ButtonProps {
     setFile: any;
     children?: ReactNode;
     height?: number;
+    file?: File | null
 }
 
-const FileInputShared = ({ inputId, setFile, height = 160, }: FileInputSharedProps) => {
+const FileInputShared = ({ inputId, setFile, height = 160, file}: FileInputSharedProps) => {
     const [preview, setPreview] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    console.log(file)
+
+    useEffect(() => {
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const result = reader.result as string;
+                setPreview(result);
+            };
+            reader.readAsDataURL(file);
+            setFile(file);
+        }
+    }, [file, setFile, setPreview]);
+
+
+
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files ? e.target.files[0] : null;
