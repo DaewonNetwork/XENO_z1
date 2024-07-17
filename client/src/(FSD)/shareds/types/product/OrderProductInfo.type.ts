@@ -1,5 +1,5 @@
 export type OrderProductInfoType = {
-    productColorSizeId: number;
+    productColorSizeId?: number;
     productColorId?: number;
     color: string;
     size: string;
