@@ -13,6 +13,7 @@ public class AuthSignupDTO {
     private boolean isSeller;
     private String address;
     private String phoneNumber;
+    private String brandName;
 
     private Date createAt;
 }
