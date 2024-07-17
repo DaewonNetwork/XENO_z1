@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class ProductController {
     private final ProductService productService;
 
     // @PreAuthorize("hasRole('USER')")
-
+    @PreAuthorize("@productSecurityUtils.isProductOwner(#productUpdateDTO.productId)")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(
             @RequestPart("productCreateDTO") String productRegisterDTOStr,
@@ -63,7 +64,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
+ @PreAuthorize("@productSecurityUtils.isProductOwner(#productUpdateDTO.productId)")
     @PutMapping("/update")
     @Operation(summary = "상품 수정")
     public ResponseEntity<?> updateProduct(
@@ -77,7 +78,7 @@ public class ProductController {
             return ResponseEntity.status(500).body("상품 업데이트 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
-
+    @PreAuthorize("@productSecurityUtils.isProductOwner(#productUpdateDTO.productId)")
     @DeleteMapping("/delete")
     @Operation(summary = "상품 삭제")
     public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {
