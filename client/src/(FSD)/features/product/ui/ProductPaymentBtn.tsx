@@ -33,7 +33,7 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     const router = useRouter();
 
     const onSuccess = (data: any) => {
-        console.log("post 성공");
+
         localStorage.removeItem('newProducts');
         router.push('/order/complete')
     }
@@ -72,7 +72,7 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     const handleClick = async () => {
         
         const tossPayments = await loadTossPayments("test_ck_Z1aOwX7K8m4b7av0xO6WryQxzvNP");
-        console.log(productOrderList)
+   
         const payment = tossPayments.payment({ customerKey: "a8s7d8asd" });
 
         mutate(productOrderList);

@@ -9,7 +9,7 @@ import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 const ProductLikeList = () => {
 
 const {data,refetch} = useProductListByLikedRead();
-console.log(data);
+
 const productList: ProductType[] = data;
 
 if(!productList ) return <></>

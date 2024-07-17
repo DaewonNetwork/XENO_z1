@@ -1,6 +1,6 @@
 package com.daewon.xeno_z1.controller;
 
-import com.daewon.xeno_z1.dto.order.OrdersDTO;
+
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
 import com.daewon.xeno_z1.dto.page.PageRequestDTO;
 import com.daewon.xeno_z1.dto.page.PageResponseDTO;
@@ -8,14 +8,11 @@ import com.daewon.xeno_z1.dto.product.ProductHeaderDTO;
 import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
 import com.daewon.xeno_z1.dto.review.ReviewInfoDTO;
 import com.daewon.xeno_z1.dto.review.ReviewUpdateDTO;
-import com.daewon.xeno_z1.repository.ProductsImageRepository;
-import com.daewon.xeno_z1.repository.ReviewImageRepository;
-import com.daewon.xeno_z1.repository.ReviewRepository;
-import com.daewon.xeno_z1.repository.UserRepository;
+
 import com.daewon.xeno_z1.service.OrdersService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.daewon.xeno_z1.domain.Review;
+
 import com.daewon.xeno_z1.dto.review.ReviewCreateDTO;
 import com.daewon.xeno_z1.service.ReviewService;
 
@@ -23,10 +20,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -96,7 +93,8 @@ public class ReviewController {
     }
 
 
-
+    // 리뷰 작성한 유저만 수정 가능
+    @PreAuthorize("@reviewAndReplySecurityUtils.isReviewOwner(#reviewId)")
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "리뷰 수정")
     public ResponseEntity<?> updateReview(
@@ -123,6 +121,8 @@ public class ReviewController {
     }
 
     // 리뷰 삭제
+    // 리뷰 작성한 유저마 삭제 가능
+    @PreAuthorize("@reviewAndReplySecurityUtils.isReviewOwner(#reviewId)")
     @DeleteMapping("/delete")
     @Operation(summary = "리뷰 삭제")
     public ResponseEntity<?> deleteReview(@RequestParam Long reviewId) {
@@ -164,4 +164,10 @@ public class ReviewController {
         }
     }
 }
+
+/*
+    createReview 메서드 값 넘기는법
+
+    {   "orderId": 해당하는 orderId값 입력,   "text": "Great product!",   "star": 5 }
+ */
 

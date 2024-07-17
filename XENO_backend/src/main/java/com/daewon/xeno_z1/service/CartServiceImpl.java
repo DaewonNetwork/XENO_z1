@@ -9,19 +9,15 @@ import com.daewon.xeno_z1.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +36,6 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addToCart(List<AddToCartDTO> addToCartDTOList) {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         log.info(authentication);
@@ -54,7 +49,9 @@ public class CartServiceImpl implements CartService {
         Cart cart = new Cart();
 
         for(AddToCartDTO addToCartDTO: addToCartDTOList) {
+
             cart = cartRepository.findByProductColorSizeIdAndUser(addToCartDTO.getProductColorSizeId(),users.getUserId()).orElse(null);
+
             ProductsColorSize productsColorSize = productsColorSizeRepository.findById(addToCartDTO.getProductColorSizeId()).orElse(null);
             ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(productsColorSize.getProductsColor().getProductColorId());
             if(cart == null) {
@@ -65,6 +62,7 @@ public class CartServiceImpl implements CartService {
                         .user(users)
                         .productsImage(productsImage)
                         .build();
+
                 cartRepository.save(cart);
             } else {
                 cart.setQuantity(cart.getQuantity()+addToCartDTO.getQuantity());

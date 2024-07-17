@@ -10,7 +10,7 @@ import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 import { Button } from "@nextui-org/button";
 import { Select, SelectItem } from "@nextui-org/select"
 import ProductImageCreateModal from "./ProductImageCreateModal";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useProductRead } from "@/(FSD)/entities/product/api/useProductRead";
 import { ProductCreateGetInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 
@@ -21,7 +21,7 @@ import { Input } from "@nextui-org/input";
 
 
 
-interface SizeStocksType {
+export interface SizeStocksType {
     id: number;
     size: string;
     stock: number;
@@ -32,16 +32,16 @@ const ProductColorCreateForm = () => {
 
     const { productId } = useParams<{ productId: string }>();
 
-
+    const router = useRouter();
     const { data } = useProductRead(+productId)
 
     const productImages = useRecoilValue(productImagesState);
     const productDetailImage = useRecoilValue(productDetailImageState);
 
-    console.log(productImages);
+
 
     const [sizeStocks, setSizeStocks] = useState<SizeStocksType[]>([]);
-    const sizeArray = ["XS", "S", "M", "L", "XL", "XXL"];
+    const sizeArray = ["S", "M", "L", "XL"];
 
     useEffect(() => {
 
@@ -65,7 +65,7 @@ const ProductColorCreateForm = () => {
 
 
     const onSuccess = (data: any) => {
-        console.log("성공")
+        router.push('/seller')
     }
 
     const { mutate } = useProductColorCreate({ onSuccess });
@@ -84,8 +84,7 @@ const ProductColorCreateForm = () => {
         });
         formData.append("productDetailImage", productDetailImage);
 
-        console.log(formData.get("productImages"));
-        console.log(productImages)
+    
         mutate(formData);
 
     }
@@ -123,8 +122,6 @@ const ProductColorCreateForm = () => {
             <form style={{ display: isOpen ? "none" : "block" }} className={styles.product_create_form} onSubmit={handleSubmit(onSubmit)}>
                 <TextMediumShared isLabel={true} htmlFor={"name"}>상품 이름</TextMediumShared>
                 <FormInputShared isClearable readOnly={true} name={"name"} control={control} placeholder={productInfo.name} />
-
-
                 <TextMediumShared isLabel={true} htmlFor={"productNumber"}>품번</TextMediumShared>
                 <FormInputShared isClearable readOnly={true} name={"productNumber"} control={control} placeholder={productInfo.productNumber} />
                 <TextMediumShared isLabel={true} htmlFor={"season"}>시즌</TextMediumShared>
@@ -180,7 +177,7 @@ const ProductColorCreateForm = () => {
 
                         >
                             {sizeArray.map((size) => (
-                                <SelectItem key={size} value={size}>
+                                <SelectItem key={size} value={size} isDisabled={sizeStocks.some((item) => item.size === size && item.id !== sizeStock.id)}>
                                     {size}
                                 </SelectItem>
                             ))}
@@ -217,7 +214,7 @@ const ProductColorCreateForm = () => {
                 </Button>
                 <Button isDisabled={(!isValid) || (!productImages) || (!productDetailImage) || (isSizeStockValid)} fullWidth size={"lg"} type={"submit"} color={"primary"}>등록하기</Button>
             </form>
-            {isOpen && <ProductImageCreateModal setIsOpen={setIsOpen} />}
+            {isOpen && <ProductImageCreateModal setIsOpen={setIsOpen} files={productImages} detailFile={productDetailImage} />}
         </>
     );
 };

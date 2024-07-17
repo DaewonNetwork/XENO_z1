@@ -21,8 +21,7 @@ const AuthSigninForm = () => {
     const [userData, setUserData] = useState<UserType | null>(null);
     
     const setIsLoggedIn = useSetRecoilState(isLoggedInState);
-    console.log(setIsLoggedIn);
-    
+
 
     const schema = z.object({
         email: z.string().regex(emailRegex, {

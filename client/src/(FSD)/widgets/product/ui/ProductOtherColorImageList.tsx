@@ -5,7 +5,7 @@ import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 
 import { useParams } from "next/navigation";
 import Slider from "react-slick";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { imageState } from "@/(FSD)/shareds/stores/ProductAtom";
 import { useProductColorFirstImegeListRead } from "@/(FSD)/entities/product/api/useProductColorFirstImegeListRead";
 
@@ -22,7 +22,9 @@ const ProductOtherColorImageList = () => {
 
     const setImages = useSetRecoilState(imageState);
 
-    console.log(productImages);
+
+
+
     useEffect(() => {
         if (productImages) {
             // productImages를 Recoil의 imageState에 설정

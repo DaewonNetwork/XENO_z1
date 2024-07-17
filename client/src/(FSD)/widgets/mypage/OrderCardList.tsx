@@ -21,7 +21,6 @@ const OrderCardList = () => {
 
     useEffect(() => {
         if (inView) {
-            console.log("asd")
             fetchNextPage();
         }
     }, [inView]);

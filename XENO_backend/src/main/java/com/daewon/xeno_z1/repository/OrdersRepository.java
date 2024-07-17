@@ -31,5 +31,9 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     @Query("SELECT o FROM Orders o WHERE o.orderId = :orderId and o.user = :user")
     Orders findByOrderIdAndUserId(@Param("orderId") Long orderId, Users user);
 
+    // 주문한 userId를 반환하도록 하는 메서드
+    @Query("select o.user.userId from Orders o where o.orderId = :orderId")
+    Optional<Long> findAuthorUserIdByOrderId(Long orderId);
+
 
 }

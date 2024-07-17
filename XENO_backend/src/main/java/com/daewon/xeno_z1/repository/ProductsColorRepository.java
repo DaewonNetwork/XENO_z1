@@ -18,4 +18,16 @@ public interface ProductsColorRepository extends JpaRepository<ProductsColor, Lo
 
     List<ProductsColor> findByProducts(Products product);
 
+    Optional<ProductsColor> findByProducts(Products products);
+
+    List<ProductsColor> findAllByProducts(Products products);
+
+    Optional<ProductsColor> findByProductsAndColor(Products product, String color);
+
+    // 상품등록한 userId를 반환하도록 하는 메서드
+    @Query("select p.users.userId from ProductsSeller p where p.products.productId = :productId")
+    Optional<Long> findAuthorUserIdByProductId(Long productId);
+
+//    @Query("select p.products.productId.users.userId from ProductsColor p where p.productColorId = :productColorId")
+//    Optional<Long> findAuthorUserIdByProductColorId(Long productColorId);
 }

@@ -8,8 +8,8 @@ import ProductInfo from "@/(FSD)/widgets/product/ui/ProductInfo";
 import ProductImagesSlideList from "@/(FSD)/widgets/product/ui/ProductImagesSlideList";
 import RelatedColorProducts from "./ProductOtherColorImageList";
 
-import { useSetRecoilState } from "recoil";
-import { nameState } from "@/(FSD)/shareds/stores/ProductAtom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import {nameState } from "@/(FSD)/shareds/stores/ProductAtom";
 import ProductDetailImageList from "./ProductDetailImageList";
 import ProductOtherColorImageList from "./ProductOtherColorImageList";
 import ReviewCardList from "../../review/ui/ReviewCardList";
@@ -51,7 +51,7 @@ const ProductInfoContainer = () => {
         <>
             <ProductImagesSlideList productImages={product.productImages} />
             <ProductInfo product={product} />
-            <ProductOtherColorImageList/>
+            {product.booleanColor && (<ProductOtherColorImageList/>)}
             <ProductDetailImageList productColorId={productColorId} />
             <ReviewInfoList productColorId={productColorId}/>
             

@@ -1,3 +1,4 @@
+
 package com.daewon.xeno_z1.service;
 
 
@@ -36,6 +37,12 @@ public interface ProductService {
 
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
+    String updateProduct(ProductUpdateDTO productUpdateDTO);
+
+    void deleteProduct(Long productId);
+
+    void deleteProductColor(Long productColorId);
+
     String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
     List<ProductListBySellerDTO> getProductListBySeller(String email);
@@ -45,5 +52,12 @@ public interface ProductService {
     PageResponseDTO<ProductsSearchDTO> BrandNameOrNameOrCategoryOrCategorysubSearch(String keyword,PageRequestDTO pageRequestDTO);
 
     PageResponseDTO<ProductsSearchDTO> allSearch(PageRequestDTO pageRequestDTO);
+
+    String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
+
+    List<ProductColorListBySellerDTO> getProductColorListBySeller(String email);
+
+    ProductColorUpdateGetInfoDTO getProductColorSizeInfo(Long productColorId) throws IOException;
+
 
 }

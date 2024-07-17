@@ -14,7 +14,7 @@ interface ProductOrderInfoCardProps {
 const ProductOrderInfoCard = ({ product }: ProductOrderInfoCardProps) => {
 
 
-    console.log(product.image)
+
     return (
         <div className={styles.productCard}>
             <h2>{product.name} ({product.color})</h2>

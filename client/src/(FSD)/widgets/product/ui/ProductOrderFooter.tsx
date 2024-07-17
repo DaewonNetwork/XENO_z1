@@ -14,7 +14,7 @@ const ProductOrderFooter = () => {
 const productList = useRecoilValue<ProductOrderInfoType[]>(productsState)
     
 
-console.log(productList);
+
 
     return (
      <div>
