@@ -18,7 +18,7 @@ const ReviewInfoList = ({ productColorId }: { productColorId: string }) => {
 
 
     useEffect(() => {
-       console.log(data)
+    
     }, [data]);
 
     useEffect(() => {

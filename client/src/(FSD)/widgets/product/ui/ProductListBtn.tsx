@@ -20,7 +20,7 @@ const ProductListBtn = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     useEffect(() => {
-        console.log(data);
+   
     }, [data]);
 
     const productInfoList: ProductColorCreateBtnType[] = data || [];

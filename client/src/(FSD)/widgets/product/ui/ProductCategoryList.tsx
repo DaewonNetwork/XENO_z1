@@ -25,7 +25,7 @@ const ProductCategoryList = ( ) => {
         refetch();
     }, [productList, refetch]);
 
-    console.log(productList)
+
 
     if (isLoading) {
         return (

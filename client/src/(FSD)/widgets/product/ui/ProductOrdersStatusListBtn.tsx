@@ -45,7 +45,6 @@ const statuses = [
 const ProductOrdersStatusListBtn = () => {
     const { data, isError, error, isPending, refetch } = useOrderListBySellerRead();
     const onSuccess = (data: any) => {
-        console.log("post 성공");
         refetch();
         onCloseStatusModal();
         onOpenUpdateCompleteModal();

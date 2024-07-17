@@ -19,7 +19,7 @@ export const useOrderListRead = () => {
         queryKey: ["order_list_read"],
         queryFn: ({ pageParam }) => fetchData({ path: `/orders/list?pageIndex=${pageParam}&size=5` }),
         getNextPageParam: (lastPage) => {
-            console.log(lastPage);
+          
             
             if (lastPage.next) {
                 return lastPage.pageIndex + 1;

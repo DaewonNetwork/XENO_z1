@@ -27,7 +27,7 @@ const ReviewCreateForm = () => {
     
     const { orderId } = useParams<{ orderId: string }>();
 
-    console.log(orderId)
+    
     const handleStarClick = (index: number) => {
         const newStars: Array<boolean> = stars.map((_, i) => i <= index);
         setStars(newStars);
@@ -61,7 +61,7 @@ const ReviewCreateForm = () => {
         formData.append("reviewDTO", JSON.stringify({ text: data.reviewText, orderId: Number(orderId), star: stars.filter(star => star).length }));
 
         formData.append("image", file);
-        console.log(Array.from(formData.entries()));
+
         mutate(formData);
     }
 

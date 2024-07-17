@@ -18,9 +18,14 @@ interface ProductColorListType {
 }
 
 
-interface SelectSectionProps {
+interface UpdateProps {
     productInfoList: ProductColorListType[];
-    handleClick: (productInfoList: ProductColorListType) => void;
+    handleUpdate: any
+}
+
+interface ReadProps {
+    productInfoList: ProductColorListType[];
+    handleRead: any
 }
 
 const ProductColorListBtn = () => {
@@ -30,7 +35,7 @@ const ProductColorListBtn = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     useEffect(() => {
-        console.log(data);
+
     }, [data]);
 
     const productInfoList: ProductColorListType[] = data || [];
@@ -40,7 +45,6 @@ const ProductColorListBtn = () => {
 
     const mergedProductInfoList = mergeProductInfoList(productInfoList);
 
-    console.log(mergedProductInfoList)
 
     // 품번(productNumber)을 기준으로 중복 항목을 합친 새로운 배열 생성하는 함수
     function mergeProductInfoList(productInfoList: ProductColorListType[]): ProductColorListType[] {
@@ -64,10 +68,10 @@ const ProductColorListBtn = () => {
         return mergedList;
     }
 
-    const renderSelectItems = ({ productInfoList, handleClick }: SelectSectionProps) => {
+    const updateProductColorList = ({ productInfoList, handleUpdate }: UpdateProps) => {
         return (
             <Select
-                label="추가 색상 상품 목록 보기"
+                label="추가 색상 상품 수정하기 "
                 className="max-w-xs"
                 size="lg"
             >
@@ -76,7 +80,7 @@ const ProductColorListBtn = () => {
                         {productInfoList
                             .filter(item => item.productNumber === product.productNumber)
                             .map(item => (
-                                <SelectItem key={item.productColorId} onClick={() => handleClick(item)}>
+                                <SelectItem key={item.productColorId} onClick={() => handleUpdate(item)}>
                                   {item.productName} ({item.color})
                                 </SelectItem>
                             ))}
@@ -86,8 +90,34 @@ const ProductColorListBtn = () => {
         );
     };
 
-    const handleClick = (product: ProductColorListType) => {
+    const readProductColorList = ({ productInfoList, handleRead }: ReadProps) => {
+        return (
+            <Select
+                label="내가 등록한 상품으로 이동하기 "
+                className="max-w-xs"
+                size="lg"
+            >
+                {mergedProductInfoList.map(product => (
+                    <SelectSection key={product.productNumber} showDivider title={product.productName}>
+                        {productInfoList
+                            .filter(item => item.productNumber === product.productNumber)
+                            .map(item => (
+                                <SelectItem key={item.productColorId} onClick={() => handleRead(item)}>
+                                  {item.productName} ({item.color})
+                                </SelectItem>
+                            ))}
+                    </SelectSection>
+                ))}
+            </Select>
+        );
+    };
+
+    const handleUpdate = (product: ProductColorListType) => {
         router.push(`/seller/productColor/update/${product.productColorId}`);
+    };
+
+    const handleRead = (product: ProductColorListType) => {
+        router.push(`/proudcts/${product.productColorId}`);
     };
 
 
@@ -101,7 +131,9 @@ const ProductColorListBtn = () => {
                         <>
                             <ModalHeader className="flex flex-col gap-1">상품 목록</ModalHeader>
                             <ModalBody>
-                                {renderSelectItems({ productInfoList, handleClick })}
+                                {readProductColorList({ productInfoList,  handleRead})}
+                                {updateProductColorList({ productInfoList, handleUpdate })}
+                            
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>

@@ -16,7 +16,6 @@ const FileInputShared = ({ inputId, setFile, height = 160, file}: FileInputShare
     const [preview, setPreview] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    console.log(file)
 
     useEffect(() => {
         if (file) {

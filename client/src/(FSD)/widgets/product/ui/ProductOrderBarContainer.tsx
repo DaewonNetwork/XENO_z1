@@ -36,7 +36,7 @@ const ProductOrderBarContainer = () => {
 
     if(!data && !orderBar) return <></>
 
-    console.log(orderBar)
+
    
     return (
         <ProductOrderBar orderBar={orderBar} parentRefetch={refetch}/>

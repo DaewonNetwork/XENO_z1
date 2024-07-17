@@ -19,7 +19,7 @@ const ProductDetailImageList = ({ productColorId }: Props) => {
 
     useEffect(() => {
         refetch();
-        console.log("불러오기");
+    
     }, [size]);
 
     if (isError) {

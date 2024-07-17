@@ -38,7 +38,7 @@ const ProductColorCreateForm = () => {
     const productImages = useRecoilValue(productImagesState);
     const productDetailImage = useRecoilValue(productDetailImageState);
 
-    console.log(productImages);
+
 
     const [sizeStocks, setSizeStocks] = useState<SizeStocksType[]>([]);
     const sizeArray = ["S", "M", "L", "XL"];
@@ -84,8 +84,7 @@ const ProductColorCreateForm = () => {
         });
         formData.append("productDetailImage", productDetailImage);
 
-        console.log(formData.get("productImages"));
-        console.log(productImages)
+    
         mutate(formData);
 
     }

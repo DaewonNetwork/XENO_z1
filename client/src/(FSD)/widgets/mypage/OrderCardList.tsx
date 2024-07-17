@@ -16,13 +16,11 @@ const OrderCardList = () => {
 
     useEffect(() => {
         refetch();
-        console.log(orderList)
     }, [orderList]);
 
 
     useEffect(() => {
         if (inView) {
-            console.log("asd")
             fetchNextPage();
         }
     }, [inView]);
