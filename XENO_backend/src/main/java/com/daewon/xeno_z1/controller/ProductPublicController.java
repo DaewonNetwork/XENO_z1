@@ -170,17 +170,27 @@ public class ProductPublicController {
     @GetMapping("/rank/{category}")
     public ResponseEntity<List<ProductsStarRankListDTO>> getranktop10(
             @PathVariable String category) {
+        try {
         List<ProductsStarRankListDTO> result = productService.getranktop10(category);
         return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
+
     @Operation(summary = "top50")
     @GetMapping("/rank/page/{category}")
     public ResponseEntity<PageInfinityResponseDTO<ProductsStarRankListDTO>> getrankTop50(
             PageRequestDTO pageRequestDTO,
             @PathVariable String category) {
-        log.info(category);
+        try {
+            log.info(category);
             PageInfinityResponseDTO<ProductsStarRankListDTO> result = productService.getrankTop50(category, pageRequestDTO);
-        return ResponseEntity.ok(result);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @Operation(summary = "브랜드명, 이름, 카테고리, 카테고리 sub 검색")
@@ -188,7 +198,13 @@ public class ProductPublicController {
     public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> searchProducts(
             @RequestParam String keyword,
             @ModelAttribute PageRequestDTO pageRequestDTO) {
-        PageResponseDTO<ProductsSearchDTO> result = productService.BrandNameOrNameOrCategoryOrCategorysubSearch(keyword, pageRequestDTO);
-        return ResponseEntity.ok(result);
+        try {
+
+
+            PageResponseDTO<ProductsSearchDTO> result = productService.BrandNameOrNameOrCategoryOrCategorysubSearch(keyword, pageRequestDTO);
+            return ResponseEntity.ok(result);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

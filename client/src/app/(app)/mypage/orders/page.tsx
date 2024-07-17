@@ -6,6 +6,7 @@ import AppTitleHeader from "@/(FSD)/widgets/app/ui/AppTitleHeader";
 import OrderInfoList from "@/(FSD)/widgets/order/ui/OrderInfoList";
 
 
+
 const Page = () => {
     return (
         <>

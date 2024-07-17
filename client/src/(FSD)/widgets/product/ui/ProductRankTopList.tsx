@@ -1,6 +1,6 @@
 "use server";
 
-import React from "react";
+import React, { useEffect } from "react";
 import ProductCardSlideList from "./ProductCardSlideList";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import TextLargeShared from "@/(FSD)/shareds/ui/TextLargeShared";
@@ -13,6 +13,8 @@ const ProductRankTopList = async () => {
     const productCardList: ProductType[] = await fetchServerData({path: "/product/rank/상의" });
     
     if(!productCardList) return <></>;
+
+    console.log(productCardList)
     
 
     return (
