@@ -20,7 +20,7 @@ const CartProductInfoList = () => {
     setCartProductInfoListRefetch({ refetch });
 
     if (!cartProductList) return <></>;
-    if (!cartProductList) return <></>;
+    if (!cartProductList[0]) return <></>;
 
 
     return (
