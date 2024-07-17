@@ -122,7 +122,7 @@ const OrderPaymentBtn = ({ productList }: OrderPaymentBtnProps) => {
     };
 
     return (
-        <Button onClick={handleClick} fullWidth color={"primary"}>{totalPrice.toLocaleString()}원 결제하기</Button>
+        <Button size={"lg"} onClick={handleClick} fullWidth color={"primary"}>{totalPrice.toLocaleString()}원 결제하기</Button>
     );
 };
 
