@@ -183,27 +183,12 @@ public class ProductPublicController {
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "카테고리별 검색")
-    @GetMapping("/search/{category}")
-    public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> productCategorySearch(@PathVariable String category, PageRequestDTO pageRequestDTO) {
-        PageResponseDTO<ProductsSearchDTO> responseDTO = productService.productCategorySearch(category, pageRequestDTO);
-        return ResponseEntity.ok(responseDTO);
-    }
-
     @Operation(summary = "브랜드명, 이름, 카테고리, 카테고리 sub 검색")
     @GetMapping("/search")
     public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> searchProducts(
             @RequestParam String keyword,
             @ModelAttribute PageRequestDTO pageRequestDTO) {
         PageResponseDTO<ProductsSearchDTO> result = productService.BrandNameOrNameOrCategoryOrCategorysubSearch(keyword, pageRequestDTO);
-        return ResponseEntity.ok(result);
-    }
-
-    @Operation(summary = "상품 모두 검색")
-    @GetMapping("/all")
-    public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> allSearch(
-            @ModelAttribute PageRequestDTO pageRequestDTO) {
-        PageResponseDTO<ProductsSearchDTO> result = productService.allSearch(pageRequestDTO);
         return ResponseEntity.ok(result);
     }
 }
