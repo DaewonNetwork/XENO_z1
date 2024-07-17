@@ -2,10 +2,12 @@ export interface CartProductInfoType {
     cartId: number;
     productsColorSizeId: number;
     quantity: number;
-    price: number;
+    amount: number;
     brandName: string;
     productImage: Uint8Array;
-    priceSale: number | undefined;
     sale: boolean;
     productName: string;
+    color: string;
+    size: string;
+    price: number;
 }

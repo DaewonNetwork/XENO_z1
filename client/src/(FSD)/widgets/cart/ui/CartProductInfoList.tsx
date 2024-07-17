@@ -6,8 +6,6 @@ import AppInner from "../../app/ui/AppInner";
 import { useCartProductListRead } from "@/(FSD)/entities/cart/api/useCartProductListRead";
 import { CartProductInfoType } from "@/(FSD)/shareds/types/cart/CartProductInfo.type";
 import styles from "@/(FSD)/shareds/styles/CartStyle.module.scss";
-import CartProductDeleteBtn from "@/(FSD)/features/cart/ui/CartProductDeleteBtn";
-import CartProductSelectBtn from "@/(FSD)/features/cart/ui/CartProductSelectBtn";
 import CartInfo from "@/(FSD)/features/cart/ui/CartInfo";
 
 const CartProductInfoList = () => {
@@ -15,8 +13,8 @@ const CartProductInfoList = () => {
 
     const cartProductList: CartProductInfoType[] = data;
 
-    if(!cartProductList) return <></>;
-    if(!cartProductList) return <></>;
+    if (!cartProductList) return <></>;
+    if (!cartProductList) return <></>;
 
     return (
         <div className={styles.cart_product_info_list}>
@@ -25,7 +23,7 @@ const CartProductInfoList = () => {
                     {
                         cartProductList.map(product => (
                             <React.Fragment key={product.productsColorSizeId}>
-                                <CartInfo product={product} selectBtn={<CartProductSelectBtn />} deleteBtn={<CartProductDeleteBtn />} />
+                                <CartInfo product={product} />
                             </React.Fragment>
                         ))
                     }
