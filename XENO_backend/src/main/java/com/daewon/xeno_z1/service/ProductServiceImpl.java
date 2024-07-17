@@ -203,14 +203,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageResponseDTO<ProductsSearchDTO> productOrBrandNameSearch(String keyword, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<ProductsSearchDTO> BrandNameOrNameOrCategoryOrCategorysubSearch(String keyword, PageRequestDTO pageRequestDTO) {
         // 페이지 요청 객체 생성
         Pageable pageable = PageRequest.of(
                 pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
                 pageRequestDTO.getSize());
 
         // 카테고리를 기준으로 상품을 검색
-        Page<Products> result = productsSearchRepository.findbrandNameOrNameBykeyword(keyword, pageable);
+        Page<Products> result = productsSearchRepository.findbrandNameOrNameOrCategoryOrCategorysubBykeyword(keyword, pageable);
         log.info(result);
 
         // 검색 결과를 DTO로 변환
@@ -850,24 +850,24 @@ public class ProductServiceImpl implements ProductService {
                         dto.setLike(false);
                     }
 
-                    // isMain이 true인 이미지만 처리
-                    if (productColorId != null) {
-                        ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
-                        if (productImage != null) {
-                            try {
-                                String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
-                                Path path = Paths.get(filePath);
-                                if (Files.exists(path)) {
-                                    byte[] imageData = Files.readAllBytes(path);
-                                    dto.setProductImage(imageData);
-                                } else {
-                                    log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
-                                }
-                            } catch (IOException e) {
-                                log.error("이미지 로딩 중 오류 발생", e);
+                    log.info(dto.isLike());
+
+                    ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                    if (productImage != null) {
+                        try {
+                            String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                            Path path = Paths.get(filePath);
+                            if (Files.exists(path)) {
+                                byte[] imageData = Files.readAllBytes(path);
+                                dto.setProductImage(imageData);
+                            } else {
+                                log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
                             }
+                        } catch (IOException e) {
+                            log.error("이미지 로딩 중 오류 발생", e);
                         }
                     }
+                    log.info(dto);
                     return dto;
                 })
                 .limit(10)

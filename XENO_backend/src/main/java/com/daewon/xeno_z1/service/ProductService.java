@@ -42,7 +42,7 @@ public interface ProductService {
 
     PageResponseDTO<ProductsSearchDTO> productCategorySearch(String category, PageRequestDTO pageRequestDTO);
 
-    PageResponseDTO<ProductsSearchDTO> productOrBrandNameSearch(String keyword,PageRequestDTO pageRequestDTO);
+    PageResponseDTO<ProductsSearchDTO> BrandNameOrNameOrCategoryOrCategorysubSearch(String keyword,PageRequestDTO pageRequestDTO);
 
     PageResponseDTO<ProductsSearchDTO> allSearch(PageRequestDTO pageRequestDTO);
 

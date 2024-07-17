@@ -15,7 +15,7 @@ export const useProductRankOuterPage = () => {
         isPending,
         refetch
     } = useInfiniteQuery({
-        queryKey: ["product_rankl_top_page"],
+        queryKey: ["product_rankl_outer_page"],
         queryFn: ({ pageParam }) => fetchData({ path: `/product/rank/page/아우터?pageIndex=${pageParam}&size=10`, isNotAuthRequired: true }),
         getNextPageParam: (lastPage) => {
             if (lastPage.next) {

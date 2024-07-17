@@ -16,8 +16,8 @@ public interface ProductsSearchRepository extends JpaRepository<Products, Long> 
     Page<Products> findByCategory(@Param("category") String category, Pageable pageable);
 
 
-    // 브랜드명 또는 이름으로 검색
-    @Query("SELECT p FROM Products p WHERE p.brandName LIKE %:keyword% OR p.name LIKE %:keyword%")
-    Page<Products> findbrandNameOrNameBykeyword(@Param("keyword") String keyword, Pageable pageable);
+    // 브랜드명, 이름, 카테고리, 카테고리 sub 검색
+    @Query("SELECT p FROM Products p WHERE p.brandName LIKE %:keyword% OR p.name LIKE %:keyword% OR p.category like %:keyword% OR p.categorySub LIKE %:keyword%")
+    Page<Products> findbrandNameOrNameOrCategoryOrCategorysubBykeyword(@Param("keyword") String keyword, Pageable pageable);
 
 }
