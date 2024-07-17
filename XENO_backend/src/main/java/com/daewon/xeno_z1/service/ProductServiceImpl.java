@@ -187,12 +187,12 @@ public class ProductServiceImpl implements ProductService {
         // 검색 결과를 DTO로 변환
         List<ProductsSearchDTO> productList = result.getContent().stream().map(product -> {
             ProductsSearchDTO productsSearchDTO = modelMapper.map(product, ProductsSearchDTO.class);
-        
+
             List<ProductsColor> colors = productsColorRepository.findByProducts(product);
             if (!colors.isEmpty()) {
                 productsSearchDTO.setProductColorId(colors.get(0).getProductColorId());
             }
-        
+
             return productsSearchDTO;
         }).collect(Collectors.toList());
     

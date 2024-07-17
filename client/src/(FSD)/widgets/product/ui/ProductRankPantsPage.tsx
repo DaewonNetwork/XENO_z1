@@ -20,8 +20,6 @@ const ProductRankPantsPage = () => {
         }
     }, [inView]);
 
-    console.log(productCardList);
-
     if (isError) return <></>;
     if (!productCardList) return <></>;
 

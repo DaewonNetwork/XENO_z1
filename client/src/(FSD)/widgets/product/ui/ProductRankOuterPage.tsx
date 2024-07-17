@@ -19,8 +19,6 @@ const ProductRankOuterPage = () => {
             fetchNextPage();
         }
     }, [inView]);
-    
-    console.log(productCardList);
 
     if (isError) return <></>;
     if (!productCardList) return <></>;

@@ -12,7 +12,6 @@ import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 const ProductRankTopList = async () => { 
     const productCardList: ProductType[] = await fetchServerData({path: "/product/rank/상의" });
     
-    console.log(productCardList);
     if(!productCardList) return <></>;
     
 

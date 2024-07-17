@@ -1,8 +1,6 @@
 "use client";
 
 import { useProductRankTopPage } from "@/(FSD)/entities/product/api/useProductRankTopPage";
-import ProductCard from "@/(FSD)/entities/product/ui/ProductCard";
-import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import ProductCardList from "./ProductCardList";
@@ -21,8 +19,6 @@ const ProductRankTopPage = () => {
             fetchNextPage();
         }
     }, [inView]);
-
-    console.log(productCardList);
 
     if (isError) return <></>;
     if (!productCardList) return <></>;
