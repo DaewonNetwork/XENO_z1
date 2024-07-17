@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
 import { useOrderListBySellerRead } from "@/(FSD)/entities/orders/api/useOrderListBySellerRead";
 import { Select, SelectItem, SelectSection } from "@nextui-org/select";

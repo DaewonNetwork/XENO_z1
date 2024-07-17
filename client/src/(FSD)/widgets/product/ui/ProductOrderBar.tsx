@@ -38,10 +38,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     const images: ProductImages[] = useRecoilValue(imageState)
     const [newProducts, setNewProducts] = useRecoilState<ProductOrderInfoType[]>(productsState)
     const  isLoggedIn  = useRecoilValue(isLoggedInState);
-    
-
-    
-
+  
     const desiredOrder = ['S', 'M', 'L', 'XL'];
 
     useEffect(() => {

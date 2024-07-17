@@ -5,7 +5,6 @@ import com.daewon.xeno_z1.domain.ProductsColor;
 import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.service.ProductService;
 
-import com.daewon.xeno_z1.utils.ProductSecurityUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +34,9 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductSecurityUtils productSecurityUtils;
 
-    @PreAuthorize("hasRole('SELLER')")
+    // @PreAuthorize("hasRole('USER')")
+
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(
             @RequestPart("productCreateDTO") String productRegisterDTOStr,
@@ -75,7 +73,7 @@ public class ProductController {
     @Operation(summary = "상품 수정")
     public ResponseEntity<?> updateProduct(
             @RequestBody ProductUpdateDTO productUpdateDTO) {
-            log.info(productUpdateDTO);
+        log.info(productUpdateDTO);
         try {
 
             String result = productService.updateProduct(productUpdateDTO);
@@ -112,43 +110,9 @@ public class ProductController {
 
 
 
-    @PreAuthorize("@productSecurityUtils.isProductOwner(#productUpdateDTO.productId)")
-    @PutMapping("/update")
-    @Operation(summary = "상품 수정")
-    public ResponseEntity<?> updateProduct(
-            @RequestBody ProductUpdateDTO productUpdateDTO) {
-        log.info(productUpdateDTO);
-        try {
-
-            String result = productService.updateProduct(productUpdateDTO);
-            return ResponseEntity.ok("\"수정 성공\"");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("상품 업데이트 중 오류가 발생했습니다: " + e.getMessage());
-        }
-    }
-
-    @PreAuthorize("@productSecurityUtils.isProductOwner(#productId)")
-    @DeleteMapping("/delete")
-    @Operation(summary = "상품 삭제")
-    public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {
-        try {
-            productService.deleteProduct(productId);
-            return ResponseEntity.ok().body("상품 삭제 완료");
-        }  catch (RuntimeException e) {
-            log.error("상품 삭제 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-
-
-
-//    @PreAuthorize("@productSecurityUtils.isProductOwner(#productDTO.productId)")
     @PostMapping(value = "/color/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProductColor(
             @RequestPart("productColorCreateDTO") String productColorCreateDTOStr,
-            @RequestPart(name = "productImages")  List<MultipartFile> productImages,
-            @RequestPart(name = "productDetailImage") MultipartFile productDetailImage) {
             @RequestPart(name = "productImages")  List<MultipartFile> productImages,
             @RequestPart(name = "productDetailImage") MultipartFile productDetailImage) {
 
@@ -158,12 +122,6 @@ public class ProductController {
             ObjectMapper objectMapper = new ObjectMapper();
             productDTO = objectMapper.readValue(productColorCreateDTOStr, ProductRegisterColorDTO.class);
             log.info(productDTO);
-
-//            // 여기서 @PreAuthorize를 위한 검사를 수행합니다.
-//            if (!productSecurityUtils.isProductOwner(productDTO.getProductId())) {
-//                return ResponseEntity.status(403).body("접근 권한이 없습니다.");
-//            }
-
         } catch (IOException e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().body("유효하지 않은 JSON 형식입니다."); // 400 상태 코드
@@ -171,7 +129,6 @@ public class ProductController {
 
         try {
             String resultMessage = productService.createProductColor(productDTO,
-                    productImages != null && !productImages.isEmpty() ? productImages : null,
                     productImages != null && !productImages.isEmpty() ? productImages : null,
                     productDetailImage != null && !productDetailImage.isEmpty() ? productDetailImage : null
             );
@@ -220,7 +177,7 @@ public class ProductController {
         }
 
     }
-    
+
     @GetMapping("/color/read")
     public ResponseEntity<ProductInfoDTO> readProductColor(@RequestParam Long productColorId) throws IOException {
         ProductInfoDTO productInfoDTO = productService.getProductColorInfo(productColorId);
@@ -240,17 +197,6 @@ public class ProductController {
         ProductColorUpdateGetInfoDTO productInfoDTO = productService.getProductColorSizeInfo(productColorId);
 
         return ResponseEntity.ok(productInfoDTO);
-    }
-    @GetMapping("/color/image/read")
-    public ResponseEntity<byte[]> readImage(@RequestParam Long productColorId) throws IOException {
-        // 실제 파일 데이터를 읽어옴 (파일 경로는 적절하게 설정해야 함)
-        byte[] fileContent = productService.readImage(productColorId);
-
-        log.info(fileContent);
-        // HTTP 응답으로 파일 데이터 전송
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION)
-                .body(fileContent);
     }
 
     @GetMapping("/color/readImages")
@@ -350,6 +296,20 @@ public class ProductController {
 
             log.info("orderUserEmail : " + userEmail);
             List<ProductListBySellerDTO> dtoList = productService.getProductListBySeller(userEmail);
+
+            return ResponseEntity.ok(dtoList);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
+        }
+    }
+
+    @GetMapping("/color/seller/read")
+    public ResponseEntity<?> getProductColorListBySeller(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String userEmail = userDetails.getUsername();
+
+            log.info("orderUserEmail : " + userEmail);
+            List<ProductColorListBySellerDTO> dtoList = productService.getProductColorListBySeller(userEmail);
 
             return ResponseEntity.ok(dtoList);
         } catch (Exception e) {
