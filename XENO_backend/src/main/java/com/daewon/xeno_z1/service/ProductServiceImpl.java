@@ -896,28 +896,189 @@ public class ProductServiceImpl implements ProductService {
         return productsInfoCardDTOList;
     }
 
-    // 카테고리 별 랭크 10개
     @Override
-    public List<ProductListBySellerDTO> getProductListBySeller(String email) {
-
-
+    public List<ProductColorListBySellerDTO> getProductColorListBySeller(String email) {
         Users users = userRepository.findByEmail(email).orElse(null);
 
         List<ProductsSeller> list = productsSellerRepository.findByUsers(users);
-        List<ProductListBySellerDTO> dtoList = new ArrayList<>();
+        List<ProductColorListBySellerDTO> dtoList = new ArrayList<>();
 
         for(ProductsSeller productsSeller: list){
-            ProductListBySellerDTO dto = new ProductListBySellerDTO();
-            dto.setProductId(productsSeller.getProducts().getProductId());
-            dto.setProductNumber(productsSeller.getProducts().getProductNumber());
-            dto.setProductName(productsSeller.getProducts().getName());
-            dtoList.add(dto);
+            List<ProductsColor> productsColor = productsColorRepository.findByProductId(productsSeller.getProducts().getProductId());
+            for(ProductsColor color : productsColor) {
+                ProductColorListBySellerDTO dto = new ProductColorListBySellerDTO();
+                dto.setProductColorId(color.getProductColorId());
+                dto.setColor(color.getColor());
+                dto.setProductNumber(productsSeller.getProducts().getProductNumber());
+                dto.setProductName(productsSeller.getProducts().getName());
+                dtoList.add(dto);
+            }
         }
 
 
         return dtoList;
     }
 
+    @Override
+    public ProductColorUpdateGetInfoDTO getProductColorSizeInfo(Long productColorId) throws IOException {
+        ProductColorUpdateGetInfoDTO dto = new ProductColorUpdateGetInfoDTO();
+        List<ProductSizeDTO> dtoList = new ArrayList<>();
+        List<ProductsColorSize> productsColorSize = productsColorSizeRepository.findByProductColorId(productColorId);
+        for(ProductsColorSize size : productsColorSize){
+            ProductSizeDTO productSizeDTO = new ProductSizeDTO();
+            ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(size.getProductColorSizeId());
+            productSizeDTO.setSize(size.getSize().name());
+            productSizeDTO.setStock(productsStock.getStock());
+            dtoList.add(productSizeDTO);
+        }
+
+        dto.setColor(productsColorSize.get(0).getProductsColor().getColor());
+        dto.setSize(dtoList);
+
+        List<ProductsImage> productsImage = productsImageRepository.findByProductColorId(productColorId);
+
+        List<ProductImageInfoDTO> imageList = new ArrayList<>();
+        for(ProductsImage image : productsImage){
+            ProductImageInfoDTO productImageInfoDTO = new ProductImageInfoDTO();
+            productImageInfoDTO.setFilename(image.getFileName());
+            byte[] imageData = getImage(image.getUuid(),image.getFileName());
+            productImageInfoDTO.setProductColorImage(imageData);
+            imageList.add(productImageInfoDTO);
+        }
+        dto.setImages(imageList);
+        ProductImageInfoDTO productImageInfoDTO = new ProductImageInfoDTO();
+        ProductsDetailImage productsDetailImage = productsDetailImageRepository.findOneByProductColorId(productColorId);
+        productImageInfoDTO.setFilename(productsDetailImage.getFileName());
+        byte[] imageData = getImage(productsDetailImage.getUuid(),productsDetailImage.getFileName());
+        productImageInfoDTO.setProductColorImage(imageData);
+        dto.setDetailImage(productImageInfoDTO);
+        return dto;
+    }
+
+        // 카테고리 별 랭크 10개
+        @Override
+        public List<ProductsStarRankListDTO> getranktop10(String category) {
+            List<ProductsStar> top10Products = productsStarRepository.findByTop10StarAvgDesc(category);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserName = authentication.getName();
+            Users users = userRepository.findByEmail(currentUserName).orElse(null);
+    
+            return top10Products.stream()
+                    .map(productsStar -> {
+    
+                        Products product = productsStar.getProductsColor().getProducts();
+                        Long productColorId = productsStar.getProductsColor().getProductColorId();
+    
+                        ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                                .productColorId(productColorId)
+                                .brandName(product.getBrandName())
+                                .price(product.getPrice())
+                                .priceSale(product.getPriceSale())
+                                .isSale(product.getIsSale())
+                                .category(product.getCategory())
+                                .categorySub(product.getCategorySub())
+                                .build();
+    
+                        if (users != null) {
+                            LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId, users.getUserId());
+                            dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+                        }else {
+                            dto.setLike(false);
+                        }
+    
+                        log.info(dto.isLike());
+    
+                        ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                        if (productImage != null) {
+                            try {
+                                String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                                Path path = Paths.get(filePath);
+                                if (Files.exists(path)) {
+                                    byte[] imageData = Files.readAllBytes(path);
+                                    dto.setProductImage(imageData);
+                                } else {
+                                    log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
+                                }
+                            } catch (IOException e) {
+                                log.error("이미지 로딩 중 오류 발생", e);
+                            }
+                        }
+                        log.info(dto);
+                        return dto;
+                    })
+                    .limit(10)
+                    .collect(Collectors.toList());
+        }
+    
+        @Override
+        public PageInfinityResponseDTO<ProductsStarRankListDTO> getrankTop50(String category, PageRequestDTO pageRequestDTO) {
+            Pageable pageable = pageRequestDTO.getPageable();
+            Page<ProductsStar> productsStarPage = productsStarRepository.findByStarAvgDesc(category, pageable);
+    
+            log.info(category);
+            log.info(productsStarPage);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserName = authentication.getName();
+            log.info(currentUserName);
+    
+            Users users = userRepository.findByEmail(currentUserName).orElse(null);
+    
+            log.info(users);
+    
+            List<ProductsStarRankListDTO> dtoList = productsStarPage.getContent().stream()
+                    .map(productsStar -> {
+                        Products product = productsStar.getProductsColor().getProducts();
+                        Long productColorId = productsStar.getProductsColor().getProductColorId();
+    
+                        ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                                .productColorId(productColorId)
+                                .brandName(product.getBrandName())
+                                .price(product.getPrice())
+                                .priceSale(product.getPriceSale())
+                                .isSale(product.getIsSale())
+                                .category(product.getCategory())
+                                .categorySub(product.getCategorySub())
+                                .build();
+    
+                        if (users != null) {
+                            LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId, users.getUserId());
+                            dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+                        }else {
+                            dto.setLike(false);
+                        }
+    
+                        log.info(dto.isLike());
+    
+                        ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                        if (productImage != null) {
+                            try {
+                                String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                                Path path = Paths.get(filePath);
+                                if (Files.exists(path)) {
+                                    byte[] imageData = Files.readAllBytes(path);
+                                    dto.setProductImage(imageData);
+                                } else {
+                                    log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
+                                }
+                            } catch (IOException e) {
+                                log.error("이미지 로딩 중 오류 발생", e);
+                            }
+                        }
+                        log.info(dto);
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+    
+            log.info(dtoList);
+    
+            return PageInfinityResponseDTO.<ProductsStarRankListDTO>withAll()
+                    .pageRequestDTO(pageRequestDTO)
+                    .dtoList(dtoList)
+                    .totalIndex((int) productsStarPage.getTotalElements())
+                    .build();
+        }
+
+    
 
 
 }
