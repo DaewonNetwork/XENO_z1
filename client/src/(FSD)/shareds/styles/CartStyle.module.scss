@@ -6,3 +6,33 @@
 .cart_btn_bar {
     display: block;
 }
+
+.cart_product_info {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 10px 0;
+
+    .left_box {
+        display: flex;
+
+        .info_product {
+            display: flex;
+    
+            .product_image {
+                display: block;
+                margin-right: 10px;
+    
+                img {
+                    width: 120px;
+                    height: 120px;
+                }
+            }
+    
+            .product_text {
+                display: block;
+            }
+        }
+    }
+
+}

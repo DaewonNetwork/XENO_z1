@@ -27,8 +27,8 @@ const OrderProductInfo = ({ product }: OrderProductInfoProps) => {
             <div className={styles.info_text}>
                 <div className={styles.text_top}>
                     <TextSmallShared fontWeight={"semibold"}>{product.name} ({product.color})</TextSmallShared>
-                    <TextSmallShared className={"text-foreground"}>수량 {product.quantity.toLocaleString()}개</TextSmallShared>
-                    <TextSmallShared className={"text-foreground"}>사이즈 {product.size}</TextSmallShared>
+                    <TextSmallShared className={"text-foreground-500"}>수량 {product.quantity.toLocaleString()}개</TextSmallShared>
+                    <TextSmallShared className={"text-foreground-500"}>사이즈 {product.size}</TextSmallShared>
                 </div>
                 <div className={styles.text_btm}>
                     <TextMediumShared fontWeight={"semibold"}>{product.price.toLocaleString()}원</TextMediumShared>

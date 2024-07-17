@@ -2,27 +2,33 @@
 
 import React from "react";
 import AppContainer from "../../app/ui/AppContainer";
-import styles from "@/(FSD)/shareds/styles/CartStyle.module.scss";
 import AppInner from "../../app/ui/AppInner";
 import { useCartProductListRead } from "@/(FSD)/entities/cart/api/useCartProductListRead";
-import { CartItemType } from "@/(FSD)/shareds/types/cart/CartItem.type";
+import { CartProductInfoType } from "@/(FSD)/shareds/types/cart/CartProductInfo.type";
+import styles from "@/(FSD)/shareds/styles/CartStyle.module.scss";
+import CartProductDeleteBtn from "@/(FSD)/features/cart/ui/CartProductDeleteBtn";
+import CartProductSelectBtn from "@/(FSD)/features/cart/ui/CartProductSelectBtn";
+import CartInfo from "@/(FSD)/features/cart/ui/CartInfo";
 
 const CartProductInfoList = () => {
     const { data, isLoading, error } = useCartProductListRead();
 
-    const cartProductList: CartItemType = data;
+    const cartProductList: CartProductInfoType[] = data;
 
     if(!cartProductList) return <></>;
     if(!cartProductList) return <></>;
-
-    console.log(cartProductList);
-    
 
     return (
         <div className={styles.cart_product_info_list}>
             <AppContainer>
                 <AppInner>
-                    a
+                    {
+                        cartProductList.map(product => (
+                            <React.Fragment key={product.productsColorSizeId}>
+                                <CartInfo product={product} selectBtn={<CartProductSelectBtn />} deleteBtn={<CartProductDeleteBtn />} />
+                            </React.Fragment>
+                        ))
+                    }
                 </AppInner>
             </AppContainer>
         </div>
