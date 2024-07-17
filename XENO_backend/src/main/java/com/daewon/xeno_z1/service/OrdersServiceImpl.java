@@ -68,6 +68,13 @@ public class OrdersServiceImpl implements OrdersService {
         return orders.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public String getLatestReqForUser(String email) {
+        return ordersRepository.findTopByUserEmailOrderByCreateAtDesc(email)
+                .map(Orders::getReq)
+                .orElse(null);
+    }
+
     @Transactional
     @Override
     public List<OrdersDTO> createOrders(List<OrdersDTO> ordersDTO, String email) {
@@ -82,7 +89,16 @@ public class OrdersServiceImpl implements OrdersService {
 
         List<Orders> savedOrders = new ArrayList<>();
 
+        // 사용자의 가장 최근 주문에서 req 값을 가져옵니다.
+        String latestReq = ordersRepository.findTopByUserOrderByCreateAtDesc(users)
+                .map(Orders::getReq)
+                .orElse(null);
+
+        log.info("latestReq: " + latestReq);
         for(OrdersDTO dto : ordersDTO) {
+            // dto의 req가 null이거나 비어있으면 최근 req 값을 사용합니다.
+            String reqToUse = (dto.getReq() == null || dto.getReq().trim().isEmpty()) ? latestReq : dto.getReq();
+
             Orders orders  = Orders.builder()
                 .orderPayId(orderPayId)
                 .orderNumber(orderNumber)

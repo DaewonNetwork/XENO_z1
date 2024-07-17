@@ -9,24 +9,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductsStarRankListDTO {
+public class ProductsSearchDTO {
 
     private Long productColorId;
 
     private String brandName;
 
-    private Long price;
-
-    private boolean isSale;
-
-    private Long priceSale;
+    private String name;
 
     private String category;
 
     private String categorySub;
 
+    private long price;
+
+    private long priceSale;
+
+    private boolean isSale;
+
     private boolean isLike;
 
     private byte[] productImage;
-    
+
 }

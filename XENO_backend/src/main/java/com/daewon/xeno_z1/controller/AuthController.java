@@ -113,6 +113,8 @@ public class AuthController {
             // JWT Payload에 userId, userName, email, roles 값을 실어서 보냄
             Map<String, Object> claim = new HashMap<>();
             claim.put("userId", users.getUserId());
+            claim.put("address", users.getAddress());
+            claim.put("phoneNumber", users.getPhoneNumber());
             claim.put("name", users.getName());
             claim.put("email", users.getEmail());
             claim.put("roles", userDetails.getAuthorities().stream()

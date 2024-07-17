@@ -123,7 +123,6 @@ public class CartServiceImpl implements CartService {
     public CartDTO convertToDTO(Cart cart) {
         CartDTO cartDTO = new CartDTO();
         cartDTO.setCartId(cart.getCartId());
-        cartDTO.setUserId(cart.getUser().getUserId());
         cartDTO.setProductsColorSizeId(cart.getProductsColorSize().getProductColorSizeId());
         cartDTO.setQuantity(cart.getQuantity());
         cartDTO.setPrice(cart.getPrice());
@@ -135,7 +134,7 @@ public class CartServiceImpl implements CartService {
         if (image != null) {
             try {
                 byte[] imageData = getImage(image.getUuid(), image.getFileName());
-                cartDTO.setImageData(imageData);
+                cartDTO.setProductImage(imageData);
             } catch (IOException e) {
                 log.error("이미지 로딩 실패: " + e.getMessage());
             }

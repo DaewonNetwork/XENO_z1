@@ -4,6 +4,7 @@ import com.daewon.xeno_z1.domain.Products;
 import com.daewon.xeno_z1.domain.ProductsColor;
 import com.daewon.xeno_z1.domain.ProductsDetailImage;
 import com.daewon.xeno_z1.domain.ProductsImage;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

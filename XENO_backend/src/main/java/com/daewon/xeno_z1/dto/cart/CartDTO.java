@@ -10,14 +10,13 @@ import lombok.NoArgsConstructor;
 public class CartDTO {
 
     private Long cartId;
-    private Long userId;
     private Long productsColorSizeId;
     private Long quantity;
     private Long price;
     private String brandName;
 //    private String imageUuid;
 //    private String imageFileName;
-    private byte[] imageData;
+    private byte[] productImage;
     private Long priceSale;
     private boolean isSale;
 }
