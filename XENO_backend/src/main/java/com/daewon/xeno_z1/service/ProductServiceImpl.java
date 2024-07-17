@@ -716,7 +716,7 @@ public class ProductServiceImpl implements ProductService {
             byte[] currentImageData = null;
             try {
                 // 서버 파일 시스템에서 파일 존재 여부 확인
-                Path filePath = Paths.get("/Users/cyjoon/Downloads/upload",
+                Path filePath = Paths.get(uploadPath,
                         currentProductsImage.getUuid() + "_" + currentProductsImage.getFileName());
                 if (Files.exists(filePath)) {
                     currentImageData = getImage(currentProductsImage.getUuid(), currentProductsImage.getFileName());
@@ -739,6 +739,7 @@ public class ProductServiceImpl implements ProductService {
         // 상품의 다른 색상 이미지들 추가
         List<ProductsColor> colors = productsColorRepository
                 .findByProductId(productsColorOptional.get().getProducts().getProductId());
+
         for (ProductsColor productsColor : colors) {
             if (productsColor.getProductColorId() == productColorId) {
                 continue; // 현재 상품 색상은 이미 추가했으므로 건너뜁니다.
@@ -751,7 +752,7 @@ public class ProductServiceImpl implements ProductService {
                     .findFirstByProductColorId(productsColor.getProductColorId());
             if (otherProductsImage != null) {
                 // 서버 파일 시스템에서 파일 존재 여부 확인
-                Path filePath = Paths.get("/Users/cyjoon/Downloads/upload",
+                Path filePath = Paths.get(uploadPath,
                         otherProductsImage.getUuid() + "_" + otherProductsImage.getFileName());
                 if (Files.exists(filePath)) {
                     byte[] otherImageData = getImage(otherProductsImage.getUuid(), otherProductsImage.getFileName());
@@ -1034,6 +1035,7 @@ log.info(dto.getProductImage());
                             .isSale(product.getIsSale())
                             .category(product.getCategory())
                             .categorySub(product.getCategorySub())
+                            .name(product.getName())
                             .build();
 
                     if (users != null) {
@@ -1082,6 +1084,7 @@ log.info(dto.getProductImage());
         String currentUserName = authentication.getName();
         Users users = userRepository.findByEmail(currentUserName).orElse(null);
 
+        log.info(top10Products);
         return top10Products.stream()
                 .map(productsStar -> {
 
@@ -1096,6 +1099,7 @@ log.info(dto.getProductImage());
                             .isSale(product.getIsSale())
                             .category(product.getCategory())
                             .categorySub(product.getCategorySub())
+                            .name(product.getName())
                             .build();
 
                     if (users != null) {

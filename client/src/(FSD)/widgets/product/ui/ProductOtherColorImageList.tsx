@@ -18,10 +18,20 @@ const ProductOtherColorImageList = () => {
     const { productColorId } = useParams<{ productColorId: string }>();
     const { data, isError, error, isPending, refetch } = useProductColorFirstImegeListRead(Number(productColorId));
 
-    const productImages: ProductImages[] = data || [];
 
     const setImages = useSetRecoilState(imageState);
 
+    const productImages: ProductImages[] = data || [];
+    const [currentSlide, setCurrentSlide] = useState<number>(0);
+    const sliderSettings = {
+        dots: true,
+        speed: 500,
+        slidesToShow: 2,    
+        slidesToScroll: 2,
+        autoplay: false,
+        infinite: false,
+        afterChange: (current: number) => setCurrentSlide(current),
+    };
 
 
 
@@ -30,20 +40,16 @@ const ProductOtherColorImageList = () => {
             // productImages를 Recoil의 imageState에 설정
             setImages(productImages);
         }
-    }, [productImages, setImages]);
-
-    const [currentSlide, setCurrentSlide] = useState<number>(0);
-    const sliderSettings = {
-        dots: true,
-        speed: 500,
-        slidesToShow: 2,
-        slidesToScroll: 2,
-        autoplay: false,
-        infinite: false,
-        afterChange: (current: number) => setCurrentSlide(current),
-    };
+        console.log(data)
+        
+    }, [productImages,data, setImages]);
+    
     const totalImages = useMemo(() => productImages.filter(p => p.productColorImage).length, [productImages]);
     const shouldEnableSlider = totalImages >= 3;
+
+    if(!data) return <></>
+
+    
 
 
     return (

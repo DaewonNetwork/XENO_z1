@@ -13,11 +13,12 @@ interface ProductCardListType {
     isRank?: boolean;
     parentRefetch?: any;
     lastCard?: ReactNode;
+    isColor?: boolean
 };
 
 const cn = classNames.bind(styles);
 
-const ProductCardList = ({ productList, column = 3, isRank = false, lastCard, parentRefetch }: ProductCardListType) => {
+const ProductCardList = ({ productList, column = 3, isRank = false, lastCard, isColor=false, parentRefetch }: ProductCardListType) => {
     const productCardListClassNames = cn({
         "column_one": column === 1,
         "column_two": column === 2,

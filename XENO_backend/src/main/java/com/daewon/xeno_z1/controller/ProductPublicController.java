@@ -172,6 +172,7 @@ public class ProductPublicController {
             @PathVariable String category) {
         try {
         List<ProductsStarRankListDTO> result = productService.getranktop10(category);
+        log.info(result);
         return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

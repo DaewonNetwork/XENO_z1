@@ -21,8 +21,9 @@ const ProductInfoContainer = () => {
     const productInfo: ProductInfoType = data;
 
     useEffect(() => {
+        console.log(productInfo)
         refetch();
-    }, [productColorId, refetch]);
+    }, [productColorId, data,refetch]);
 
     if (!productInfo) return <></>;
 
@@ -32,8 +33,11 @@ const ProductInfoContainer = () => {
         <>
             <ProductImagesSlideList productImages={productInfo.productImages} />
             <ProductInfo product={productInfo} />
-            <ProductOtherColorImageList />
+
+            {productInfo.booleanColor && (<ProductOtherColorImageList />)}
+            
             <ProductDetailImage productColorId={productColorId} />
+
             <ReviewInfoList productColorId={productColorId} />
         </>
     );

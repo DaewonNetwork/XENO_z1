@@ -24,6 +24,7 @@ const ProductCardSlideList = ({ productList, isRank = false }: ProductCardSlideL
         arrows: false,
     };
 
+    console.log(productList)
     if((!productList)) return <></>;
 
     return (

@@ -306,6 +306,7 @@ public class ProductController {
     public ResponseEntity<List<ProductsStarRankListDTO>> getranktop10(
             @PathVariable String category) {
         List<ProductsStarRankListDTO> result = productService.getranktop10(category);
+        log.info(result);
         return ResponseEntity.ok(result);
     }
     @Operation(summary = "top50")

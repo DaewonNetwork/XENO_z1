@@ -29,7 +29,7 @@ const ReviewInfoList = ({ productColorId }: { productColorId: string }) => {
 
     return (
         <div className={style.review_info_list} >
-            <div className={style.review_header}>리뷰{data?.totalIndex}개</div>
+
           {
                 reviewList.map(review => (
                     <React.Fragment key={review.reviewId}>
