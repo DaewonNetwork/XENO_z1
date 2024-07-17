@@ -6,6 +6,8 @@ import { Button } from "@nextui-org/button";
 import IconShared from "@/(FSD)/shareds/ui/IconShared";
 import { Input } from "@nextui-org/input";
 import { useCartUpdate } from "../api/useCartUpdate";
+import { useRecoilValue } from "recoil";
+import { cartProductInfoListRefetchState } from "@/(FSD)/shareds/stores/CartUpdateAtom";
 
 interface CartProductNumberBarProps {
     defaultQuantity: number;
@@ -19,10 +21,9 @@ interface HandleClickType {
 const CartProductNumberBar = ({ defaultQuantity, cartId }: CartProductNumberBarProps) => {
     const [quantity, setQuantity] = useState(defaultQuantity);
 
-    const onSuccess = (data: any) => {
-        console.log(data);
-        
-    };
+    const onSuccess = (data: any) => {};
+
+    const { refetch } = useRecoilValue(cartProductInfoListRefetchState);
 
     const { mutate } = useCartUpdate({ onSuccess });
 
@@ -33,10 +34,9 @@ const CartProductNumberBar = ({ defaultQuantity, cartId }: CartProductNumberBarP
             setQuantity(state => --state);
         }
 
-        console.log(quantity);
-        
-
         mutate({ cartId: cartId, quantity: quantity });
+
+        refetch();
     };
 
     return (

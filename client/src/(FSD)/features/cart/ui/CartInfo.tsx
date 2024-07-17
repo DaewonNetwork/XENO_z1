@@ -11,8 +11,6 @@ interface CartInfoProps {
 }
 
 const CartInfo = ({ product }: CartInfoProps) => {
-    console.log(product);
-
     return (
         <div className={styles.cart_product_info}>
             <div className={styles.left_box}>

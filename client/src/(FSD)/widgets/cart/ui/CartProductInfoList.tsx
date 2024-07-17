@@ -7,14 +7,21 @@ import { useCartProductListRead } from "@/(FSD)/entities/cart/api/useCartProduct
 import { CartProductInfoType } from "@/(FSD)/shareds/types/cart/CartProductInfo.type";
 import styles from "@/(FSD)/shareds/styles/CartStyle.module.scss";
 import CartInfo from "@/(FSD)/features/cart/ui/CartInfo";
+import { useSetRecoilState } from "recoil";
+import { cartProductInfoListRefetchState } from "@/(FSD)/shareds/stores/CartUpdateAtom";
 
 const CartProductInfoList = () => {
-    const { data, isLoading, error } = useCartProductListRead();
+    const { data, isLoading, error, refetch } = useCartProductListRead();
 
     const cartProductList: CartProductInfoType[] = data;
 
+    const setCartProductInfoListRefetch = useSetRecoilState(cartProductInfoListRefetchState);
+
+    setCartProductInfoListRefetch({ refetch });
+
     if (!cartProductList) return <></>;
     if (!cartProductList) return <></>;
+
 
     return (
         <div className={styles.cart_product_info_list}>
