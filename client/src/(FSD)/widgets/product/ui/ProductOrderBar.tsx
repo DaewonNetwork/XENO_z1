@@ -348,7 +348,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
                                             {product.color} / {product.size}
                                         </div>
                                         <div className={styles.product_order_modal_product_list_item_quantity}>
-                                            <Button onClick={() => decreaseCount(index)}>-</Button>
+                                            <Button isIconOnly onClick={() => decreaseCount(index)}>-</Button>
                                             <input
                                                 className={styles.product_order_modal_product_list_item_quantity_input}
                                                 type="number"
@@ -357,11 +357,11 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
 
                                                 onChange={(e) => handleQuantityChange(e, index)}
                                             />
-                                            <Button onClick={() => increaseCount(index)}>+</Button>
+                                            <Button isIconOnly onClick={() => increaseCount(index)}>+</Button>
                                         </div>
                                         <div className={styles.product_order_modal_product_list_item_price}>
                                             {product.price?.toLocaleString()}원
-                                            <Button onClick={() => handleDelete(index)}>삭제</Button> {/* 삭제 버튼 추가 */}
+                                            <Button isIconOnly  onClick={() => handleDelete(index)}>삭제</Button> {/* 삭제 버튼 추가 */}
                                         </div>
                                     </li>
                                 ))}

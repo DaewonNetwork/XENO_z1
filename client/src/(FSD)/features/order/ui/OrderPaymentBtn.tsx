@@ -3,11 +3,14 @@
 import { Button } from "@nextui-org/button";
 import React from "react";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
-import { useRecoilValue } from "recoil";
+
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useProductOrder } from "../../product/api/useProductAddOrder";
 import { reqState } from "@/(FSD)/shareds/stores/ProductAtom";
 import { OrderProductInfoType } from "@/(FSD)/shareds/types/product/OrderProductInfo.type";
 import { useRouter } from "next/navigation";
+import { UserType } from "@/(FSD)/shareds/types/User.type";
+import { useUserRead } from "@/(FSD)/entities/user/api/useUserRead";
 
 export interface ProductOrderType {
     orderPayId: string;
@@ -27,15 +30,17 @@ const OrderPaymentBtn = ({ productList }: OrderPaymentBtnProps) => {
     const router = useRouter();
 
     const onSuccess = (data: any) => {
+        // setOrdersCompleteInfo(data)
         console.log("post 성공");
         localStorage.removeItem('newProducts');
         router.push('/order/complete')
     }
 
+    const { data } = useUserRead();
+
     const { mutate } = useProductOrder({ onSuccess });
 
- 
-   
+    const user: UserType = data;
 
     const generateRandomId = () => {
         const length = Math.floor(Math.random() * (32 - 16 + 1)) + 16;
@@ -43,6 +48,27 @@ const OrderPaymentBtn = ({ productList }: OrderPaymentBtnProps) => {
         window.crypto.getRandomValues(array);
         return Array.from(array, (byte) => ("0" + byte.toString(16)).slice(-2)).join("");
     };
+
+    const generateRandomInt = (min: number, max: number): number => {
+        const byteArray = new Uint32Array(1);
+        window.crypto.getRandomValues(byteArray);
+        const randomNum = byteArray[0] / (0xFFFFFFFF + 1);
+        return Math.floor(randomNum * (max - min + 1)) + min;
+    }
+
+    const generateCustomerKey = (): string => {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=.@';
+        let key = '';
+        while (!/[\-_=.@]/.test(key) || !/[A-Z]/.test(key) || !/[a-z]/.test(key) || !/[0-9]/.test(key)) {
+            key = '';
+            for (let i = 0; i < 50; i++) {
+                key += chars.charAt(generateRandomInt(0, chars.length - 1));
+            }
+        }
+        return key;
+    }
+
+
 
     const orderId = generateRandomId();
 
@@ -61,13 +87,15 @@ const OrderPaymentBtn = ({ productList }: OrderPaymentBtnProps) => {
         amount: product.price,
     }));
 
-  
 
-    const handleClick = async () => {
+
+        const handleClick = async () => {
+
+        const customerKey = generateCustomerKey();
+
         const tossPayments = await loadTossPayments("test_ck_Z1aOwX7K8m4b7av0xO6WryQxzvNP");
-        const payment = tossPayments.payment({ customerKey: "a8s7d8asd" });
 
-        mutate(OrderInfoList);
+        const payment = tossPayments.payment({ customerKey: customerKey });
 
         await payment.requestPayment({
             method: "CARD",
@@ -77,15 +105,16 @@ const OrderPaymentBtn = ({ productList }: OrderPaymentBtnProps) => {
             },
             orderId: orderId,
             orderName: orderName,
-            customerEmail: "user.email",
+            customerEmail: user.email,
             card: {
                 useEscrow: false,
                 flowMode: "DEFAULT",
                 useCardPoint: false,
                 useAppCardOnly: false,
             },
-        }).then((data :any) => {
-          
+        }).then(data => {
+
+            mutate(OrderInfoList);
 
         }).catch((error: any) => {
             console.log("결제오류", error)
