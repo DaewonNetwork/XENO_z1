@@ -8,6 +8,8 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure
 import { Button } from "@nextui-org/button";
 import { Select, SelectItem, SelectSection } from "@nextui-org/select";
 import { useProductColorBySellerRead } from "@/(FSD)/entities/product/api/useProductColorBySellerRead";
+import IconShared from "@/(FSD)/shareds/ui/IconShared";
+import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 
 
 interface ProductColorListType {
@@ -35,7 +37,7 @@ const ProductColorListBtn = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     useEffect(() => {
-console.log(data)
+        console.log(data)
     }, [data]);
 
     const productInfoList: ProductColorListType[] = data || [];
@@ -81,7 +83,7 @@ console.log(data)
                             .filter(item => item.productNumber === product.productNumber)
                             .map(item => (
                                 <SelectItem key={item.productColorId} onClick={() => handleUpdate(item)}>
-                                  {item.productName} ({item.color})
+                                    {item.productName} ({item.color})
                                 </SelectItem>
                             ))}
                     </SelectSection>
@@ -103,7 +105,7 @@ console.log(data)
                             .filter(item => item.productNumber === product.productNumber)
                             .map(item => (
                                 <SelectItem key={item.productColorId} onClick={() => handleRead(item)}>
-                                  {item.productName} ({item.color})
+                                    {item.productName} ({item.color})
                                 </SelectItem>
                             ))}
                     </SelectSection>
@@ -122,18 +124,19 @@ console.log(data)
 
 
     return (
-        <>
+        <div style={{marginBottom:"10px"}}>
+            <Button onClick={onOpen} size={"sm"} className="w-full h-[100px] bg-white border-2" radius="none"  
+            endContent={<IconShared iconType={isOpen ? "top" : "bottom"} />}><TextMediumShared>추가된 색상 목록 보기</TextMediumShared></Button>
 
-            <Button onPress={onOpen}>추가된 색상 목록 보기</Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">상품 목록</ModalHeader>
                             <ModalBody>
-                                {readProductColorList({ productInfoList,  handleRead})}
+                                {readProductColorList({ productInfoList, handleRead })}
                                 {updateProductColorList({ productInfoList, handleUpdate })}
-                            
+
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>
@@ -145,7 +148,7 @@ console.log(data)
                 </ModalContent>
             </Modal>
 
-        </>
+        </div>
     );
 };
 

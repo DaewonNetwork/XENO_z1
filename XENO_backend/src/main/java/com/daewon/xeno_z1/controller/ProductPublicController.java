@@ -150,10 +150,10 @@ public class ProductPublicController {
 
     @Operation(summary = "상품 카드")
     @GetMapping("/color/read/info")
-    public ResponseEntity<ProductsInfoCardDTO> readProductCardInfo(@RequestParam Long productColorId) {
+    public ResponseEntity<ProductColorInfoCardDTO> readProductCardInfo(@RequestParam Long productColorId) {
 
         try {
-            ProductsInfoCardDTO product = productService.getProductCardInfo(productColorId);
+            ProductColorInfoCardDTO product = productService.getProductCardInfo(productColorId);
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(product);
         } catch (Exception e) {

@@ -505,14 +505,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductsInfoCardDTO getProductCardInfo(Long productColorId) {
+    public ProductColorInfoCardDTO getProductCardInfo(Long productColorId) {
         ProductsColor productsColor = productsColorRepository.findById(productColorId).orElse(null);
         ProductsLike productsLike = productsLikeRepository.findByProductColorId(productColorId).orElse(null);
         ProductsStar productsStar = productsStarRepository.findByProductColorId(productColorId).orElse(null);
-        ProductsInfoCardDTO dto = ProductsInfoCardDTO.builder()
+        ProductColorInfoCardDTO dto = ProductColorInfoCardDTO.builder()
                 .productColorId(productColorId)
                 .name(productsColor.getProducts().getName())
-
+                .color(productsColor.getColor())
                 .brandName(productsColor.getProducts().getBrandName())
                 .category(productsColor.getProducts().getCategory())
                 .categorySub(productsColor.getProducts().getCategorySub())

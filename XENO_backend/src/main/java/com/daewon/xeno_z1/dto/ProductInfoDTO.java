@@ -51,10 +51,4 @@ public class ProductInfoDTO {
 
     private List<byte[]> productImages;
 
-
-
-
-
-
-
 }

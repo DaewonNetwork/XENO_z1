@@ -16,7 +16,7 @@ public interface ProductService {
     ProductInfoDTO getProductColorInfo(Long productColorId) throws IOException;
     ProductCreateGetInfoDTO getProductInfo(Long productId) throws IOException;
 
-    ProductsInfoCardDTO getProductCardInfo(Long productColorId);
+    ProductColorInfoCardDTO getProductCardInfo(Long productColorId);
 
     ProductDetailImagesDTO getProductDetailImages(Long productColorId, int page, int size);
 

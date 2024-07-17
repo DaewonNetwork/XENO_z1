@@ -4,6 +4,7 @@ package com.daewon.xeno_z1.controller;
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.auth.AuthSigninDTO;
 import com.daewon.xeno_z1.dto.auth.AuthSignupDTO;
+import com.daewon.xeno_z1.dto.auth.SellerInfoCardDTO;
 import com.daewon.xeno_z1.security.UsersDetailsService;
 import com.daewon.xeno_z1.service.AuthService;
 import com.daewon.xeno_z1.utils.JWTUtil;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -139,5 +141,16 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
     }
+
+
+    @GetMapping("/seller/read")
+    public ResponseEntity<?> readSellerInfo(@AuthenticationPrincipal UserDetails userDetails) {
+
+        SellerInfoCardDTO dto = authService.readSellerInfo(userDetails);
+        return ResponseEntity.ok(dto);
+
+
+    }
+
 }
 

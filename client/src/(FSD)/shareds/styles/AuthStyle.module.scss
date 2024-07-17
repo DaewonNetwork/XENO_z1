@@ -6,3 +6,19 @@
         margin-bottom: 20px;
     }
 }
+
+.user_info_card{
+    display: flex;
+    justify-content: space-between; 
+    padding: 10px;
+    .user_info {
+        display: flex;
+        flex-direction: column;
+        gap:30px;
+    }
+    .user_modify{
+        display: flex;
+        flex-direction: column;
+        gap:10px;
+    }
+}

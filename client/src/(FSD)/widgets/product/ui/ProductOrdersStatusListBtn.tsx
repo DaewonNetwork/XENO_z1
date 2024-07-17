@@ -6,6 +6,8 @@ import { Button } from "@nextui-org/button";
 import { useOrderListSellerRead } from "@/(FSD)/entities/order/api/useOrderListSellerRead";
 import { Select, SelectItem } from "@nextui-org/select";
 import { useOrderStatusUpdate } from "@/(FSD)/features/order/api/useOrderStatusUpdate";
+import IconShared from "@/(FSD)/shareds/ui/IconShared";
+import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 
 interface ProductOrdersStatusListBtnType {
     orderID: number;
@@ -112,7 +114,7 @@ const ProductOrdersStatusListBtn = () => {
             );
         }
     };
-    
+
 
     const handleClick = (order: ProductOrdersStatusListBtnType) => {
         setSelectedOrder(order);
@@ -127,8 +129,12 @@ const ProductOrdersStatusListBtn = () => {
     };
 
     return (
-        <>
-            <Button onClick={onOpenOrderModal}>주문 내역 보기</Button>
+        <div style={{marginBottom:"10px"}}>
+
+            <Button onClick={onOpenOrderModal} size={"sm"} 
+             className="w-full h-[100px] bg-white border-2" radius="none" 
+             endContent={<IconShared iconType={isOrderModalOpen ? "top" : "bottom"} />}><TextMediumShared>주문 내역 보기</TextMediumShared></Button>
+
 
             {/* 주문 내역 모달 */}
             <Modal isOpen={isOrderModalOpen} onOpenChange={onOpenChangeOrderModal}>
@@ -193,7 +199,7 @@ const ProductOrdersStatusListBtn = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </>
+        </div>
     );
 };
 

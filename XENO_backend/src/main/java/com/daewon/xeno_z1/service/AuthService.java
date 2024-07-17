@@ -2,6 +2,8 @@ package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.auth.AuthSignupDTO;
+import com.daewon.xeno_z1.dto.auth.SellerInfoCardDTO;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public interface AuthService {
 
@@ -19,4 +21,6 @@ public interface AuthService {
     Users signupSeller(AuthSignupDTO authSignupDTO) throws UserEmailExistException;
 
     Users signin(final String email, final String password);
+
+    SellerInfoCardDTO readSellerInfo(UserDetails userDetails);
 }

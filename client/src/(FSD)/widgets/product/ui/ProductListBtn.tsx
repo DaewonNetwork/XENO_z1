@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
 import { Select, SelectItem } from "@nextui-org/select";
+import IconShared from "@/(FSD)/shareds/ui/IconShared";
+import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 interface ProductColorCreateBtnType {
     productId: number;
     productNumber: string;
@@ -20,7 +22,7 @@ const ProductListBtn = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     useEffect(() => {
-   
+
     }, [data]);
 
     const productInfoList: ProductColorCreateBtnType[] = data || [];
@@ -39,16 +41,15 @@ const ProductListBtn = () => {
 
 
     return (
-        <>
-
-            <Button onPress={onOpen}>기존 상품 목록 보기</Button>
+        <div style={{marginBottom:"10px"}}>
+            <Button onClick={onOpen} size={"sm"}   className="w-full h-[100px] bg-white border-2" radius="none" 
+             endContent={<IconShared iconType={isOpen ? "top" : "bottom"} />}><TextMediumShared>기존 상품 목록 보기</TextMediumShared></Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">상품 목록</ModalHeader>
                             <ModalBody>
-
                                 {productInfoList.length > 0 ? (
                                     <Select label="기존 상품에서 색상 추가하기" >
                                         {productInfoList.map(product => (
@@ -70,7 +71,7 @@ const ProductListBtn = () => {
                                         ))}
                                     </Select>
                                 ) : (
-                                   ""
+                                    ""
                                 )}
 
                             </ModalBody>
@@ -84,7 +85,7 @@ const ProductListBtn = () => {
                 </ModalContent>
             </Modal>
 
-        </>
+        </div>
     );
 };
 

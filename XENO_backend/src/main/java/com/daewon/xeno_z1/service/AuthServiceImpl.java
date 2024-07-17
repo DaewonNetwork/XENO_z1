@@ -3,10 +3,12 @@ package com.daewon.xeno_z1.service;
 import com.daewon.xeno_z1.domain.UserRole;
 import com.daewon.xeno_z1.domain.Users;
 import com.daewon.xeno_z1.dto.auth.AuthSignupDTO;
+import com.daewon.xeno_z1.dto.auth.SellerInfoCardDTO;
 import com.daewon.xeno_z1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -91,5 +93,15 @@ public class AuthServiceImpl implements AuthService {
             log.info("클라이언트가 입력한 이메일" + email + "을 DB에서 찾지 못했습니다");
             return null;
         }
+    }
+
+    @Override
+    public SellerInfoCardDTO readSellerInfo(UserDetails userDetails) {
+        Users users = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+        SellerInfoCardDTO dto = new SellerInfoCardDTO();
+                dto.setBrandName(users.getBrandName());
+                dto.setName(users.getName());
+
+        return dto;
     }
 }
