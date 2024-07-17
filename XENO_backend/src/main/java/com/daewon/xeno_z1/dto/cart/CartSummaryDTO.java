@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CartSummaryDTO {   // 장바구니의 요약 정보를 담는 DTO
 
-    private int totalItems;
+    private int totalProductIndex;
     private Long totalPrice;
 }
