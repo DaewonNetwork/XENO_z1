@@ -1,5 +1,5 @@
-export type ProductOrderInfoType = {
-    productColorSizeId: number;
+export type OrderProductInfoType = {
+    productColorSizeId?: number;
     productColorId?: number;
     color: string;
     size: string;
@@ -8,4 +8,3 @@ export type ProductOrderInfoType = {
     name?: string;
     image?: Uint8Array | null
 };
-

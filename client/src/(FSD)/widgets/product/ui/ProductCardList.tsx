@@ -31,7 +31,7 @@ const ProductCardList = ({ productList, column = 3, isRank = false, lastCard, pa
             {
                 productList.map((product, index) => (
                     <React.Fragment key={product.productColorId}>
-                        <ProductCard product={product} isRank={isRank} rank={index + 1} likeBtn={<ProductLikeBtn productColorId={product.productColorId} isLike={product.like} parentRefetch={parentRefetch}/>} />
+                        <ProductCard product={product} isRank={isRank} rank={index + 1} isColor={isColor} likeBtn={<ProductLikeBtn productColorId={product.productColorId} isLike={product.like} parentRefetch={parentRefetch}/>} />
                     </React.Fragment>
                 ))
             }

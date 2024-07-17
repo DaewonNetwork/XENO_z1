@@ -1,4 +1,3 @@
-
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { OrderInfoType } from "@/(FSD)/shareds/types/orders/OrderInfo.Type";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -17,7 +16,7 @@ export const useOrderListRead = () => {
         refetch
     } = useInfiniteQuery({
         queryKey: ["order_list_read"],
-        queryFn: ({ pageParam }) => fetchData({ path: `/orders/list?pageIndex=${pageParam}&size=5` }),
+        queryFn: ({ pageParam }) => fetchData({ isAuthRequired: true, path: `/orders/list?pageIndex=${pageParam}&size=5`, }),
         getNextPageParam: (lastPage) => {
           
             

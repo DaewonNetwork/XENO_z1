@@ -1,6 +1,6 @@
-
 export interface OrderInfoType {
     orderId: number;
+    productColorId: number;
     orderDate: string;
     brandName: string;
     productName: string;
@@ -10,5 +10,4 @@ export interface OrderInfoType {
     amount: number;
     quantity: number;
     productImage: Uint8Array | null; // byte[]에 해당하는 ArrayBuffer로 처리
-
 }

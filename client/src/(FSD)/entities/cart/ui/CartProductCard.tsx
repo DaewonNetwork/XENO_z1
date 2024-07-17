@@ -1,9 +1,9 @@
-/* import React, { useState } from 'react'
-import { useCartProductListRead } from '../api/useCartProductListRead'
-import { ProductType } from '@/(FSD)/shareds/types/product/Product.type';
-import { useCarttItemUpdate } from '../api/useCarttItemUpdate';
-import { useCartDelete } from '../api/useCartDelete';
-import { CartItemsProps } from './CartProductList';
+/* import React, { useState } from "react"
+import { useCartProductListRead } from "../api/useCartProductListRead"
+import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
+import { useCartUpdate } from "../api/useCartUpdate";
+import { useCartDelete } from "../api/useCartDelete";
+import { CartItemsProps } from "./CartProductList";
 
 interface CartProductCardProps {
     product: CartItemsProps;
@@ -13,7 +13,7 @@ const CartProductCard = ({ product}: CartProductCardProps) => {
     const [products, setProducts] = useState(product);
     const [quantity, setQuantity] = useState(product.quantity);
     const [isSelected, setIsSelected] = useState(true);
-    const updateCartItem = useCarttItemUpdate();
+    const updateCartItem = useCartUpdate();
     const removeFromCart = useCartDelete();
     
     console.log();
@@ -73,7 +73,7 @@ const CartProductCard = ({ product}: CartProductCardProps) => {
             />
             {product.productImage && (
                 <img
-                    src={URL.createObjectURL(new Blob([product.productImage], { type: 'image/jpeg' }))}
+                    src={URL.createObjectURL(new Blob([product.productImage], { type: "image/jpeg" }))}
                     alt={product.productName}
                     className="w-20 h-20 object-cover mr-4"
                 />

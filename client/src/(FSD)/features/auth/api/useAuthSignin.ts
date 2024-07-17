@@ -9,7 +9,7 @@ export const useAuthSignin = ({ onSuccess, onError }: MutationType) => {
     
     return useMutation({
         mutationFn: (userData: UserType) => {
-            return fetchData({ path: "/auth/signin", method: "POST", body: userData, isNotAuthRequired: true })
+            return fetchData({ path: "/auth/signin", method: "POST", body: userData, isNotAuthRequired: true });
         },
         onSuccess: (data: any) => {
             onSuccess(data);

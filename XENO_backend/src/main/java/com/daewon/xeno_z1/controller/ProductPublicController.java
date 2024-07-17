@@ -112,11 +112,11 @@ public class ProductPublicController {
 
     @Operation(summary = "카테고리")
     @GetMapping("/read/category")
-    public ResponseEntity<List<ProductsInfoCardDTO>> readProductsListByCategory(@RequestParam String categoryId,
+    public ResponseEntity<List<ProductColorInfoCardDTO>> readProductsListByCategory(@RequestParam String categoryId,
                                                                                 @RequestParam(required = false, defaultValue = "") String categorySubId) {
 
         try {
-            List<ProductsInfoCardDTO> products = productService.getProductsInfoByCategory(categoryId, categorySubId);
+            List<ProductColorInfoCardDTO> products = productService.getProductsInfoByCategory(categoryId, categorySubId);
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(products);
         } catch (Exception e) {
@@ -140,10 +140,10 @@ public class ProductPublicController {
 
     @Operation(summary = "좋아요한 상품")
     @GetMapping("/read/like")
-    public ResponseEntity<List<ProductsInfoCardDTO>> readLikedProductList() {
+    public ResponseEntity<List<ProductColorInfoCardDTO>> readLikedProductList() {
 
         try {
-            List<ProductsInfoCardDTO> products = productService.getLikedProductsInfo();
+            List<ProductColorInfoCardDTO> products = productService.getLikedProductsInfo();
             // 페이징된 이미지 데이터와 HTTP 200 OK 응답 반환
             return ResponseEntity.ok(products);
         } catch (Exception e) {

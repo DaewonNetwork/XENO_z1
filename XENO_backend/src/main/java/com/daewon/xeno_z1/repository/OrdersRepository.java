@@ -35,5 +35,9 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     @Query("select o.user.userId from Orders o where o.orderId = :orderId")
     Optional<Long> findAuthorUserIdByOrderId(Long orderId);
 
+    Optional<Orders> findTopByUserOrderByCreateAtDesc(Users user);
+
+    Optional<Orders> findTopByUserEmailOrderByCreateAtDesc(String email);
+
 
 }

@@ -68,25 +68,38 @@ public class OrdersServiceImpl implements OrdersService {
         return orders.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public String getLatestReqForUser(String email) {
+        return ordersRepository.findTopByUserEmailOrderByCreateAtDesc(email)
+                .map(Orders::getReq)
+                .orElse(null);
+    }
+
     @Transactional
     @Override
     public List<OrdersDTO> createOrders(List<OrdersDTO> ordersDTO, String email) {
-        log.info("ordersDTO : " + ordersDTO);
+
 
         Users users = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
-        Orders orders = new Orders();
         String orderPayId = ordersDTO.get(0).getOrderPayId();
-        log.info("orderPayId : " + orderPayId);
 
         Long orderNumber = generateOrderNumber();
 
         List<Orders> savedOrders = new ArrayList<>();
 
-        for(OrdersDTO dto : ordersDTO) {
+        // 사용자의 가장 최근 주문에서 req 값을 가져옵니다.
+        String latestReq = ordersRepository.findTopByUserOrderByCreateAtDesc(users)
+                .map(Orders::getReq)
+                .orElse(null);
 
-            orders = Orders.builder()
+        log.info("latestReq: " + latestReq);
+        for(OrdersDTO dto : ordersDTO) {
+            // dto의 req가 null이거나 비어있으면 최근 req 값을 사용합니다.
+            String reqToUse = (dto.getReq() == null || dto.getReq().trim().isEmpty()) ? latestReq : dto.getReq();
+
+            Orders orders  = Orders.builder()
                 .orderPayId(orderPayId)
                 .orderNumber(orderNumber)
                 .productsColorSize(findProductColorSize(dto.getProductColorSizeId()))
@@ -96,8 +109,6 @@ public class OrdersServiceImpl implements OrdersService {
                 .quantity(dto.getQuantity())
                 .amount(dto.getAmount())
                 .build();
-            log.info("order: " + orders);
-
             savedOrders.add(ordersRepository.save(orders));
         }
 
@@ -242,7 +253,6 @@ public class OrdersServiceImpl implements OrdersService {
             dto.setBrandName(order.getProductsColorSize().getProductsColor().getProducts().getBrandName());
             dto.setProductName(order.getProductsColorSize().getProductsColor().getProducts().getName());
             dto.setProductColorId(order.getProductsColorSize().getProductsColor().getProductColorId());
-
             ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(order.getProductsColorSize().getProductsColor().getProductColorId());
             if (productsImage != null) {
                 try {

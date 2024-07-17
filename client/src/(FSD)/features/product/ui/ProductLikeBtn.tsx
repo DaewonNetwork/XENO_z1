@@ -37,7 +37,7 @@ const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = 
         if(isLoggedIn){
         mutate(productColorId)
         } else {
-            router.push('/auth/signin')
+            router.push("/auth/signin")
         }
     }
 

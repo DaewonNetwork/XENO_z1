@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useProductBySellerRead } from "@/(FSD)/entities/product/api/useProductBySellerRead";
 import { useEffect, useState } from "react";
@@ -28,12 +28,12 @@ const ProductListBtn = () => {
     if (isPending) return <p>Loading...</p>;
     if (isError) return <p>Error: {error.message}</p>;
 
-    const handleCreate = (id: number) => {
-        router.push(`/seller/product/create/${id}`);
+    const handleCreate = (productId: number) => {
+        router.push(`/seller/product/create/${productId}`);
     };
 
-    const handleUpdate = (id: number) => {
-        router.push(`/seller/product/update/${id}`);
+    const handleUpdate = (productId: number) => {
+        router.push(`/seller/product/update/${productId}`);
     };
 
 

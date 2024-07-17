@@ -1,11 +1,11 @@
 "use client"
 
-import React from 'react'
-import { useCartProductListRead } from '@/(FSD)/entities/cart/api/useCartProductListRead'
-import { useCartSummary } from '@/(FSD)/entities/cart/api/useCartSummary'
-import { useRecoilValue } from 'recoil'
+import React from "react"
+import { useCartProductListRead } from "@/(FSD)/entities/cart/api/useCartProductListRead"
+import { useCartSummary } from "@/(FSD)/entities/cart/api/useCartSummary"
+import { useRecoilValue } from "recoil"
 
-import { UserType } from '@/(FSD)/shareds/types/User.type'
+import { UserType } from "@/(FSD)/shareds/types/User.type"
 
 export interface CartItemsProps {
     cartId: number;

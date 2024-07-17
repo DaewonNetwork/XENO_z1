@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import React from "react";
 import ProductCardList from "./ProductCardList";
@@ -15,7 +15,7 @@ const productList: ProductType[] = data;
 if(!productList ) return <></>
 
     return (
-        <ProductCardList productList={productList} parentRefetch={refetch} />
+        <ProductCardList productList={productList} parentRefetch={refetch} isColor={true} />
     );
 };
 

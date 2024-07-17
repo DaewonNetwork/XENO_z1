@@ -35,7 +35,7 @@ const ProductColorListBtn = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     useEffect(() => {
-
+console.log(data)
     }, [data]);
 
     const productInfoList: ProductColorListType[] = data || [];

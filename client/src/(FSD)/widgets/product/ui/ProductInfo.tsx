@@ -13,10 +13,10 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
 
     const discountPercent = calculateDiscountPercent(product.price, product.priceSale);
 
-    const categoryId = getCategoryID(product.category)
-    const categorySubId = getCategorySubId(product.categorySub)
+    const categoryId = getCategoryID(product.category);
+    const categorySubId = getCategorySubId(product.categorySub);
 
-    
+
     const router = useRouter();
 
     const setCategoryId = useSetRecoilState(categoryIdState);
@@ -37,22 +37,22 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
     return (
         <>
             <div className={styles.product_category}>
-            <span onClick={handleCategoryClick} style={{cursor:'pointer'}} >
-                {product.category}
-            </span>
-            &nbsp;&gt;&nbsp;
-            <span onClick={handleSubCategoryClick} style={{cursor:'pointer'}}>
-                {product.categorySub}
-            </span>
-            &nbsp;({product.brandName})
-        </div>
+                <span onClick={handleCategoryClick} style={{ cursor: "pointer" }} >
+                    {product.category}
+                </span>
+                &nbsp;&gt;&nbsp;
+                <span onClick={handleSubCategoryClick} style={{ cursor: "pointer" }}>
+                    {product.categorySub}
+                </span>
+                &nbsp;({product.brandName})
+            </div>
             <div className={styles.product_name_block}>
                 <h2 className={styles.product_name}>
                     {product.booleanColor ? `${product.name} (${product.color})` : `${product.name}`}
                 </h2>
             </div>
             <div className={styles.product_rating}>
-                <div className={styles.product_star_img}></div>
+                <div className={styles.product_star}></div>
                 <p className={styles.product_star_avg}>{product.starAvg}</p>
                 <p className={styles.product_review_count}>후기 {product.reviewIndex}개</p>
             </div>

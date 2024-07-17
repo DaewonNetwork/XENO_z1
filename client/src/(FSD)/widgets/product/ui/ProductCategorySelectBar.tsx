@@ -13,7 +13,7 @@ const ProductCategorySelectBar = () => {
 
     const updateCategoryId = (id: string) => {
         setCategoryId(id);
-        setCategorySubId('');
+        setCategorySubId("");
     };
 
     const updateCategorySubId = (id: string) => {
@@ -26,7 +26,7 @@ const ProductCategorySelectBar = () => {
                 {categories.map(category => (
                     <Chip
                         key={category.id}
-                        className={categoryId === category.id ? styles.selected : ''}
+                        className={categoryId === category.id ? styles.selected : ""}
                         onClick={() => updateCategoryId(category.id)}
                     >
                         {category.label}
@@ -37,7 +37,7 @@ const ProductCategorySelectBar = () => {
                 {categories.find(category => category.id === categoryId)?.subCategories?.map(subCategory => (
                     <Chip
                         key={subCategory.id}
-                        className={categorySubId === subCategory.id ? styles.selected : ''}
+                        className={categorySubId === subCategory.id ? styles.selected : ""}
                         onClick={() => updateCategorySubId(subCategory.id)}
                     >
                         {subCategory.label}

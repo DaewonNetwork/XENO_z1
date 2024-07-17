@@ -7,8 +7,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import style from "@/(FSD)/shareds/styles/ReviewStyle.module.scss";
 
 const ReviewInfoList = ({ productColorId }: { productColorId: string }) => {
-
-    const [pageIndex,setPageIndex] = useState(1);
+    const [pageIndex, setPageIndex] = useState(1);
 
     const { data , refetch} = useReviewInfoListRead(Number(productColorId),pageIndex);
 
@@ -17,9 +16,7 @@ const ReviewInfoList = ({ productColorId }: { productColorId: string }) => {
     }, [data]);
 
 
-    useEffect(() => {
-    
-    }, [data]);
+    useEffect(() => {}, [data]);
 
     useEffect(() => {
         refetch();
@@ -32,7 +29,7 @@ const ReviewInfoList = ({ productColorId }: { productColorId: string }) => {
 
     return (
         <div className={style.review_info_list} >
-            <div className={style.review_info_header}>리뷰{data?.totalIndex}개</div>
+            <div className={style.review_header}>리뷰{data?.totalIndex}개</div>
           {
                 reviewList.map(review => (
                     <React.Fragment key={review.reviewId}>
