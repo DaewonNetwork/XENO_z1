@@ -72,7 +72,7 @@ public class ReviewServiceImpl implements ReviewService {
         dto.setProductColorId(review.getOrder().getProductsColorSize().getProductsColor().getProductColorId());
         dto.setUserName(review.getUsers().getName());
 //        dto.setProductName(review.getOrder().getProductsColorSize().getProductsColor().getProducts().getName());
-//        dto.setColor(review.getOrder().getProductsColorSize().getProductsColor().getColor());
+        dto.setColor(review.getOrder().getProductsColorSize().getProductsColor().getColor());
 //        dto.setSize(review.getOrder().getProductsColorSize().getSize().name());
         dto.setText(review.getText());
         dto.setStar(review.getStar());

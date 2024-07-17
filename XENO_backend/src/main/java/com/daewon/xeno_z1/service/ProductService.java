@@ -24,9 +24,9 @@ public interface ProductService {
 
     ProductOrderBarDTO getProductOrderBar(Long productColorId);
 
-    List<ProductsInfoCardDTO> getProductsInfoByCategory(String categoryId, String categorySubId);
+    List<ProductColorInfoCardDTO> getProductsInfoByCategory(String categoryId, String categorySubId);
 
-    List<ProductsInfoCardDTO> getLikedProductsInfo();
+    List<ProductColorInfoCardDTO> getLikedProductsInfo();
 
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 

@@ -6,9 +6,7 @@ import ProductCard from "@/(FSD)/entities/product/ui/ProductCard";
 import { useReviewInfoRead } from "@/(FSD)/entities/review/api/useReviewInfoRead";
 import ReviewInfo from "@/(FSD)/entities/review/ui/ReviewInfo";
 import ProductLikeBtn from "@/(FSD)/features/product/ui/ProductLikeBtn";
-import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import { ReviewInfoType } from "@/(FSD)/shareds/types/review/ReviewInfo.type";
-
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";
 
@@ -32,7 +30,7 @@ const ReviewInfoContainer = () => {
 
     return (
         <div >
-            <ProductCard product={product}  likeBtn={<ProductLikeBtn productColorId={product.productColorId} isLike={product.like} parentRefetch={refetch} />} />
+            <ProductCard product={product} isColor={true} likeBtn={<ProductLikeBtn productColorId={product.productColorId} isLike={product.like} parentRefetch={refetch}  />} />
             <ReviewInfo review={reviewInfo} />
         </div>
     );

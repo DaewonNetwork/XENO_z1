@@ -20,6 +20,7 @@ public class ReviewInfoDTO {
     private int replyIndex;
     private byte[] reviewImage;
     private String createAt;
+    private String color;
 
 
 }
