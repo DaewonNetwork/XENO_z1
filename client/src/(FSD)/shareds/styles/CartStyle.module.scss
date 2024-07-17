@@ -82,3 +82,12 @@
         width: 50px;
     }
 }
+
+.cart_summary_bar {
+    display: block;
+    margin: 10px 0;
+
+    div[data-slot="container"] {
+        padding: 10px 0;
+    }
+}

@@ -114,10 +114,10 @@ public class CartServiceImpl implements CartService {
         Long totalPrice = carts.stream()
                 .mapToLong(cart -> cart.getPrice())
                 .sum();
-        int totalItems = carts.stream()
+        int totalProductIndex = carts.stream()
                 .mapToInt(cart -> cart.getQuantity().intValue())
                 .sum();
-        return new CartSummaryDTO(totalItems, totalPrice);
+        return new CartSummaryDTO(totalProductIndex, totalPrice);
     }
 
     @Override

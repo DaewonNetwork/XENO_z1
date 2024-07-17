@@ -10,8 +10,6 @@ interface CartProductItemProps {
 }
 
 const CartProductItem = ({ numberBar, cart }: CartProductItemProps) => {
-    console.log(cart);
-
     return (
         <div className={styles.info_product}>
             <div className={styles.product_image}>

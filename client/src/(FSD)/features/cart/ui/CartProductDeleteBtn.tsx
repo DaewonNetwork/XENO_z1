@@ -6,18 +6,19 @@ import React from "react";
 import { useCartListDelete } from "../api/useCartDelete";
 import { cartProductInfoListRefetchState } from "@/(FSD)/shareds/stores/CartUpdateAtom";
 import { useRecoilValue } from "recoil";
+import { cartSummaryRefetchState } from "@/(FSD)/shareds/stores/CartSummaryAtome";
 
 interface CartProductDeleteBtnProps {
     cartId: number;
 }
 
 const CartProductDeleteBtn = ({ cartId }: CartProductDeleteBtnProps) => {
-    const { refetch } = useRecoilValue(cartProductInfoListRefetchState);
+    const { refetch: cartProductInfoListRefetch } = useRecoilValue(cartProductInfoListRefetchState);
+    const { refetch: cartSummaryRefetch } = useRecoilValue(cartSummaryRefetchState);
 
     const onSuccess = (data: any) => {
-        console.log(data);
-        
-        refetch();
+        cartProductInfoListRefetch();
+        cartSummaryRefetch();
     };
 
     const { mutate } = useCartListDelete({ onSuccess });

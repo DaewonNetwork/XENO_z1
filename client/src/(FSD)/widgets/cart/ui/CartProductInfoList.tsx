@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import AppContainer from "../../app/ui/AppContainer";
 import AppInner from "../../app/ui/AppInner";
 import { useCartProductListRead } from "@/(FSD)/entities/cart/api/useCartProductListRead";
@@ -22,13 +22,12 @@ const CartProductInfoList = () => {
     if (!cartProductList) return <></>;
     if (!cartProductList[0]) return <></>;
 
-
     return (
         <div className={styles.cart_product_info_list}>
             <AppContainer>
                 <AppInner>
                     {
-                        cartProductList.map(cart => (
+                        cartProductList.map((cart) => (
                             <React.Fragment key={cart.productsColorSizeId}>
                                 <CartInfo cart={cart} />
                             </React.Fragment>
