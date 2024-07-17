@@ -1,7 +1,7 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Products;
-import com.daewon.xeno_z1.domain.ProductsColor;
+
 import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.service.ProductService;
 
@@ -9,10 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.List;
 
 @RestController
@@ -137,7 +132,7 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resultMessage); // 404 상태 코드
             }
 
-            return ResponseEntity.ok(resultMessage); // 성공 시 200 상태 코드
+            return ResponseEntity.ok(resultMessage);
         } catch (Exception e) {
             log.error("상품 등록 중 오류 발생: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 등록 중 오류가 발생했습니다."); // 500 상태 코드
