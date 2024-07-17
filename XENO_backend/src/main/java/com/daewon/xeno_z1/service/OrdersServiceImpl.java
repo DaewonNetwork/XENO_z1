@@ -71,22 +71,19 @@ public class OrdersServiceImpl implements OrdersService {
     @Transactional
     @Override
     public List<OrdersDTO> createOrders(List<OrdersDTO> ordersDTO, String email) {
-        log.info("ordersDTO : " + ordersDTO);
+
 
         Users users = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없음"));
 
-        Orders orders = new Orders();
         String orderPayId = ordersDTO.get(0).getOrderPayId();
-        log.info("orderPayId : " + orderPayId);
 
         Long orderNumber = generateOrderNumber();
 
         List<Orders> savedOrders = new ArrayList<>();
 
         for(OrdersDTO dto : ordersDTO) {
-
-            orders = Orders.builder()
+            Orders orders  = Orders.builder()
                 .orderPayId(orderPayId)
                 .orderNumber(orderNumber)
                 .productsColorSize(findProductColorSize(dto.getProductColorSizeId()))
@@ -96,8 +93,6 @@ public class OrdersServiceImpl implements OrdersService {
                 .quantity(dto.getQuantity())
                 .amount(dto.getAmount())
                 .build();
-            log.info("order: " + orders);
-
             savedOrders.add(ordersRepository.save(orders));
         }
 

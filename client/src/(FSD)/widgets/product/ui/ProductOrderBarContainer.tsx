@@ -30,7 +30,10 @@ const ProductOrderBarContainer = () => {
     const orderBar: ProductOrderBarType = data || { orderInfo: [] };
 
     
+
+
     useEffect(() => {
+        console.log(orderBar);
         refetch();
     }, [productColorId, orderBar, refetch]);
 
