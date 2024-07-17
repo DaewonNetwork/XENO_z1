@@ -117,7 +117,7 @@ const ProductColorListBtn = () => {
     };
 
     const handleRead = (product: ProductColorListType) => {
-        router.push(`/proudcts/${product.productColorId}`);
+        router.push(`/products/${product.productColorId}`);
     };
 
 
