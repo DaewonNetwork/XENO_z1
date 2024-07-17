@@ -5,7 +5,7 @@ import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 
 import { useParams } from "next/navigation";
 import Slider from "react-slick";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { imageState } from "@/(FSD)/shareds/stores/ProductAtom";
 import { useProductColorFirstImegeListRead } from "@/(FSD)/entities/product/api/useProductColorFirstImegeListRead";
 
@@ -21,6 +21,9 @@ const ProductOtherColorImageList = () => {
     const productImages: ProductImages[] = data || [];
 
     const setImages = useSetRecoilState(imageState);
+
+
+
 
     useEffect(() => {
         if (productImages) {

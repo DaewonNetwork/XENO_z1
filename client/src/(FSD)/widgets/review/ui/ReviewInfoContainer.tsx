@@ -23,8 +23,7 @@ const ReviewInfoContainer = () => {
     const { data:product,refetch } = useProductColorCardRead(reviewInfo?.productColorId);
 
     useEffect(() => {
-        console.log(product);
-        
+       
     }, [product]);
 
     if(!reviewInfo) return <></>

@@ -1,18 +1,14 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Products;
-import com.daewon.xeno_z1.domain.ProductsColor;
+
 import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.service.ProductService;
 
-import com.daewon.xeno_z1.utils.ProductSecurityUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+
 import java.util.List;
 
 @RestController
@@ -33,9 +30,9 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductSecurityUtils productSecurityUtils;
 
-    @PreAuthorize("hasRole('SELLER')")
+    // @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("@productSecurityUtils.isProductOwner(#productUpdateDTO.productId)")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(
             @RequestPart("productCreateDTO") String productRegisterDTOStr,
@@ -67,8 +64,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-    @PreAuthorize("@productSecurityUtils.isProductOwner(#productUpdateDTO.productId)")
+ @PreAuthorize("@productSecurityUtils.isProductOwner(#productUpdateDTO.productId)")
     @PutMapping("/update")
     @Operation(summary = "상품 수정")
     public ResponseEntity<?> updateProduct(
@@ -82,14 +78,25 @@ public class ProductController {
             return ResponseEntity.status(500).body("상품 업데이트 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
-
-    @PreAuthorize("@productSecurityUtils.isProductOwner(#productId)")
+    @PreAuthorize("@productSecurityUtils.isProductOwner(#productUpdateDTO.productId)")
     @DeleteMapping("/delete")
     @Operation(summary = "상품 삭제")
     public ResponseEntity<?> deleteProduct(@RequestParam Long productId) {
         try {
             productService.deleteProduct(productId);
-            return ResponseEntity.ok().body("상품 삭제 완료");
+            return ResponseEntity.ok("\"삭제 성공\"");
+        }  catch (RuntimeException e) {
+            log.error("상품 삭제 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/color/delete")
+    @Operation(summary = "상품 삭제")
+    public ResponseEntity<?> deleteProductColor(@RequestParam Long productColorId) {
+        try {
+            productService.deleteProductColor(productColorId);
+            return ResponseEntity.ok("\"삭제 성공\"");
         }  catch (RuntimeException e) {
             log.error("상품 삭제 중 오류 발생", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -99,7 +106,6 @@ public class ProductController {
 
 
 
-//    @PreAuthorize("@productSecurityUtils.isProductOwner(#productDTO.productId)")
     @PostMapping(value = "/color/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProductColor(
             @RequestPart("productColorCreateDTO") String productColorCreateDTOStr,
@@ -112,12 +118,6 @@ public class ProductController {
             ObjectMapper objectMapper = new ObjectMapper();
             productDTO = objectMapper.readValue(productColorCreateDTOStr, ProductRegisterColorDTO.class);
             log.info(productDTO);
-
-//            // 여기서 @PreAuthorize를 위한 검사를 수행합니다.
-//            if (!productSecurityUtils.isProductOwner(productDTO.getProductId())) {
-//                return ResponseEntity.status(403).body("접근 권한이 없습니다.");
-//            }
-
         } catch (IOException e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().body("유효하지 않은 JSON 형식입니다."); // 400 상태 코드
@@ -133,19 +133,18 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resultMessage); // 404 상태 코드
             }
 
-            return ResponseEntity.ok(resultMessage); // 성공 시 200 상태 코드
+            return ResponseEntity.ok(resultMessage);
         } catch (Exception e) {
             log.error("상품 등록 중 오류 발생: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 등록 중 오류가 발생했습니다."); // 500 상태 코드
         }
     }
 
-//    @PreAuthorize("@productSecurityUtils.isProductOwner(#productDTO.productId)")
     @PutMapping("/color/update")
     @Operation(summary = "상품 컬러 수정")
     public ResponseEntity<?> updateProductColor(@RequestPart("productColorUpdateDTO") String productColorUpdateDTOStr,
-                                                @RequestPart(name = "productImages",required = false)  List<MultipartFile> productImages,
-                                                @RequestPart(name = "productDetailImage",required = false) MultipartFile productDetailImage) {
+                                                @RequestPart(name = "productImages")  List<MultipartFile> productImages,
+                                                @RequestPart(name = "productDetailImage") MultipartFile productDetailImage) {
         ProductUpdateColorDTO productDTO;
 
         try {
@@ -185,6 +184,13 @@ public class ProductController {
     @GetMapping("/read")
     public ResponseEntity<ProductCreateGetInfoDTO> readProduct(@RequestParam Long productId) throws IOException {
         ProductCreateGetInfoDTO productInfoDTO = productService.getProductInfo(productId);
+
+        return ResponseEntity.ok(productInfoDTO);
+    }
+
+    @GetMapping("/color/size/read")
+    public ResponseEntity<ProductColorUpdateGetInfoDTO> readProductColorSize(@RequestParam Long productColorId) throws IOException {
+        ProductColorUpdateGetInfoDTO productInfoDTO = productService.getProductColorSizeInfo(productColorId);
 
         return ResponseEntity.ok(productInfoDTO);
     }
@@ -308,97 +314,3 @@ public class ProductController {
     }
 
 }
-
-/*
-
-    productCreateDTO 해당 형식으로 값 넘기면 됨.
-   {
-        "category": "Clothing",
-        "categorySub": "Shirts",
-        "name": "Summer T-Shirt",
-        "price": 29999,
-        "sale": true,
-        "priceSale": 24999,
-        "productNumber": "TS001",
-        "season": "Summer",
-        "colors": "Red,Blue,Green",
-        "size": [
-                    {
-                        "size": "S",
-                        "stock" : 100
-                    },
-                    {
-                        "size": "M",
-                        "stock" : 150
-                    },
-                    {
-                        "size": "L",
-                        "stock": 100
-                    }
-                 ]
-    }
-
-createProductColor 값 넘겨주는법
-
-productColorCreateDTO :
-
-{
-  "productId": 해당하는 productId 값,
-  "color": "Red",
-  "size": [
-    {
-      "size": "S",
-      "stock": 50
-    },
-    {
-      "size": "M",
-      "stock": 75
-    },
-    {
-      "size": "L",
-      "stock": 100
-    }
-  ]
-}
-
-updateProduct 값 넘기는법
-수정해야 하는 productId값 넘겨주고
-
-productUpdateDTO는 해당하는 형식으로 넘겨주면 됨.
-{
-  "name": "Updated Product Name",
-  "price": 15000,
-  "isSale": true,
-  "priceSale": 12000,
-  "category": "Electronics",
-  "categorySub": "Smartphones",
-  "season": "Summer",
-  "size": ["S", "M", "L"],
-  "stock": [10, 20, 30]
-}
-
-updateProductColor 값 넘기는법
-
-productUpdateColorDTO =
-
-{
-  "productId": 해당하는 productId,
-  "color": "productId에 해당하는 color명",
-  "size": [
-    {
-      "size": "S",
-      "stock": 1000
-    },
-    {
-      "size": "M",
-      "stock": 2000
-    },
-    {
-      "size": "L",
-      "stock": 3000
-    }
-  ]
-}
-
-
- */

@@ -15,46 +15,76 @@ import { useProductRead } from "@/(FSD)/entities/product/api/useProductRead";
 import { ProductCreateGetInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 
 import { useProductColorCreate } from "../api/useProductColorCreate";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { productDetailImageState, productImagesState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
 import { Input } from "@nextui-org/input";
+import { useProductColorSizeStockRead } from "@/(FSD)/entities/product/api/useProductColorSizeStockRead";
+import { useProductColorUpdate } from "../api/useProductColorUpdate";
+import ProductImageUpdateModal from "./ProductImageUpdateModal";
+import { detailImageState, imagesState } from "@/(FSD)/shareds/stores/PreviewAtom";
+import { useProductColorDelete } from "../api/useProductColorDelete";
 
-
-
-export interface SizeStocksType {
+interface SizeStocksType {
     id: number;
     size: string;
     stock: number;
 }
 
+export interface ProductImageInfoType {
+    imageId: number;
+    productColorImage: Uint8Array | null;
+    filename: string | null;
+}
 
-const ProductColorCreateForm = () => {
+interface ProductColorSizeType {
+    color: string;
+    size: {
+        size: string;
+        stock: number;
+    }[];
+    images: ProductImageInfoType[];
+    detailImage: ProductImageInfoType;
+}
 
-    const { productId } = useParams<{ productId: string }>();
+const ProductColorUpdateForm = () => {
 
-    const router = useRouter();
-    const { data } = useProductRead(+productId)
-
+    const { productColorId } = useParams<{ productColorId: string }>();
+    const { data } = useProductColorSizeStockRead(+productColorId)
     const productImages = useRecoilValue(productImagesState);
     const productDetailImage = useRecoilValue(productDetailImageState);
-
-
-
+    const [images,setImages] = useRecoilState(imagesState)
+    const [detailImage,setDetailImage] =useRecoilState(detailImageState)
     const [sizeStocks, setSizeStocks] = useState<SizeStocksType[]>([]);
+    const router = useRouter();
     const sizeArray = ["S", "M", "L", "XL"];
 
     useEffect(() => {
-
+        if (data) {
+            const sizeStocksNew: SizeStocksType[] = data.size.map((item:SizeStocksType, index:number) => ({
+                id: index + 1,
+                size: item.size,
+                stock: item.stock
+            }));
+            setSizeStocks(sizeStocksNew);
+            if (data.images && data.detailImage && data.images.length > 0) {
+                const imagesWithId = data.images.map((image: any, index: number) => ({
+                    ...image,
+                    imageId: index + 1, 
+                }));
+                setImages(imagesWithId); 
+            }
+            if(data.detailImage && !detailImage.filename ) {
+                setDetailImage(data.detailImage)
+            }
+        }
     }, [data]);
 
-    const productInfo: ProductCreateGetInfoType = data;
+    const productInfo: ProductColorSizeType = data;
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const schema = z.object({
-        color: z.string().refine(value => !productInfo.colorType.includes(value), {
-            message: "중복된 색상입니다."
-        }),
+
     });
 
     const { control, handleSubmit, formState: { errors, isValid, submitCount } } = useForm({
@@ -62,38 +92,32 @@ const ProductColorCreateForm = () => {
         mode: "onChange"
     });
 
-
-
     const onSuccess = (data: any) => {
         router.push('/seller')
     }
 
-    const { mutate } = useProductColorCreate({ onSuccess });
+    const { mutate } = useProductColorUpdate({ onSuccess });
+    const { mutate:deleteProductColor } = useProductColorDelete({ onSuccess });
 
     const onSubmit = (data: any) => {
-
-
         const formData = new FormData();
-
         const sizeStocksToSend = sizeStocks.map(({ id, ...rest }) => rest);
-        formData.append("productColorCreateDTO", JSON.stringify({ productId: productId, color: data.color, size: sizeStocksToSend }));
+        formData.append("productColorUpdateDTO", JSON.stringify({ productColorId: productColorId, size: sizeStocksToSend }));
         productImages.forEach((image: File) => {
             if (image) {
                 formData.append("productImages", image);
             }
         });
         formData.append("productDetailImage", productDetailImage);
-
-    
         mutate(formData);
-
     }
 
     if (!data) return <></>
 
+  
     const handleAddSizeStock = () => {
         const newId = sizeStocks.length > 0 ? sizeStocks[sizeStocks.length - 1].id + 1 : 1;
-        setSizeStocks([...sizeStocks, { id: newId, size: "", stock: 0 }]);
+        setSizeStocks([...sizeStocks, { id: newId, size: '', stock: 0 }]);
     };
 
     const handleRemoveSizeStock = (idToRemove: number) => {
@@ -115,45 +139,11 @@ const ProductColorCreateForm = () => {
         setSizeStocks(updatedSizeStocks);
     };
 
-    const isSizeStockValid: boolean = sizeStocks.length === 0 || sizeStocks.some(item => !item.size || item.stock === 0);
-
     return (
         <>
             <form style={{ display: isOpen ? "none" : "block" }} className={styles.product_create_form} onSubmit={handleSubmit(onSubmit)}>
-                <TextMediumShared isLabel={true} htmlFor={"name"}>상품 이름</TextMediumShared>
-                <FormInputShared isClearable readOnly={true} name={"name"} control={control} placeholder={productInfo.name} />
-                <TextMediumShared isLabel={true} htmlFor={"productNumber"}>품번</TextMediumShared>
-                <FormInputShared isClearable readOnly={true} name={"productNumber"} control={control} placeholder={productInfo.productNumber} />
-                <TextMediumShared isLabel={true} htmlFor={"season"}>시즌</TextMediumShared>
-                <FormInputShared isClearable readOnly={true} name={"season"} control={control} placeholder={productInfo.season} />
-                <TextMediumShared isLabel={true} htmlFor={"price"}>가격</TextMediumShared>
-                <FormInputShared isClearable readOnly={true} name={"price"} control={control} placeholder={`${productInfo.price.toLocaleString()}원`} />
-                <TextMediumShared isLabel={true} htmlFor={"priceSale"}>할인 가격</TextMediumShared>
-                <FormInputShared isClearable readOnly={true} name={"priceSale"} control={control} placeholder={`${productInfo.priceSale.toLocaleString()}원`} />
-                <TextMediumShared>카테고리</TextMediumShared>
-                <Select
-                    size={"lg"}
-                    placeholder={productInfo.category}
-                    isDisabled
-                >
-                    <SelectItem key={""}>
-                    </SelectItem>
-                </Select>
-                <TextMediumShared>서브 카테고리</TextMediumShared>
-                <Select
-                    size={"lg"}
-                    placeholder={productInfo.categorySub}
-                    isDisabled
-                >
-                    <SelectItem key={""}>
-                    </SelectItem>
-                </Select>
-                <TextMediumShared>기존 색상입니다.</TextMediumShared>
-                {productInfo.colorType.map((color, index) => (
-                    <TextMediumShared key={index}>{color}</TextMediumShared>
-                ))}
                 <TextMediumShared isLabel={true} htmlFor={"color"}>색상</TextMediumShared>
-                <FormInputShared size="lg" variant="flat" isInvalid={!!errors.color} radius="none" errorMessage={errors.color && <>{errors.color.message}</>} name={"color"} control={control} placeholder="색상을 입력해주세요." />
+                <FormInputShared isClearable readOnly={true} name={"color"} control={control} placeholder={productInfo.color}  />
                 <Button
                     type="button"
                     onClick={handleAddSizeStock}
@@ -163,9 +153,8 @@ const ProductColorCreateForm = () => {
                 </Button>
                 {sizeStocks.map((sizeStock) => (
                     <div key={sizeStock.id} style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-start" }} >
-
                         <Select
-                            placeholder="사이즈 선택"
+                            placeholder={sizeStock.size}
                             aria-label="사이즈 선택창"
                             value={sizeStock.size}
                             size="md"
@@ -193,6 +182,7 @@ const ProductColorCreateForm = () => {
                             placeholder="재고 입력"
                             onChange={(e) => handleStockChange(e, sizeStock.id)}
                             aria-label="재고 입력란"
+                            defaultValue={String(sizeStock.stock)}
                         />
                         <Button
                             variant="flat"
@@ -207,16 +197,30 @@ const ProductColorCreateForm = () => {
                 <Button
                     onClick={_ => {
                         setIsOpen(true);
+            
                     }}
                     fullWidth size={"lg"} type={"button"} variant={"ghost"}
                 >
-                    이미지 등록하기
+                    이미지 수정하기
                 </Button>
-                <Button isDisabled={(!isValid) || (!productImages) || (!productDetailImage) || (isSizeStockValid)} fullWidth size={"lg"} type={"submit"} color={"primary"}>등록하기</Button>
+                <Button isDisabled={(!isValid) || (!productImages) || (!productDetailImage)} fullWidth size={"lg"} type={"submit"}>수정하기</Button>
+                <Button fullWidth size={"lg"} onClick={() => deleteProductColor(+productColorId)} >삭제하기</Button>
             </form>
-            {isOpen && <ProductImageCreateModal setIsOpen={setIsOpen} files={productImages} detailFile={productDetailImage} />}
+            {isOpen && <ProductImageUpdateModal setIsOpen={setIsOpen} files={productImages} detailFile={productDetailImage} />}
         </>
     );
 };
 
-export default ProductColorCreateForm;
+const compareUint8Arrays = (arr1: Uint8Array, arr2: Uint8Array): boolean => {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+    return true;
+};
+
+export default ProductColorUpdateForm;
