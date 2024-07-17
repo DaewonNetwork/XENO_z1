@@ -8,7 +8,6 @@ interface OrderProductInfoProps {
     product: OrderProductInfoType;
 };
 
-// 함수형 컴포넌트 정의
 const OrderProductInfo = ({ product }: OrderProductInfoProps) => {
     return (
         <div className={styles.order_product_info}>
