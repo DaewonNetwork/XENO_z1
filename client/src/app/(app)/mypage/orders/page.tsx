@@ -1,26 +1,16 @@
-'use client'
-
-import React, { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
-import { isLoggedInState } from '@/(FSD)/shareds/stores/UserAtom';
-import OrderCardList from '@/(FSD)/widgets/mypage/OrderCardList';
-import AppSection from '@/(FSD)/widgets/app/ui/AppSection';
+import React from "react";
+import OrderInfoList from "@/(FSD)/widgets/mypage/OrderInfoList";
+import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
+import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
 
 
 const Page = () => {
-
-    const isLoggedIn = useRecoilValue(isLoggedInState);
-
-    if (!isLoggedIn) return <></>
-
-
-
     return (
-        <div>
-            <AppSection>
-                <OrderCardList />
-            </AppSection>
-        </div>
+        <AppSection>
+            <AppInner>
+                <OrderInfoList />
+            </AppInner>
+        </AppSection>
     );
 };
 

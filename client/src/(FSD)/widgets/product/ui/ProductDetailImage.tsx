@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
 
@@ -7,11 +7,11 @@ import ProductImageSkeleton from "@/(FSD)/shareds/ui/ProductImageSkeleton";
 import { Button } from "@nextui-org/button";
 import { useProductColorDetailImageListRead } from "@/(FSD)/entities/product/api/useProductColorDetailImageListRead";
 
-interface Props {
+interface ProductDetailImageProps {
     productColorId: string;
 }
 
-const ProductDetailImageList = ({ productColorId }: Props) => {
+const ProductDetailImage = ({ productColorId }: ProductDetailImageProps) => {
     const [size, setSize] = useState(2);
     const [isOpen, setIsOpen] = useState(false);
     const [loaded, setLoaded] = useState(false);
@@ -19,7 +19,6 @@ const ProductDetailImageList = ({ productColorId }: Props) => {
 
     useEffect(() => {
         refetch();
-    
     }, [size]);
 
     if (isError) {
@@ -28,7 +27,7 @@ const ProductDetailImageList = ({ productColorId }: Props) => {
 
     if (isPending || !data) {
         return (
-            <div className={style.product_detail_images}>
+            <div className={style.product_detail_images_list}>
                 <div className={style.product_detail_slide_list}>
                     {[...Array(size)].map((_, index) => (
                         <ProductImageSkeleton key={index} />
@@ -69,11 +68,11 @@ const ProductDetailImageList = ({ productColorId }: Props) => {
                 ))}
             </div>
             <div className={style.gradient_overlay_block}>
-            {!isOpen && <div className={style.gradient_overlay}></div>}
+                {!isOpen && <div className={style.gradient_overlay}></div>}
             </div>
             <div className={style.product_load_more}>
                 <Button className={style.load_more_button} onClick={handleLoadMore}>
-                    {isOpen ? '접기' : '더 보기'}
+                    {isOpen ? "접기" : "더 보기"}
                 </Button>
             </div>
             <div className={style.block} />
@@ -81,4 +80,4 @@ const ProductDetailImageList = ({ productColorId }: Props) => {
     );
 };
 
-export default ProductDetailImageList;
+export default ProductDetailImage;

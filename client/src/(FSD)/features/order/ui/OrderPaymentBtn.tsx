@@ -2,24 +2,15 @@
 
 import { Button } from "@nextui-org/button";
 import React from "react";
-
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 
 import { useRecoilValue, useSetRecoilState } from "recoil";
-
-
-import { useProductOrder } from "../api/useProductAddOrder";
+import { useProductOrder } from "../../product/api/useProductAddOrder";
 import { reqState } from "@/(FSD)/shareds/stores/ProductAtom";
-import { ProductOrderInfoType } from "@/(FSD)/shareds/types/product/ProductOrderBar.type";
+import { OrderProductInfoType } from "@/(FSD)/shareds/types/product/OrderProductInfo.type";
 import { useRouter } from "next/navigation";
 import { UserType } from "@/(FSD)/shareds/types/User.type";
 import { useUserRead } from "@/(FSD)/entities/user/api/useUserRead";
-
-
-interface ProductPaymentBtnType {
-    productList: ProductOrderInfoType[];
-}
-
 
 export interface ProductOrderType {
     orderPayId: string;
@@ -30,12 +21,18 @@ export interface ProductOrderType {
     orderNumber?: number;
 }
 
-const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
+interface OrderPaymentBtnProps {
+    productList: OrderProductInfoType[];
+}
+
+const OrderPaymentBtn = ({ productList }: OrderPaymentBtnProps) => {
     const req = useRecoilValue(reqState);
     const router = useRouter();
 
     const onSuccess = (data: any) => {
         // setOrdersCompleteInfo(data)
+        console.log("post 성공");
+        localStorage.removeItem('newProducts');
         router.push('/order/complete')
     }
 
@@ -78,11 +75,11 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     const orderName: string =
         productList.length > 1
             ? `${productList[0]?.name} 외 ${productList.length - 1}건`
-            : productList[0]?.name ?? '';
+            : productList[0]?.name ?? "";
 
     const totalPrice = productList.reduce((accumulator, product) => accumulator + product.price, 0);
 
-    const productOrderList: ProductOrderType[] = productList.map(product => ({
+    const OrderInfoList: ProductOrderType[] = productList.map(product => ({
         orderPayId: orderId,
         productColorSizeId: product.productColorSizeId,
         req: req,
@@ -117,9 +114,9 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
             },
         }).then(data => {
 
-            mutate(productOrderList);
+            mutate(OrderInfoList);
 
-        }).catch(error => {
+        }).catch((error: any) => {
             console.log("결제오류", error)
         });
     };
@@ -129,4 +126,4 @@ const ProductPaymentBtn = ({ productList }: ProductPaymentBtnType) => {
     );
 };
 
-export default ProductPaymentBtn;
+export default OrderPaymentBtn;

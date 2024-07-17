@@ -13,8 +13,8 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
 
     const discountPercent = calculateDiscountPercent(product.price, product.priceSale);
 
-    const categoryId = getCategoryID(product.category)
-    const categorySubId = getCategorySubId(product.categorySub)
+    const categoryId = getCategoryID(product.category);
+    const categorySubId = getCategorySubId(product.categorySub);
 
     
     const router = useRouter();
@@ -37,11 +37,11 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
     return (
         <>
             <div className={styles.product_category}>
-            <span onClick={handleCategoryClick} style={{cursor:'pointer'}} >
+            <span onClick={handleCategoryClick} style={{cursor:"pointer"}} >
                 {product.category}
             </span>
             &nbsp;&gt;&nbsp;
-            <span onClick={handleSubCategoryClick} style={{cursor:'pointer'}}>
+            <span onClick={handleSubCategoryClick} style={{cursor:"pointer"}}>
                 {product.categorySub}
             </span>
             &nbsp;({product.brandName})
@@ -52,7 +52,7 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
                 </h2>
             </div>
             <div className={styles.product_rating}>
-                <div className={styles.product_star_img}></div>
+                <div className={styles.product_star}></div>
                 <p className={styles.product_star_avg}>{product.starAvg}</p>
                 <p className={styles.product_review_count}>후기 {product.reviewIndex}개</p>
             </div>

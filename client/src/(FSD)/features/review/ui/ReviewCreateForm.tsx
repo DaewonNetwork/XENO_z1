@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import FormTextareaShared from "@/(FSD)/shareds/ui/FormTextareaShared";
 import { Button } from "@nextui-org/button";
-
 import TextLargeShared from "@/(FSD)/shareds/ui/TextLargeShared";
 import styles from "@/(FSD)/shareds/styles/ReviewStyle.module.scss";
 import FileInputShared from "@/(FSD)/shareds/ui/FileInputShared";
 import { useReviewCreate } from "../api/useReviewCreate";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import FormInputShared from "@/(FSD)/shareds/ui/FormInputShared";
-
+import { useParams, useRouter } from "next/navigation";
 import { useRecoilValue } from "recoil";
 import { isLoggedInState} from "@/(FSD)/shareds/stores/UserAtom";
 import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
@@ -24,19 +21,16 @@ const ReviewCreateForm = () => {
     const [stars, setStars] = useState<Array<boolean>>([false, false, false, false, false]);
     
     const router = useRouter();
-    
+
     const { orderId } = useParams<{ orderId: string }>();
 
-    
     const handleStarClick = (index: number) => {
         const newStars: Array<boolean> = stars.map((_, i) => i <= index);
         setStars(newStars);
     };
 
-
     const schema = z.object({
         reviewText: z.string().min(10).max(200),
-
     });
 
     const { control, handleSubmit, formState: { errors, isValid, submitCount } } = useForm({

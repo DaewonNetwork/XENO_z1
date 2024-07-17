@@ -1,16 +1,13 @@
 "use client";
 
-import { useOrderListRead } from "@/(FSD)/entities/orders/api/useOrderListRead";
-import OrderCard from "@/(FSD)/entities/orders/ui/OrderCard";
-import { useReviewCardListRead } from "@/(FSD)/entities/review/api/useReviewCardListRead";
-import ReviewCard from "@/(FSD)/entities/review/ui/ReviewCard";
-import styles from "@/(FSD)/shareds/styles/ReviewStyle.module.scss";
+import { useOrderListRead } from "@/(FSD)/entities/order/api/useOrderListRead";
+import OrderCard from "@/(FSD)/entities/order/ui/OrderCard";
 import { OrderInfoType } from "@/(FSD)/shareds/types/orders/OrderInfo.Type";
-import { ReviewCardType } from "@/(FSD)/shareds/types/review/ReviewCard.type";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
+import styles from "@/(FSD)/shareds/styles/OrderStyle.module.scss";
 
-const OrderCardList = () => {
+const OrderInfoList = () => {
     const { orderList, fetchNextPage, refetch, hasNextPage } = useOrderListRead();
     const { ref, inView } = useInView();
 
@@ -18,21 +15,22 @@ const OrderCardList = () => {
         refetch();
     }, [orderList]);
 
-
     useEffect(() => {
         if (inView) {
             fetchNextPage();
         }
     }, [inView]);
 
-    const orderCardList: OrderInfoType[] = orderList;
+    const OrderInfoList: OrderInfoType[] = orderList;
 
-    if (!orderCardList) return <></>;
+    if (!OrderInfoList) return <></>;
+    if(!OrderInfoList[0]) return <></>;
+    
 
     return (
-        <div >
+        <div className={styles.order_info_list}>
             {
-                orderCardList.map(order => (
+                OrderInfoList.map(order => (
                     <React.Fragment key={order.orderId}>
                         <OrderCard order={order} />
                     </React.Fragment>
@@ -43,4 +41,4 @@ const OrderCardList = () => {
     )
 }
 
-export default OrderCardList;
+export default OrderInfoList;

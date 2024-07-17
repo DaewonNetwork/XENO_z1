@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 
 import { useProductColorCardRead } from "@/(FSD)/entities/product/api/useProductColorCardRead";

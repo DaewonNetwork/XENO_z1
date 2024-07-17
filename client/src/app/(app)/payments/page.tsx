@@ -1,4 +1,4 @@
-import ProductPaymentBtn from "@/(FSD)/features/product/ui/ProductPaymentBtn";
+import OrderPaymentBtn from "@/(FSD)/features/product/ui/OrderPaymentBtn";
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
 import React from "react";
@@ -23,7 +23,7 @@ const Page = () => {
     return (
         <>
             <AppSection>
-                {/* <ProductPaymentBtn product={product} /> */}
+                {/* <OrderPaymentBtn product={product} /> */}
                 asd
             </AppSection>
         </>
