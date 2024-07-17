@@ -8,10 +8,10 @@ import FormInputShared from "@/(FSD)/shareds/ui/FormInputShared";
 import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 import styles from "@/(FSD)/shareds/styles/OrderStyle.module.scss";
 import TextLargeShared from "@/(FSD)/shareds/ui/TextLargeShared";
-import { Checkbox } from "@nextui-org/checkbox";
 import FormTextareaShared from "@/(FSD)/shareds/ui/FormTextareaShared";
-import TextSmallShared from "@/(FSD)/shareds/ui/TextSmallShared";
 import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
+import { useUserRead } from "@/(FSD)/entities/user/api/useUserRead";
+import { UserType } from "@/(FSD)/shareds/types/User.type";
 
 const OrderDeliveryForm = () => {
     const schema = z.object({
@@ -28,12 +28,17 @@ const OrderDeliveryForm = () => {
     const onSubmit = (data: any) => {
     };
 
+    const { data } = useUserRead();
+
+    const user: UserType = data;
+
+    console.log(user);
+
     return (
         <form className={`bg-background ${styles.order_form}`} onSubmit={handleSubmit(onSubmit)}>
             <AppInner>
                 <div className={styles.form_header}>
                     <TextLargeShared>배송 정보</TextLargeShared>
-                    <Checkbox><TextSmallShared>저장하기</TextSmallShared></Checkbox>
                 </div>
                 <div className={styles.form_body}>
                     <div className={styles.input_box}>
