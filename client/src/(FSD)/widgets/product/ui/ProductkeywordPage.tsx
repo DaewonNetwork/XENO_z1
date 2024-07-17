@@ -7,54 +7,41 @@ import { useProductkeywordSearch } from "@/(FSD)/entities/product/api/useProduct
 import ProductCardList from "@/(FSD)/widgets/product/ui/ProductCardList";
 import ProductCardSkeletonShared from "@/(FSD)/shareds/ui/ProductCardSkeletonShared";
 
-const ProductkeywordPage = () => {
+const ProductKeywordPage = () => {
     const searchParams = useSearchParams();
     const keyword = searchParams.get("keyword")!;
 
     const { productList, fetchNextPage, refetch, isFetchingNextPage, isError } = useProductkeywordSearch(keyword);
 
     const { ref, inView } = useInView();
-    
+
     useEffect(() => {
         refetch();
     }, [productList]);
-    
+
     useEffect(() => {
         if (inView) {
             fetchNextPage();
         }
     }, [inView]);
 
-
-    console.log(productList);
-
     if (isError) return <></>;
     if (!productList) return <></>;
+    if (!productList[0]) return <></>;    
 
     return (
         <>
-            {
-                productList.map(product => (
-                    <React.Fragment key={product.productColorId}>
-                        <ProductCardList productList={productList} parentRefetch={refetch} />
-                    </React.Fragment>
-                    
-                ))
-            }
-            {
-                isFetchingNextPage ? <>
-                    <ProductCardSkeletonShared />
-                    {
-                        Array.from({ length: 9 }).map((_, index) => (
-                            <React.Fragment key={index}>
-                                <ProductCardSkeletonShared />
-                            </React.Fragment>
-                        ))
-                    }
-                </> : <div ref={ref} />
-            }
+            <ProductCardList productList={productList} parentRefetch={refetch} lastCard={
+                <>
+                    {isFetchingNextPage ? (
+                        <ProductCardSkeletonShared />
+                    ) : (
+                        <div ref={ref} />
+                    )}
+                </>
+            } />
         </>
     );
 };
 
-export default ProductkeywordPage;
+export default ProductKeywordPage;

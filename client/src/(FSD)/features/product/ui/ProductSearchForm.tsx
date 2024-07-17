@@ -24,7 +24,7 @@ const ProductSearchForm = () => {
     
     const onSubmit = (data: any) => {
         if(data.keyword) {
-            router.push(`/search?keyword=${data.keyword}`); 
+            router.push(`/search/result?keyword=${data.keyword}`);
         }
     }
 

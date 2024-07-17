@@ -32,7 +32,7 @@ export const useProductkeywordSearch = (keyword: string) => {
     });
 
     const productList: ProductType[] = useMemo(() => {
-        const productList = data?.pages?.flatMap(page => page.productList) || [];
+        const productList = data?.pages?.flatMap(page => page.dtoList) || [];
         return productList;
     }, [data]);
 

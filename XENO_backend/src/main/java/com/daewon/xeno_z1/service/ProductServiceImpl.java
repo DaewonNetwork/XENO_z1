@@ -9,6 +9,8 @@ import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 
 import com.daewon.xeno_z1.utils.CategoryUtils;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -209,21 +211,60 @@ public class ProductServiceImpl implements ProductService {
                 pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
                 pageRequestDTO.getSize());
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        Users users = userRepository.findByEmail(currentUserName).orElse(null);
+
         // 카테고리를 기준으로 상품을 검색
-        Page<Products> result = productsSearchRepository.findbrandNameOrNameOrCategoryOrCategorysubBykeyword(keyword, pageable);
+        Page<Long> result = productsSearchRepository.findProductColorIdsByKeyword(keyword, pageable);
         log.info(result);
 
         // 검색 결과를 DTO로 변환
-        List<ProductsSearchDTO> productList = result.getContent().stream().map(product -> {
-            ProductsSearchDTO productsSearchDTO = modelMapper.map(product, ProductsSearchDTO.class);
+        List<ProductsSearchDTO> productList = result.getContent().stream().map(productColorId -> {
+            ProductsColor productsColor = productsColorRepository.findById(productColorId)
+                .orElseThrow(() -> new EntityNotFoundException("ProductColor not found"));
+            Products product = productsColor.getProducts();
+                    
 
-            List<ProductsColor> colors = productsColorRepository.findByProducts(product);
-            if (!colors.isEmpty()) {
-                productsSearchDTO.setProductColorId(colors.get(0).getProductColorId());
-            }
+                    ProductsSearchDTO dto = ProductsSearchDTO.builder()
+                            .productColorId(productColorId)
+                            .brandName(product.getBrandName())
+                            .name(product.getName())
+                            .category(product.getCategory())
+                            .categorySub(product.getCategorySub())
+                            .price(product.getPrice())
+                            .priceSale(product.getPriceSale())
+                            .isSale(product.getIsSale())
+                            .build();
 
-            return productsSearchDTO;
-        }).collect(Collectors.toList());
+                    if (users != null) {
+                        LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId, users.getUserId());
+                        dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+                    }else {
+                        dto.setLike(false);
+                    }
+
+                    log.info(dto.isLike());
+
+                    ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                    if (productImage != null) {
+                        try {
+                            String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                            Path path = Paths.get(filePath);
+                            if (Files.exists(path)) {
+                                byte[] imageData = Files.readAllBytes(path);
+                                dto.setProductImage(imageData);
+                            } else {
+                                log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
+                            }
+                        } catch (IOException e) {
+                            log.error("이미지 로딩 중 오류 발생", e);
+                        }
+                    }
+                    log.info(dto);
+                    return dto;
+                })
+                .collect(Collectors.toList());
 
         // 페이지 응답 객체 생성 및 반환
         return PageResponseDTO.<ProductsSearchDTO>withAll()

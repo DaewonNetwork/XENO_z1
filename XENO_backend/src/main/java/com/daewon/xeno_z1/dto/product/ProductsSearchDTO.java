@@ -15,8 +15,20 @@ public class ProductsSearchDTO {
 
     private String brandName;
 
+    private String name;
+
     private String category;
 
     private String categorySub;
+
+    private long price;
+
+    private long priceSale;
+
+    private boolean isSale;
+
+    private boolean isLike;
+
+    private byte[] productImage;
 
 }
