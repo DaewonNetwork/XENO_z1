@@ -125,10 +125,13 @@ public class CartServiceImpl implements CartService {
         cartDTO.setCartId(cart.getCartId());
         cartDTO.setProductsColorSizeId(cart.getProductsColorSize().getProductColorSizeId());
         cartDTO.setQuantity(cart.getQuantity());
-        cartDTO.setPrice(cart.getPrice());
+        cartDTO.setAmount(cart.getPrice());
         cartDTO.setBrandName(cart.getProductsColorSize().getProductsColor().getProducts().getBrandName());
         cartDTO.setSale(cart.getProductsColorSize().getProductsColor().getProducts().getIsSale());
-        cartDTO.setPriceSale(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale());
+        cartDTO.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale());
+        cartDTO.setProductName(cart.getProductsColorSize().getProductsColor().getProducts().getName());
+        cartDTO.setColor(cart.getProductsColorSize().getProductsColor().getColor());
+        cartDTO.setSize(String.valueOf(cart.getProductsColorSize().getSize()));
 
         ProductsImage image = cart.getProductsImage();
         if (image != null) {
