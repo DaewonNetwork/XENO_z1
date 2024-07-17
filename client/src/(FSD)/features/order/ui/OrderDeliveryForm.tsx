@@ -17,7 +17,7 @@ const OrderDeliveryForm = () => {
     const schema = z.object({
         address: z.string().min(10).max(200),
         phoneNumber: z.string().min(11).max(15),
-        message: z.string().optional(),
+        req: z.string().optional(),
     });
 
     const { control, handleSubmit, formState: { errors, isValid, submitCount } } = useForm({
@@ -45,10 +45,9 @@ const OrderDeliveryForm = () => {
                         <FormInputShared isClearable isInvalid={!!errors.phoneNumber} size={"md"} control={control} name={"phoneNumber"} placeholder={"01012345678"} />
                     </div>
                     <div className={styles.input_box}>
-                        <TextMediumShared isLabel={true} htmlFor={"message"}>배송 메세지</TextMediumShared>
-                        <FormTextareaShared size={"lg"} isClearable isInvalid={!!errors.message} control={control} name={"message"} placeholder={"배송 메세지를 입력해주세요."} />
+                        <TextMediumShared isLabel={true} htmlFor={"req"}>배송 메세지</TextMediumShared>
+                        <FormTextareaShared size={"lg"} isInvalid={!!errors.req} control={control} name={"req"} placeholder={"배송 메세지를 입력해주세요."} />
                     </div>
-
                 </div>
             </AppInner>
         </form>

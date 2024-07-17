@@ -1,12 +1,10 @@
-import CartProductList from "@/(FSD)/entities/cart/ui/CartProductList";
-import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
-
 import React from "react";
+import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
 
 const Page = () => {
     return (
-        <AppSection>
-            <CartProductList />
+        <AppSection isBgColor={true}>
+            a
         </AppSection>
     );
 };
