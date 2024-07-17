@@ -24,6 +24,8 @@ const ProductCardSlideList = ({ productList, isRank = false }: ProductCardSlideL
         arrows: false,
     };
 
+    if((!productList)) return <></>;
+
     return (
         <div className={style.product_card_slide_list}>
             <Slider {...settings}>

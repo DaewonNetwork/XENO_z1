@@ -4,8 +4,11 @@ package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.Products;
 
-import com.daewon.xeno_z1.domain.ProductsColor;
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
+import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.product.*;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,6 +31,10 @@ public interface ProductService {
 
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
+    List<ProductsStarRankListDTO> getranktop10(String category);
+
+    PageInfinityResponseDTO<ProductsStarRankListDTO> getrankTop50(String category, PageRequestDTO pageRequestDTO);
+
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
     String updateProduct(ProductUpdateDTO productUpdateDTO);
@@ -38,9 +45,15 @@ public interface ProductService {
 
     String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
-    String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
+    List<ProductListBySellerDTO> getProductListBySeller(String email);
 
-     List<ProductListBySellerDTO> getProductListBySeller(String email);
+    PageResponseDTO<ProductsSearchDTO> productCategorySearch(String category, PageRequestDTO pageRequestDTO);
+
+    PageResponseDTO<ProductsSearchDTO> BrandNameOrNameOrCategoryOrCategorysubSearch(String keyword,PageRequestDTO pageRequestDTO);
+
+    PageResponseDTO<ProductsSearchDTO> allSearch(PageRequestDTO pageRequestDTO);
+
+    String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
     List<ProductColorListBySellerDTO> getProductColorListBySeller(String email);
 

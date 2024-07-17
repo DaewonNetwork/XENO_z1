@@ -1,8 +1,11 @@
 package com.daewon.xeno_z1.controller;
 
 import com.daewon.xeno_z1.domain.Products;
-
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
+import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.product.*;
+import com.daewon.xeno_z1.dto.review.ReviewCardDTO;
 import com.daewon.xeno_z1.service.ProductService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -299,6 +302,30 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "카테고리별 검색")
+    @GetMapping("/search/{category}")
+    public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> productCategorySearch(@PathVariable String category, PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<ProductsSearchDTO> responseDTO = productService.productCategorySearch(category, pageRequestDTO);
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @Operation(summary = "브랜드명, 이름 검색")
+    @GetMapping("/search")
+    public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> searchProducts(
+            @RequestParam String keyword,
+            @ModelAttribute PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<ProductsSearchDTO> result = productService.BrandNameOrNameOrCategoryOrCategorysubSearch(keyword, pageRequestDTO);
+        return ResponseEntity.ok(result);
+    }
+
+    @Operation(summary = "상품 모두 검색")
+    @GetMapping("/all")
+    public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> allSearch(
+            @ModelAttribute PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<ProductsSearchDTO> result = productService.allSearch(pageRequestDTO);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/color/seller/read")
     public ResponseEntity<?> getProductColorListBySeller(@AuthenticationPrincipal UserDetails userDetails) {
         try {
@@ -312,5 +339,4 @@ public class ProductController {
             return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
         }
     }
-
 }

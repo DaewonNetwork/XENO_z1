@@ -1,5 +1,5 @@
 import { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
-import React from "react";
+import React, { ReactNode } from "react";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import classNames from "classnames/bind";
 
@@ -12,16 +12,19 @@ interface ProductCardListType {
     column?: number;
     isRank?: boolean;
     parentRefetch?: any;
+    lastCard?: ReactNode;
 };
 
 const cn = classNames.bind(styles);
 
-const ProductCardList = ({ productList, column = 3, isRank = false, parentRefetch }: ProductCardListType) => {
+const ProductCardList = ({ productList, column = 3, isRank = false, lastCard, parentRefetch }: ProductCardListType) => {
     const productCardListClassNames = cn({
         "column_one": column === 1,
         "column_two": column === 2,
         "column_three": column === 3,
     });
+
+    if (!productList) return <></>;
 
     return (
         <div className={`${styles.product_card_list} ${productCardListClassNames}`}>
@@ -32,6 +35,7 @@ const ProductCardList = ({ productList, column = 3, isRank = false, parentRefetc
                     </React.Fragment>
                 ))
             }
+            {lastCard}
         </div>
     );
 };

@@ -1,13 +1,14 @@
 package com.daewon.xeno_z1.service;
 
 import com.daewon.xeno_z1.domain.*;
+import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
+import com.daewon.xeno_z1.dto.page.PageRequestDTO;
+import com.daewon.xeno_z1.dto.page.PageResponseDTO;
 import com.daewon.xeno_z1.dto.product.*;
 import com.daewon.xeno_z1.repository.*;
 import com.daewon.xeno_z1.security.exception.ProductNotFoundException;
 
 import com.daewon.xeno_z1.utils.CategoryUtils;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -17,7 +18,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +50,7 @@ public class ProductServiceImpl implements ProductService {
     private final LikeRepository likeRepository;
     private final ProductsSellerRepository productsSellerRepository;
     private final CartRepository cartRepository;
+    private final ProductsSearchRepository productsSearchRepository;
 
 
     @Value("${uploadPath}")
@@ -109,7 +109,6 @@ public class ProductServiceImpl implements ProductService {
         productsColorRepository.save(productsColor);
 
 
-
 //             3. ProductsColorSize 엔티티 생성 및 저장
         for (ProductSizeDTO size : dto.getSize()) {
             ProductsColorSize productsColorSize = ProductsColorSize.builder()
@@ -155,6 +154,158 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return product;
+    }
+
+    @Override
+    public List<ProductListBySellerDTO> getProductListBySeller(String email) {
+
+
+        Users users = userRepository.findByEmail(email).orElse(null);
+
+        List<ProductsSeller> list = productsSellerRepository.findByUsers(users);
+        List<ProductListBySellerDTO> dtoList = new ArrayList<>();
+
+        for(ProductsSeller productsSeller: list){
+            ProductListBySellerDTO dto = new ProductListBySellerDTO();
+            dto.setProductId(productsSeller.getProducts().getProductId());
+            dto.setProductNumber(productsSeller.getProducts().getProductNumber());
+            dto.setProductName(productsSeller.getProducts().getName());
+            dtoList.add(dto);
+        }
+
+
+        return dtoList;
+    }
+
+    public PageResponseDTO<ProductsSearchDTO> productCategorySearch(String category, PageRequestDTO pageRequestDTO) {
+        // 페이지 요청 객체 생성
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
+                pageRequestDTO.getSize());
+    
+        // 카테고리를 기준으로 상품을 검색
+        Page<Products> result = productsSearchRepository.findByCategory(category, pageable);
+        log.info(result);
+
+        // 검색 결과를 DTO로 변환
+        List<ProductsSearchDTO> productList = result.getContent().stream().map(product -> {
+            ProductsSearchDTO productsSearchDTO = modelMapper.map(product, ProductsSearchDTO.class);
+
+            List<ProductsColor> colors = productsColorRepository.findByProducts(product);
+            if (!colors.isEmpty()) {
+                productsSearchDTO.setProductColorId(colors.get(0).getProductColorId());
+            }
+
+            return productsSearchDTO;
+        }).collect(Collectors.toList());
+    
+        // 페이지 응답 객체 생성 및 반환
+        return PageResponseDTO.<ProductsSearchDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(productList)
+                .totalIndex((int) result.getTotalElements())
+                .build();
+    }
+
+    @Override
+    public PageResponseDTO<ProductsSearchDTO> BrandNameOrNameOrCategoryOrCategorysubSearch(String keyword, PageRequestDTO pageRequestDTO) {
+        // 페이지 요청 객체 생성
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
+                pageRequestDTO.getSize());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        Users users = userRepository.findByEmail(currentUserName).orElse(null);
+
+        // 카테고리를 기준으로 상품을 검색
+        Page<Long> result = productsSearchRepository.findProductColorIdsByKeyword(keyword, pageable);
+        log.info(result);
+
+        // 검색 결과를 DTO로 변환
+        List<ProductsSearchDTO> productList = result.getContent().stream().map(productColorId -> {
+            ProductsColor productsColor = productsColorRepository.findById(productColorId)
+                .orElseThrow(() -> new EntityNotFoundException("ProductColor not found"));
+            Products product = productsColor.getProducts();
+                    
+
+                    ProductsSearchDTO dto = ProductsSearchDTO.builder()
+                            .productColorId(productColorId)
+                            .brandName(product.getBrandName())
+                            .name(product.getName())
+                            .category(product.getCategory())
+                            .categorySub(product.getCategorySub())
+                            .price(product.getPrice())
+                            .priceSale(product.getPriceSale())
+                            .isSale(product.getIsSale())
+                            .build();
+
+                    if (users != null) {
+                        LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId, users.getUserId());
+                        dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+                    }else {
+                        dto.setLike(false);
+                    }
+
+                    log.info(dto.isLike());
+
+                    ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                    if (productImage != null) {
+                        try {
+                            String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                            Path path = Paths.get(filePath);
+                            if (Files.exists(path)) {
+                                byte[] imageData = Files.readAllBytes(path);
+                                dto.setProductImage(imageData);
+                            } else {
+                                log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
+                            }
+                        } catch (IOException e) {
+                            log.error("이미지 로딩 중 오류 발생", e);
+                        }
+                    }
+                    log.info(dto);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        // 페이지 응답 객체 생성 및 반환
+        return PageResponseDTO.<ProductsSearchDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(productList)
+                .totalIndex((int) result.getTotalElements())
+                .build();
+    }
+
+    @Override
+    public PageResponseDTO<ProductsSearchDTO> allSearch(PageRequestDTO pageRequestDTO) {
+        // 페이지 요청 객체 생성
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPageIndex() <= 0 ? 0 : pageRequestDTO.getPageIndex() - 1,
+                pageRequestDTO.getSize());
+
+        // 카테고리를 기준으로 상품을 검색
+        Page<Products> result = productsSearchRepository.findAll(pageable);
+        log.info(result);
+
+        // 검색 결과를 DTO로 변환
+        List<ProductsSearchDTO> productList = result.getContent().stream().map(product -> {
+            ProductsSearchDTO productsSearchDTO = modelMapper.map(product, ProductsSearchDTO.class);
+
+            List<ProductsColor> colors = productsColorRepository.findByProducts(product);
+            if (!colors.isEmpty()) {
+                productsSearchDTO.setProductColorId(colors.get(0).getProductColorId());
+            }
+
+            return productsSearchDTO;
+        }).collect(Collectors.toList());
+
+        // 페이지 응답 객체 생성 및 반환
+        return PageResponseDTO.<ProductsSearchDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(productList)
+                .totalIndex((int) result.getTotalElements())
+                .build();
     }
 
     @Override
@@ -256,123 +407,6 @@ public class ProductServiceImpl implements ProductService {
 
 
 
-
-
-    @Transactional
-    public String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImages, MultipartFile productDetailImage) {
-
-
-        log.info(dto);
-
-        ProductsColor productsColor = productsColorRepository.findByProductColorId(dto.getProductColorId())
-                .orElseThrow(() -> new EntityNotFoundException());
-
-        productsColorRepository.save(productsColor);
-
-        List<ProductsColorSize> list = productsColorSizeRepository.findByProductColorId(dto.getProductColorId());
-
-        for(ProductSizeDTO sizeDTO : dto.getSize() ) {
-            Size size = Size.valueOf(sizeDTO.getSize());
-            ProductsColorSize productsColorSize = productsColorSizeRepository.findByProductColorIdAndSize(dto.getProductColorId(), size);
-            if (productsColorSize != null) {
-                ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(productsColorSize.getProductColorSizeId());
-                productsStock.setStock(sizeDTO.getStock());
-                productsStockRepository.save(productsStock);
-            } else {
-                productsColorSize = ProductsColorSize.builder()
-                        .productsColor(productsColor)
-                        .size(Size.valueOf(sizeDTO.getSize()))
-                        .build();
-                productsColorSizeRepository.save(productsColorSize);
-                ProductsStock productsStock = ProductsStock.builder()
-                        .productsColorSize(productsColorSize)
-                        .stock(sizeDTO.getStock())
-                        .build();
-                productsStockRepository.save(productsStock);
-            }
-            List<ProductsColorSize> toDeleteColorSizes = new ArrayList<>();
-            List<ProductsStock> toDeleteStocks = new ArrayList<>();
-
-            for (ProductsColorSize colorSize : list) {
-                boolean found = false;
-                for (ProductSizeDTO NewSizeDTO : dto.getSize()) {
-                    if (colorSize.getSize() == Size.valueOf(NewSizeDTO.getSize())) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    ProductsStock productsStock = productsStockRepository.findByProductColorSizeId(colorSize.getProductColorSizeId());
-                    if (productsStock != null) {
-                        toDeleteStocks.add(productsStock);
-                    }
-                    toDeleteColorSizes.add(colorSize);
-                }
-            }
-            for (ProductsColorSize colorSize : toDeleteColorSizes) {
-                productsColorSizeRepository.delete(colorSize);
-            }
-
-            for (ProductsStock productsStock : toDeleteStocks) {
-                productsStockRepository.delete(productsStock);
-            }
-
-        }
-
-
-        List<ProductsImage> productsImageList = productsImageRepository.findByProductColorId(dto.getProductColorId());
-        for (ProductsImage productsImage : productsImageList) {
-            String filePath = uploadPath + File.separator + productsImage.getUuid() + "_" + productsImage.getFileName();
-            try {
-                Files.deleteIfExists(Paths.get(filePath));
-                productsImageRepository.deleteById(productsImage.getProductImageId());
-            } catch (IOException e) {
-                log.error("Failed to delete image file: " + filePath, e);
-            }
-        }
-
-
-        ProductsDetailImage productsDetailImage = productsDetailImageRepository.findOneByProductColorId(dto.getProductColorId());
-        String filePath = uploadPath + File.separator + productsDetailImage.getUuid() + "_" + productsDetailImage.getFileName();
-        try {
-            Files.deleteIfExists(Paths.get(filePath));
-            productsDetailImageRepository.deleteById(productsDetailImage.getProductsDetailImageId());
-        } catch (IOException e) {
-            log.error("Failed to delete image file: " + filePath, e);
-        }
-
-        boolean isFirstImage = true;
-        for (MultipartFile image : productImages) {
-            String uuid = saveImage(image);
-            ProductsImage productsImage = ProductsImage.builder()
-                    .productsColor(productsColor)
-                    .fileName(image.getOriginalFilename())
-                    .uuid(uuid)
-                    .isMain(isFirstImage)
-                    .build();
-            productsImageRepository.save(productsImage);
-            isFirstImage = false;
-        }
-
-        String uuid = saveImage(productDetailImage);
-        ProductsDetailImage image = ProductsDetailImage.builder()
-                .productsColor(productsColor)
-                .fileName(productDetailImage.getOriginalFilename())
-                .uuid(uuid)
-                .build();
-        productsDetailImageRepository.save(image);
-
-
-
-
-
-
-
-        return "상품 색상 및 수량 수정 완료";
-    }
-
-
-
     private String saveImage(MultipartFile image) {
         String fileName = image.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
@@ -385,7 +419,7 @@ public class ProductServiceImpl implements ProductService {
             // 파일 저장 또는 썸네일 생성 중 오류가 발생할 경우
             log.error("파일 저장하는 도중 오류가 발생했습니다: ", e);
             throw new RuntimeException("File processing error", e);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return uuid;
@@ -862,28 +896,6 @@ public class ProductServiceImpl implements ProductService {
         return productsInfoCardDTOList;
     }
 
-
-    @Override
-    public List<ProductListBySellerDTO> getProductListBySeller(String email) {
-
-
-        Users users = userRepository.findByEmail(email).orElse(null);
-
-        List<ProductsSeller> list = productsSellerRepository.findByUsers(users);
-        List<ProductListBySellerDTO> dtoList = new ArrayList<>();
-
-        for(ProductsSeller productsSeller: list){
-            ProductListBySellerDTO dto = new ProductListBySellerDTO();
-            dto.setProductId(productsSeller.getProducts().getProductId());
-            dto.setProductNumber(productsSeller.getProducts().getProductNumber());
-            dto.setProductName(productsSeller.getProducts().getName());
-            dtoList.add(dto);
-        }
-
-
-        return dtoList;
-    }
-
     @Override
     public List<ProductColorListBySellerDTO> getProductColorListBySeller(String email) {
         Users users = userRepository.findByEmail(email).orElse(null);
@@ -942,6 +954,131 @@ public class ProductServiceImpl implements ProductService {
         dto.setDetailImage(productImageInfoDTO);
         return dto;
     }
+
+        // 카테고리 별 랭크 10개
+        @Override
+        public List<ProductsStarRankListDTO> getranktop10(String category) {
+            List<ProductsStar> top10Products = productsStarRepository.findByTop10StarAvgDesc(category);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserName = authentication.getName();
+            Users users = userRepository.findByEmail(currentUserName).orElse(null);
+    
+            return top10Products.stream()
+                    .map(productsStar -> {
+    
+                        Products product = productsStar.getProductsColor().getProducts();
+                        Long productColorId = productsStar.getProductsColor().getProductColorId();
+    
+                        ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                                .productColorId(productColorId)
+                                .brandName(product.getBrandName())
+                                .price(product.getPrice())
+                                .priceSale(product.getPriceSale())
+                                .isSale(product.getIsSale())
+                                .category(product.getCategory())
+                                .categorySub(product.getCategorySub())
+                                .build();
+    
+                        if (users != null) {
+                            LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId, users.getUserId());
+                            dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+                        }else {
+                            dto.setLike(false);
+                        }
+    
+                        log.info(dto.isLike());
+    
+                        ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                        if (productImage != null) {
+                            try {
+                                String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                                Path path = Paths.get(filePath);
+                                if (Files.exists(path)) {
+                                    byte[] imageData = Files.readAllBytes(path);
+                                    dto.setProductImage(imageData);
+                                } else {
+                                    log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
+                                }
+                            } catch (IOException e) {
+                                log.error("이미지 로딩 중 오류 발생", e);
+                            }
+                        }
+                        log.info(dto);
+                        return dto;
+                    })
+                    .limit(10)
+                    .collect(Collectors.toList());
+        }
+    
+        @Override
+        public PageInfinityResponseDTO<ProductsStarRankListDTO> getrankTop50(String category, PageRequestDTO pageRequestDTO) {
+            Pageable pageable = pageRequestDTO.getPageable();
+            Page<ProductsStar> productsStarPage = productsStarRepository.findByStarAvgDesc(category, pageable);
+    
+            log.info(category);
+            log.info(productsStarPage);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserName = authentication.getName();
+            log.info(currentUserName);
+    
+            Users users = userRepository.findByEmail(currentUserName).orElse(null);
+    
+            log.info(users);
+    
+            List<ProductsStarRankListDTO> dtoList = productsStarPage.getContent().stream()
+                    .map(productsStar -> {
+                        Products product = productsStar.getProductsColor().getProducts();
+                        Long productColorId = productsStar.getProductsColor().getProductColorId();
+    
+                        ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
+                                .productColorId(productColorId)
+                                .brandName(product.getBrandName())
+                                .price(product.getPrice())
+                                .priceSale(product.getPriceSale())
+                                .isSale(product.getIsSale())
+                                .category(product.getCategory())
+                                .categorySub(product.getCategorySub())
+                                .build();
+    
+                        if (users != null) {
+                            LikeProducts likeProducts = likeRepository.findByProductColorIdAndUserId(productColorId, users.getUserId());
+                            dto.setLike(likeProducts != null ? likeProducts.isLike() : false);
+                        }else {
+                            dto.setLike(false);
+                        }
+    
+                        log.info(dto.isLike());
+    
+                        ProductsImage productImage = productsImageRepository.findByProductsColorProductColorIdAndIsMainTrue(productColorId);
+                        if (productImage != null) {
+                            try {
+                                String filePath = uploadPath + productImage.getUuid() + "_" + productImage.getFileName();
+                                Path path = Paths.get(filePath);
+                                if (Files.exists(path)) {
+                                    byte[] imageData = Files.readAllBytes(path);
+                                    dto.setProductImage(imageData);
+                                } else {
+                                    log.warn("이미지 파일이 존재하지 않습니다: " + filePath);
+                                }
+                            } catch (IOException e) {
+                                log.error("이미지 로딩 중 오류 발생", e);
+                            }
+                        }
+                        log.info(dto);
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+    
+            log.info(dtoList);
+    
+            return PageInfinityResponseDTO.<ProductsStarRankListDTO>withAll()
+                    .pageRequestDTO(pageRequestDTO)
+                    .dtoList(dtoList)
+                    .totalIndex((int) productsStarPage.getTotalElements())
+                    .build();
+        }
+
+    
 
 
 }
