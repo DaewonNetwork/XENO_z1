@@ -22,10 +22,11 @@ const ProductCategoryList = ( ) => {
     const productList: ProductType[] = data;
 
     useEffect(() => {
-        refetch();
+        refetch();console.log(data)
+
     }, [productList, refetch]);
 
-
+    
 
     if (isLoading) {
         return (
@@ -45,7 +46,7 @@ const ProductCategoryList = ( ) => {
    
 
     return (
-        <ProductCardList column={2} productList={productList} parentRefetch={refetch}/>
+        <ProductCardList column={2} productList={productList} parentRefetch={refetch} isColor={true} />
     );
 };
 

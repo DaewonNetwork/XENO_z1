@@ -27,6 +27,7 @@ export interface ProductType {
     // starAvg: number;
     productState: string;
     productImage: Uint8Array | null;
+    color?: string;
 }
 
 

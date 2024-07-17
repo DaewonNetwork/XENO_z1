@@ -12,10 +12,10 @@ interface ProductCardType {
     likeBtn: ReactNode;
     isRank?: boolean;
     rank?: number;
-
+    isColor?: boolean;
 }
 
-const ProductCard = ({ product, likeBtn, isRank = false, rank = 0 }: ProductCardType) => {
+const ProductCard = ({ product, likeBtn, isRank = false, rank = 0 , isColor = false}: ProductCardType) => {
 
     const router = useRouter();
 
@@ -44,7 +44,7 @@ const ProductCard = ({ product, likeBtn, isRank = false, rank = 0 }: ProductCard
             </div>
             <div className={styles.card_btm}>
                 <TextSmallShared fontWeight={"medium"}>{product.brandName}</TextSmallShared>
-                <TextSmallShared>{product.name}</TextSmallShared>
+                <TextSmallShared>{product.name} {isColor &&`(${product.color})`} </TextSmallShared>
                 <TextSmallShared>
                     {product.sale && (
                         <span className="text-primary">

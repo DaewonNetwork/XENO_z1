@@ -721,7 +721,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductsInfoCardDTO> getProductsInfoByCategory(String categoryId, String categorySubId) {
+    public List<ProductColorInfoCardDTO> getProductsInfoByCategory(String categoryId, String categorySubId) {
         List<Products> productsList = new ArrayList<>();
         if (categoryId.equals("000") && categorySubId.isEmpty()) {
             productsList = productsRepository.findAll();
@@ -734,7 +734,7 @@ public class ProductServiceImpl implements ProductService {
             productsList = productsRepository.findByCategorySub(category, categorySub);
         }
 
-        List<ProductsInfoCardDTO> productsInfoCardDTOList = new ArrayList<>();
+        List<ProductColorInfoCardDTO> productsInfoCardDTOList = new ArrayList<>();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -750,7 +750,7 @@ public class ProductServiceImpl implements ProductService {
         for (Products products : productsList) {
             List<ProductsColor> productsColors = productsColorRepository.findByProductId(products.getProductId());
             for (ProductsColor productsColor : productsColors) {
-                ProductsInfoCardDTO dto = new ProductsInfoCardDTO();
+                ProductColorInfoCardDTO dto = new ProductColorInfoCardDTO();
                 dto.setBrandName(products.getBrandName());
                 dto.setName(products.getName());
                 dto.setCategory(products.getCategory());
@@ -758,6 +758,7 @@ public class ProductServiceImpl implements ProductService {
                 dto.setPrice(products.getPrice());
                 dto.setPriceSale(products.getPriceSale());
                 dto.setSale(products.getIsSale());
+                dto.setColor(productsColor.getColor());
                 if (users != null) {
                     Long userId = users.getUserId();
                     LikeProducts likeProducts = likeRepository
@@ -772,6 +773,7 @@ public class ProductServiceImpl implements ProductService {
                         .findByProductColorId(productsColor.getProductColorId()).orElse(null);
                 ProductsImage productsImage = productsImageRepository
                         .findFirstByProductColorId(productsColor.getProductColorId());
+                log.info(productsImage);
                 if (productsImage != null) {
                     try {
                         byte[] imageData = getImage(productsImage.getUuid(), productsImage.getFileName());
@@ -785,7 +787,7 @@ public class ProductServiceImpl implements ProductService {
                 dto.setProductColorId(productsColor.getProductColorId());
                 dto.setLikeIndex(productsLike != null ? productsLike.getLikeIndex() : 0);
                 dto.setStarAvg(productsStar != null ? productsStar.getStarAvg() : 0);
-
+log.info(dto.getProductImage());
                 productsInfoCardDTOList.add(dto);
             }
         }
@@ -794,7 +796,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductsInfoCardDTO> getLikedProductsInfo() {
+    public List<ProductColorInfoCardDTO> getLikedProductsInfo() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -806,10 +808,10 @@ public class ProductServiceImpl implements ProductService {
         log.info(users);
         List<LikeProducts> likeProductsList = likeRepository.findByUserId(users.getUserId());
         log.info(likeProductsList);
-        List<ProductsInfoCardDTO> productsInfoCardDTOList = new ArrayList<>();
+        List<ProductColorInfoCardDTO> productsInfoCardDTOList = new ArrayList<>();
 
         for (LikeProducts likeProducts : likeProductsList) {
-            ProductsInfoCardDTO dto = new ProductsInfoCardDTO();
+            ProductColorInfoCardDTO dto = new ProductColorInfoCardDTO();
             ProductsLike productsLike = productsLikeRepository
                     .findById(likeProducts.getProductsLike().getProductLikeId()).orElse(null);
 
@@ -834,6 +836,7 @@ public class ProductServiceImpl implements ProductService {
             dto.setPriceSale(products.getPriceSale());
 
             dto.setSale(products.getIsSale());
+            dto.setColor(likeProducts.getProductsLike().getProductsColor().getColor());
 
             dto.setLike(likeProducts.isLike());
             dto.setProductColorId(productsColor.getProductColorId());

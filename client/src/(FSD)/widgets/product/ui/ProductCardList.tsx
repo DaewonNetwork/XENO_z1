@@ -12,11 +12,12 @@ interface ProductCardListType {
     column?: number;
     isRank?: boolean;
     parentRefetch?: any;
+    isColor?: boolean;
 };
 
 const cn = classNames.bind(styles);
 
-const ProductCardList = ({ productList, column = 3, isRank = false, parentRefetch }: ProductCardListType) => {
+const ProductCardList = ({ productList, column = 3, isRank = false, parentRefetch, isColor = false}: ProductCardListType) => {
     const productCardListClassNames = cn({
         "column_one": column === 1,
         "column_two": column === 2,
@@ -28,7 +29,7 @@ const ProductCardList = ({ productList, column = 3, isRank = false, parentRefetc
             {
                 productList.map((product, index) => (
                     <React.Fragment key={product.productColorId}>
-                        <ProductCard product={product} isRank={isRank} rank={index + 1} likeBtn={<ProductLikeBtn productColorId={product.productColorId} isLike={product.like} parentRefetch={parentRefetch}/>} />
+                        <ProductCard product={product} isRank={isRank} rank={index + 1} isColor={isColor} likeBtn={<ProductLikeBtn productColorId={product.productColorId} isLike={product.like} parentRefetch={parentRefetch}/>} />
                     </React.Fragment>
                 ))
             }
