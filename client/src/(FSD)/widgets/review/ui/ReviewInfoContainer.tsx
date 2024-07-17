@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 
 import { useProductColorCardRead } from "@/(FSD)/entities/product/api/useProductColorCardRead";
@@ -23,8 +23,7 @@ const ReviewInfoContainer = () => {
     const { data:product,refetch } = useProductColorCardRead(reviewInfo?.productColorId);
 
     useEffect(() => {
-        console.log(product);
-        
+       
     }, [product]);
 
     if(!reviewInfo) return <></>

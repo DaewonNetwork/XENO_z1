@@ -2,9 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useCartProductListRead } from '../api/useCartProductListRead'
 import { ProductType } from '@/(FSD)/shareds/types/product/Product.type';
 import { useCartItemUpdate } from '../api/useCartItemUpdate';
-import { useCartDelete } from '../api/useCartDelete';
 import { CartItemsProps } from './CartProductList';
-import { useCartListAdd } from '../api/useCartListAdd';
 import { useUserRead } from '../../user/api/useUserRead';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { product } from '@/(FSD)/shareds/styles/SkeletonStyle.module.scss';

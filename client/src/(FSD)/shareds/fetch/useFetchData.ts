@@ -1,18 +1,14 @@
 "use client";
 
-import { useRecoilValue } from "recoil";
 import { FetchType } from "../types/FetchData.type";
-import { isLoggedInState } from "../stores/UserAtom";
 
 const useFetchData = () => {
-    const isLoggedIn = useRecoilValue(isLoggedInState);
     const accessToken = localStorage.getItem("access_token");
 
     const fetchData = async ({ path, method = "GET", contentType = "application/json", isAuthRequired = false, isNotAuthRequired = false, body }: FetchType) => {
         let response = null;
-
-     
-        if ((!isNotAuthRequired && isLoggedIn) || (isAuthRequired && isLoggedIn)) {
+        
+        if ((!isNotAuthRequired) || (isAuthRequired)) {
             response = await fetch(`http://localhost:8090/api${path}`, {
                 method: method,
                 headers: {

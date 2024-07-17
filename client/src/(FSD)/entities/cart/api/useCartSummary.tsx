@@ -7,8 +7,6 @@ export const useCartSummary = () => {
     
     return useQuery({
         queryKey: ["cart_summary"],
-        queryFn: () => fetchData({ 
-            path: "/cart/summary", 
-            isAuthRequired: true }),
+        queryFn: () => fetchData({  path: "/cart/summary", isAuthRequired: true }),
     });
 };

@@ -13,11 +13,17 @@ import ProductImageCreateModal from "./ProductImageCreateModal";
 import { useRecoilValue } from "recoil";
 import { productDetailImageState, productImagesState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
 import { useProductCreate } from "../api/useProductCreate";
+import { SizeStocksType } from "./ProductColorCreateForm";
+import { Input } from "@nextui-org/input";
+import { useRouter } from "next/navigation";
+
 
 const ProductCreateForm = () => {
     const [category, setCategory] = useState<string>("");
     const [categorySub, setCategorySub] = useState<string>("");
-
+    const [sizeStocks, setSizeStocks] = useState<SizeStocksType[]>([]);
+    const sizeArray = ["S", "M", "L", "XL"];
+    const router = useRouter();
     const categories: Record<string, string[]> = {
         상의: ["반팔", "긴팔"],
         하의: ["청바지", "반바지", "면", "나일론"],
@@ -45,7 +51,7 @@ const ProductCreateForm = () => {
     });
 
     const onSuccess = (data: any) => {
-        console.log(data);
+        router.push('/seller')
     };
 
     const onError = () => {
@@ -56,30 +62,43 @@ const ProductCreateForm = () => {
 
     console.log(error);
 
-    const sizes = [
-        { size: "M", stock: 10 },
-        { size: "L", stock: 20 }
-    ];
-    
-
     const onSubmit = (data: any) => {
         const formData = new FormData();
-
-        formData.append("productCreateDTO", JSON.stringify({ brandName: "영준", category: category, categorySub: categorySub, price: +data.price, sale: !!data.priceSale, priceSale: +data.priceSale, size: sizes , ...data }));
+        const sizeStocksToSend = sizeStocks.map(({ id, ...rest }) => rest);
+        formData.append("productCreateDTO", JSON.stringify({category: category, categorySub: categorySub, price: +data.price, sale: !!data.priceSale, priceSale: +data.priceSale, size: sizeStocksToSend , ...data }));
         productImages.forEach((image:File) => {
             if (image) {
-                formData.append("productImages", image); // "productImages"로 각 이미지 추가
+                formData.append("productImages", image);
             }
         });
         formData.append("productDetailImage", productDetailImage);
 
-        console.log(productImages)
-        console.log(productImages)
-        console.log(formData.get("productImages"))
-        console.log(productImages.filter((image:File) => !!image))
-
-
         mutate(formData);
+    };
+
+
+    const handleAddSizeStock = () => {
+        const newId = sizeStocks.length > 0 ? sizeStocks[sizeStocks.length - 1].id + 1 : 1;
+        setSizeStocks([...sizeStocks, { id: newId, size: '', stock: 0 }]);
+    };
+
+    const handleRemoveSizeStock = (idToRemove: number) => {
+        const updatedSizeStocks = sizeStocks.filter((item) => item.id !== idToRemove);
+        setSizeStocks(updatedSizeStocks);
+    };
+
+    const handleSizeChange = (selectedSize: string, id: number) => {
+        const updatedSizeStocks = sizeStocks.map(item =>
+            item.id === id ? { ...item, size: selectedSize } : item
+        );
+        setSizeStocks(updatedSizeStocks);
+    };
+
+    const handleStockChange = (e: any, id: number) => {
+        const updatedSizeStocks = sizeStocks.map(item =>
+            item.id === id ? { ...item, stock: e.target.value } : item
+        );
+        setSizeStocks(updatedSizeStocks);
     };
 
     return (
@@ -120,7 +139,54 @@ const ProductCreateForm = () => {
                 </Select>
                 <TextMediumShared isLabel={true} htmlFor={"colors"}>색상</TextMediumShared>
                 <FormInputShared isClearable size="lg" variant="flat" isInvalid={!!errors.colors} radius="none" errorMessage={errors.colors && <>{errors.colors.message}</>} name={"colors"} control={control} placeholder="색상을 입력해주세요." />
-              
+                <Button
+                    type="button"
+                    onClick={handleAddSizeStock}
+                    style={{ marginTop: "1rem" }}
+                >
+                    사이즈 추가
+                </Button>
+                {sizeStocks.map((sizeStock) => (
+                    <div key={sizeStock.id} style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-start" }} >
+
+                        <Select
+                            placeholder="사이즈 선택"
+                            aria-label="사이즈 선택창"
+                            value={sizeStock.size}
+                            size="md"
+                            classNames={{
+                                base: "w-100"
+                            }}
+                            style={{ width: "150px" }}
+                            onChange={(selectedSize) => handleSizeChange(selectedSize.target.value, sizeStock.id)}
+
+                        >
+                            {sizeArray.map((size) => (
+                                <SelectItem key={size} value={size} isDisabled={sizeStocks.some((item) => item.size === size && item.id !== sizeStock.id)}>
+                                    {size}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                        <Input
+                            isClearable
+                            size="md"
+                            classNames={{
+                                base: "w-100"
+                            }}
+
+                            style={{ width: "100px" }}
+                            placeholder="재고 입력"
+                            onChange={(e) => handleStockChange(e, sizeStock.id)}
+                            aria-label="재고 입력란"
+                        />
+                        <Button
+                            variant="flat"
+                            onClick={() => handleRemoveSizeStock(sizeStock.id)}
+                        >
+                            삭제
+                        </Button>
+                    </div>
+                ))}
                 <TextMediumShared>이미지</TextMediumShared>
                 <Button
                     onClick={_ => {
@@ -132,7 +198,7 @@ const ProductCreateForm = () => {
                 </Button>
                 <Button isDisabled={(!isValid) || (!productImages) || (!productDetailImage) || (!category) || (!categorySub)} fullWidth size={"lg"} type={"submit"} color={"primary"}>등록하기</Button>
             </form>
-            {isOpen && <ProductImageCreateModal setIsOpen={setIsOpen} />}
+            {isOpen && <ProductImageCreateModal setIsOpen={setIsOpen} files={productImages} detailFile={productDetailImage}/>}
         </>
     );
 };

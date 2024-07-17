@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useState } from "react";
 import Slider from "react-slick";
@@ -7,7 +7,7 @@ import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 const ProductImagesSlideList = ({ productImages }: { productImages?: Uint8Array[] }) => {
     const [currentSlide, setCurrentSlide] = useState<number>(0);
     const images = productImages || [];
-    
+
     const sliderSettings = {
         dots: false,
         speed: 500,

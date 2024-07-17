@@ -1,17 +1,13 @@
-'use client'
-
-import { productsState } from "@/(FSD)/shareds/stores/ProductAtom";
+import React from "react";
 import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
-import ProductOrderInfoContainer from "@/(FSD)/widgets/product/ui/ProductOrderInfoContainer";
-import React, { useEffect } from "react";
-import { useRecoilState } from "recoil";
+import OrderDeliveryForm from "@/(FSD)/features/order/ui/OrderDeliveryForm";
+import OrderProductInfoList from "@/(FSD)/widgets/order/ui/OrderProductInfoList";
 
 const Page = () => {
-
-
     return (
-        <AppSection>
-        <ProductOrderInfoContainer />
+        <AppSection isBgColor={true}>
+            <OrderDeliveryForm />
+            <OrderProductInfoList />
         </AppSection>
     );
 };

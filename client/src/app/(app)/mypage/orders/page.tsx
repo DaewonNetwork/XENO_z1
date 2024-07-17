@@ -1,27 +1,23 @@
-'use client'
-
-import React, { useEffect } from 'react';
-import { useUserRead } from '@/(FSD)/entities/user/api/useUserRead';
-import { UserType } from '@/(FSD)/shareds/types/User.type';
-import { useOrderListRead } from '@/(FSD)/entities/orders/api/useOrderListRead';
-import { OrderInfoType } from '@/(FSD)/shareds/types/orders/OrderInfo.Type';
-import { useRecoilValue } from 'recoil';
-import { isLoggedInState } from '@/(FSD)/shareds/stores/UserAtom';
-import OrderCardList from '@/(FSD)/widgets/mypage/OrderCardList';
+import React from "react";
+import OrderInfoList from "@/(FSD)/widgets/mypage/OrderInfoList";
+import AppSection from "@/(FSD)/widgets/app/ui/AppSection";
+import AppInner from "@/(FSD)/widgets/app/ui/AppInner";
+import AppFixedTopBar from "@/(FSD)/widgets/app/ui/AppFixedTopBar";
+import AppTitleHeader from "@/(FSD)/widgets/app/ui/AppTitleHeader";
 
 
 const Page = () => {
-
-    const isLoggedIn = useRecoilValue(isLoggedInState);
-   
-    if(!isLoggedIn) return <></>
-
-
-    
     return (
-        <div>
-          <OrderCardList/>
-        </div>
+        <>
+            <AppFixedTopBar>
+                <AppTitleHeader title={"주문 목록"} />
+            </AppFixedTopBar>
+            <AppSection>
+                <AppInner>
+                    <OrderInfoList />
+                </AppInner>
+            </AppSection>
+        </>
     );
 };
 

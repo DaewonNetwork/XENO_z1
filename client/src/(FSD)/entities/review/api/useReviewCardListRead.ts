@@ -19,7 +19,7 @@ export const useReviewCardListRead = () => {
         queryKey: ["review_list_read"],
         queryFn: ({ pageParam }) => fetchData({ path: `/review/page/card?pageIndex=${pageParam}&size=15` }),
         getNextPageParam: (lastPage) => {
-            console.log(lastPage);
+  
             
             if (lastPage.next) {
                 return lastPage.pageIndex + 1;

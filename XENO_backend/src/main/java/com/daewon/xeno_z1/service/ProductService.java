@@ -28,20 +28,23 @@ public interface ProductService {
 
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
-
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
     String updateProduct(ProductUpdateDTO productUpdateDTO);
 
     void deleteProduct(Long productId);
 
+    void deleteProductColor(Long productColorId);
 
     String createProductColor(ProductRegisterColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
     String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
-    List<ProductListBySellerDTO> getProductListBySeller(String email);
+     List<ProductListBySellerDTO> getProductListBySeller(String email);
 
     List<ProductColorListBySellerDTO> getProductColorListBySeller(String email);
+
+    ProductColorUpdateGetInfoDTO getProductColorSizeInfo(Long productColorId) throws IOException;
+
 
 }

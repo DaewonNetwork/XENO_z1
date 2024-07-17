@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import React from 'react';
-import { useUserRead } from '@/(FSD)/entities/user/api/useUserRead';
-import { UserType } from '@/(FSD)/shareds/types/User.type';
+import React from "react";
+import { useUserRead } from "@/(FSD)/entities/user/api/useUserRead";
+import { UserType } from "@/(FSD)/shareds/types/User.type";
 
 const UserInfo = () => {
     const { data } = useUserRead();
-    const userInfo: UserType = data; // UserType에 맞게 data를 userInfo로 타입 단언
+    const userInfo: UserType = data;
 
     return (
         <div>

@@ -7,7 +7,6 @@ import { useRecoilValue } from 'recoil'
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import { UserType } from '@/(FSD)/shareds/types/User.type'
 import { Skeleton } from '@nextui-org/skeleton'
-import { useCartListAdd } from '../api/useCartListAdd'
 import { useUserRead } from '../../user/api/useUserRead'
 import { product } from '@/(FSD)/shareds/styles/SkeletonStyle.module.scss'
 import CartProductCard from './CartProductCard'
@@ -30,7 +29,7 @@ export interface CartItemsProps {
 const CartProductList = () => {
     const { data, isLoading: itemsLoading, error: itemsError } = useCartProductListRead();
     const { data: initialCartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary();
-    
+
     const cartUpdate = useRecoilValue(cartUpdateState);
     const cartTotal = useRecoilValue(cartTotalState);
 
@@ -38,7 +37,7 @@ const CartProductList = () => {
     console.log(cartItems);
 
     const cartSummary = useMemo(() => {
-        if(!cartItems.length) return initialCartSummary;
+        if (!cartItems.length) return initialCartSummary;
 
         return {
             totalItems: cartTotal.totalItems,
@@ -46,9 +45,6 @@ const CartProductList = () => {
         };
     }, [cartItems, initialCartSummary, cartTotal]);
 
-    // if (!user) {
-    //     return <div>로그인이 필요합니다.</div>;
-    // }
 
     if (itemsLoading || summaryLoading) return <div>Loading...</div>;
     if (itemsError || summaryError) return <div>Error loading cart data</div>;
@@ -57,7 +53,9 @@ const CartProductList = () => {
         <div>  {/* 스타일 클래스 추가 */}
             {cartItems?.map((product) => (
                 // CartProductCard 컴포넌트로 교체
-                <CartProductCard key={product.productsColorSizeId} product={product} />
+                <React.Fragment key={product.productsColorSizeId}>
+                    <CartProductCard product={product} />
+                </React.Fragment>
             ))}
             {cartSummary && (
                 <div>  {/* 스타일 클래스 변경 */}

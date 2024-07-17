@@ -5,9 +5,8 @@ import { RiKakaoTalkFill } from "react-icons/ri";
 import { FaEye, FaEyeSlash, FaStar } from "react-icons/fa6";
 import { IoCloseOutline, IoSettingsSharp, IoSearchOutline, IoBagOutline, IoMenuOutline } from "react-icons/io5";
 import { IconType } from "../types/Icon.type";
-import { GoHeartFill, GoPlus, GoHeart, GoProjectRoadmap, GoHome, GoHomeFill, GoPerson  } from "react-icons/go";
+import { GoHeartFill, GoPlus, GoHeart, GoProjectRoadmap, GoHome, GoHomeFill, GoPerson, GoChevronLeft, GoChevronRight, GoChevronUp, GoChevronDown } from "react-icons/go";
 import { MdLocalHospital } from "react-icons/md";
-import { LiaAngleLeftSolid, LiaAngleRightSolid } from "react-icons/lia";
 
 const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType) => {
     let component = null;
@@ -23,10 +22,16 @@ const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType
             component = <RiKakaoTalkFill />;
             break;
         case "left":
-            component = <LiaAngleLeftSolid />;
+            component = <GoChevronLeft />;
             break;
         case "right":
-            component = <LiaAngleRightSolid />;
+            component = <GoChevronRight />;
+            break;
+        case "top":
+            component = <GoChevronUp />;
+            break;
+        case "bottom":
+            component = <GoChevronDown />;
             break;
         case "eye":
             component = <FaEye />;

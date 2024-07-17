@@ -10,25 +10,40 @@ import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 import { Button } from "@nextui-org/button";
 import { Select, SelectItem } from "@nextui-org/select"
 import ProductImageCreateModal from "./ProductImageCreateModal";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useProductRead } from "@/(FSD)/entities/product/api/useProductRead";
 import { ProductCreateGetInfoType } from "@/(FSD)/shareds/types/product/ProductInfo.type";
 
 import { useProductColorCreate } from "../api/useProductColorCreate";
+import { useRecoilValue } from "recoil";
+import { productDetailImageState, productImagesState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
+import { Input } from "@nextui-org/input";
 
 
+
+export interface SizeStocksType {
+    id: number;
+    size: string;
+    stock: number;
+}
 
 
 const ProductColorCreateForm = () => {
 
     const { productId } = useParams<{ productId: string }>();
 
-
+    const router = useRouter();
     const { data } = useProductRead(+productId)
+
+    const productImages = useRecoilValue(productImagesState);
+    const productDetailImage = useRecoilValue(productDetailImageState);
+
+
+
+    const [sizeStocks, setSizeStocks] = useState<SizeStocksType[]>([]);
     const sizeArray = ["S", "M", "L", "XL"];
 
     useEffect(() => {
-        console.log(data);
 
     }, [data]);
 
@@ -38,7 +53,7 @@ const ProductColorCreateForm = () => {
 
     const schema = z.object({
         color: z.string().refine(value => !productInfo.colorType.includes(value), {
-            message: '중복된 색상입니다.'
+            message: "중복된 색상입니다."
         }),
     });
 
@@ -47,13 +62,10 @@ const ProductColorCreateForm = () => {
         mode: "onChange"
     });
 
-    const sizes = [
-        { size: "M", stock: 10 },
-        { size: "L", stock: 20 }
-    ];
+
 
     const onSuccess = (data: any) => {
-        console.log("성공")
+        router.push('/seller')
     }
 
     const { mutate } = useProductColorCreate({ onSuccess });
@@ -63,25 +75,53 @@ const ProductColorCreateForm = () => {
 
         const formData = new FormData();
 
-        formData.append("productColorCreateDTO", JSON.stringify({ productId: productId, color: data.color, size: sizes }));
-
-        formData.forEach((value, key) => {
-            console.log(`${key}: ${value}`);
+        const sizeStocksToSend = sizeStocks.map(({ id, ...rest }) => rest);
+        formData.append("productColorCreateDTO", JSON.stringify({ productId: productId, color: data.color, size: sizeStocksToSend }));
+        productImages.forEach((image: File) => {
+            if (image) {
+                formData.append("productImages", image);
+            }
         });
+        formData.append("productDetailImage", productDetailImage);
+
+    
         mutate(formData);
 
     }
 
     if (!data) return <></>
 
+    const handleAddSizeStock = () => {
+        const newId = sizeStocks.length > 0 ? sizeStocks[sizeStocks.length - 1].id + 1 : 1;
+        setSizeStocks([...sizeStocks, { id: newId, size: "", stock: 0 }]);
+    };
+
+    const handleRemoveSizeStock = (idToRemove: number) => {
+        const updatedSizeStocks = sizeStocks.filter((item) => item.id !== idToRemove);
+        setSizeStocks(updatedSizeStocks);
+    };
+
+    const handleSizeChange = (selectedSize: string, id: number) => {
+        const updatedSizeStocks = sizeStocks.map(item =>
+            item.id === id ? { ...item, size: selectedSize } : item
+        );
+        setSizeStocks(updatedSizeStocks);
+    };
+
+    const handleStockChange = (e: any, id: number) => {
+        const updatedSizeStocks = sizeStocks.map(item =>
+            item.id === id ? { ...item, stock: e.target.value } : item
+        );
+        setSizeStocks(updatedSizeStocks);
+    };
+
+    const isSizeStockValid: boolean = sizeStocks.length === 0 || sizeStocks.some(item => !item.size || item.stock === 0);
 
     return (
         <>
             <form style={{ display: isOpen ? "none" : "block" }} className={styles.product_create_form} onSubmit={handleSubmit(onSubmit)}>
                 <TextMediumShared isLabel={true} htmlFor={"name"}>상품 이름</TextMediumShared>
                 <FormInputShared isClearable readOnly={true} name={"name"} control={control} placeholder={productInfo.name} />
-
-
                 <TextMediumShared isLabel={true} htmlFor={"productNumber"}>품번</TextMediumShared>
                 <FormInputShared isClearable readOnly={true} name={"productNumber"} control={control} placeholder={productInfo.productNumber} />
                 <TextMediumShared isLabel={true} htmlFor={"season"}>시즌</TextMediumShared>
@@ -113,9 +153,55 @@ const ProductColorCreateForm = () => {
                     <TextMediumShared key={index}>{color}</TextMediumShared>
                 ))}
                 <TextMediumShared isLabel={true} htmlFor={"color"}>색상</TextMediumShared>
-                <FormInputShared isClearable size="lg" variant="flat" isInvalid={!!errors.color} radius="none" errorMessage={errors.color && <>{errors.color.message}</>} name={"color"} control={control} placeholder="색상을 입력해주세요." />
-              
+                <FormInputShared size="lg" variant="flat" isInvalid={!!errors.color} radius="none" errorMessage={errors.color && <>{errors.color.message}</>} name={"color"} control={control} placeholder="색상을 입력해주세요." />
+                <Button
+                    type="button"
+                    onClick={handleAddSizeStock}
+                    style={{ marginTop: "1rem" }}
+                >
+                    사이즈 추가
+                </Button>
+                {sizeStocks.map((sizeStock) => (
+                    <div key={sizeStock.id} style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-start" }} >
 
+                        <Select
+                            placeholder="사이즈 선택"
+                            aria-label="사이즈 선택창"
+                            value={sizeStock.size}
+                            size="md"
+                            classNames={{
+                                base: "w-100"
+                            }}
+                            style={{ width: "150px" }}
+                            onChange={(selectedSize) => handleSizeChange(selectedSize.target.value, sizeStock.id)}
+
+                        >
+                            {sizeArray.map((size) => (
+                                <SelectItem key={size} value={size} isDisabled={sizeStocks.some((item) => item.size === size && item.id !== sizeStock.id)}>
+                                    {size}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                        <Input
+                            isClearable
+                            size="md"
+                            classNames={{
+                                base: "w-100"
+                            }}
+
+                            style={{ width: "100px" }}
+                            placeholder="재고 입력"
+                            onChange={(e) => handleStockChange(e, sizeStock.id)}
+                            aria-label="재고 입력란"
+                        />
+                        <Button
+                            variant="flat"
+                            onClick={() => handleRemoveSizeStock(sizeStock.id)}
+                        >
+                            삭제
+                        </Button>
+                    </div>
+                ))}
 
                 <TextMediumShared>이미지</TextMediumShared>
                 <Button
@@ -126,9 +212,9 @@ const ProductColorCreateForm = () => {
                 >
                     이미지 등록하기
                 </Button>
-                <Button fullWidth size={"lg"} type={"submit"} color={"primary"}>등록하기</Button>
+                <Button isDisabled={(!isValid) || (!productImages) || (!productDetailImage) || (isSizeStockValid)} fullWidth size={"lg"} type={"submit"} color={"primary"}>등록하기</Button>
             </form>
-            {isOpen && <ProductImageCreateModal setIsOpen={setIsOpen} />}
+            {isOpen && <ProductImageCreateModal setIsOpen={setIsOpen} files={productImages} detailFile={productDetailImage} />}
         </>
     );
 };

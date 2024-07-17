@@ -1,17 +1,14 @@
-
-
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export const useProductListByLikedRead = () => {
-
     const fetchData = useFetchData();
+
     return useQuery({
         queryKey: ["product_list_liked__read"],
-        queryFn: () => fetchData({ 
+        queryFn: () => fetchData({
             path: `/product/read/like`,
-            isAuthRequired: true, 
-          }),
-        
+            isAuthRequired: true,
+        }),
     });
 };
