@@ -1,4 +1,3 @@
-
 export interface OrderInfoType {
     orderId: number;
     orderDate: string;

@@ -12,7 +12,7 @@ const OrderProductInfo = ({ product }: OrderProductInfoProps) => {
     return (
         <div className={styles.order_product_info}>
             <div className={styles.info_image}>
-                <img className="" src={`data:image/jpeg;base64,${product.image}`} />
+                <img src={`data:image/jpeg;base64,${product.image}`} />
             </div>
             <div className={styles.info_text}>
                 <div className={styles.text_top}>

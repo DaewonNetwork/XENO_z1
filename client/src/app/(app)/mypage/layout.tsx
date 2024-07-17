@@ -7,9 +7,6 @@ import React from "react";
 const Layout = ({ children, }: { children: React.ReactNode }) => {
     return (
         <>
-            <AppFixedTopBar>
-                <AppTitleHeader title={"마이페이지"} />
-            </AppFixedTopBar>
             {children}
             <AppFixedBtmBar>
                 <AppNav />
