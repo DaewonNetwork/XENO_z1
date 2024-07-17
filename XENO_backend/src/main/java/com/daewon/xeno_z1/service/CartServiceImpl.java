@@ -31,7 +31,7 @@ public class CartServiceImpl implements CartService {
     private final ProductsColorSizeRepository productsColorSizeRepository;
     private final ProductsImageRepository productsImageRepository;
 
-    @Value("${uploadPath}")
+    @Value("${org.daewon.upload.path}")
     private String uploadPath;
 
     @Override
@@ -127,6 +127,7 @@ public class CartServiceImpl implements CartService {
         cartDTO.setProductsColorSizeId(cart.getProductsColorSize().getProductColorSizeId());
         cartDTO.setQuantity(cart.getQuantity());
         cartDTO.setPrice(cart.getPrice());
+
         cartDTO.setBrandName(cart.getProductsColorSize().getProductsColor().getProducts().getBrandName());
         cartDTO.setSale(cart.getProductsColorSize().getProductsColor().getProducts().getIsSale());
         cartDTO.setPriceSale(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale());

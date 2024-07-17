@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,11 +102,12 @@ public class CartController {
 
     @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartDTO.cartId)")
     @PutMapping
-    public ResponseEntity<String> updateCartItem(@RequestBody CartDTO cartDTO) {
+    public ResponseEntity<?> updateCartItem(@RequestBody CartDTO cartDTO) {
         // SecurityContext에서 인증된 사용자 정보를 가져옵니다.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증되지 않은 사용자입니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "인증되지 않은 사용자입니다."));
         }
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -117,10 +119,13 @@ public class CartController {
 
             cartService.updateCartItem(user.getUserId(), cartDTO.getCartId(), cartDTO.getQuantity());
 
+            Map<String, String> response = new HashMap<>();
             if (cartDTO.getQuantity() <= 0) {
-                return ResponseEntity.ok("장바구니 아이템이 삭제되었습니다.");
+                response.put("message", "장바구니 아이템이 삭제되었습니다.");
+            } else {
+                response.put("message", "장바구니 수량이 수정되었습니다.");
             }
-            return ResponseEntity.ok("장바구니 수량이 수정되었습니다.");
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

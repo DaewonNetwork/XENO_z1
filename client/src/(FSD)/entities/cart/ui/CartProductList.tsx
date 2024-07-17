@@ -1,11 +1,17 @@
 "use client"
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useCartProductListRead } from '@/(FSD)/entities/cart/api/useCartProductListRead'
 import { useCartSummary } from '@/(FSD)/entities/cart/api/useCartSummary'
 import { useRecoilValue } from 'recoil'
-
+import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 import { UserType } from '@/(FSD)/shareds/types/User.type'
+import { Skeleton } from '@nextui-org/skeleton'
+import { useCartListAdd } from '../api/useCartListAdd'
+import { useUserRead } from '../../user/api/useUserRead'
+import { product } from '@/(FSD)/shareds/styles/SkeletonStyle.module.scss'
+import CartProductCard from './CartProductCard'
+import { cartTotalState, cartUpdateState } from '@/(FSD)/shareds/stores/CartAtom'
 
 export interface CartItemsProps {
     cartId: number;
@@ -23,11 +29,22 @@ export interface CartItemsProps {
 
 const CartProductList = () => {
     const { data, isLoading: itemsLoading, error: itemsError } = useCartProductListRead();
-    const { data: cartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary();
- 
+    const { data: initialCartSummary, isLoading: summaryLoading, error: summaryError } = useCartSummary();
+    
+    const cartUpdate = useRecoilValue(cartUpdateState);
+    const cartTotal = useRecoilValue(cartTotalState);
 
     const cartItems: CartItemsProps[] = data || [];
     console.log(cartItems);
+
+    const cartSummary = useMemo(() => {
+        if(!cartItems.length) return initialCartSummary;
+
+        return {
+            totalItems: cartTotal.totalItems,
+            totalPrice: cartTotal.totalPrice
+        };
+    }, [cartItems, initialCartSummary, cartTotal]);
 
     // if (!user) {
     //     return <div>로그인이 필요합니다.</div>;
@@ -37,16 +54,13 @@ const CartProductList = () => {
     if (itemsError || summaryError) return <div>Error loading cart data</div>;
 
     return (
-        <div>
+        <div>  {/* 스타일 클래스 추가 */}
             {cartItems?.map((product) => (
-                <div key={product.productsColorSizeId} >
-                    <p>Brand: {product.brandName}</p>
-                    <p>Price: {product.price}</p>
-                    <p>Quantity: {product.quantity}</p>
-                </div>
+                // CartProductCard 컴포넌트로 교체
+                <CartProductCard key={product.productsColorSizeId} product={product} />
             ))}
             {cartSummary && (
-                <div className="mt-4 p-4 bg-gray-100">
+                <div>  {/* 스타일 클래스 변경 */}
                     <p>총 상품 수: {cartSummary.totalItems}</p>
                     <p>총 금액: {cartSummary.totalPrice.toLocaleString()}원</p>
                 </div>

@@ -2,7 +2,7 @@
 import useFetchData from "@/(FSD)/shareds/fetch/useFetchData";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const useCarttItemUpdate = () => {
+export const useCartItemUpdate = () => {
     const fetchData = useFetchData();
     const queryClient = useQueryClient();
 
