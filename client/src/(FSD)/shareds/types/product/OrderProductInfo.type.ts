@@ -8,4 +8,3 @@ export type OrderProductInfoType = {
     name?: string;
     image?: Uint8Array | null
 };
-

@@ -21,16 +21,16 @@ const OrderInfoList = () => {
         }
     }, [inView]);
 
-    const OrderInfoList: OrderInfoType[] = orderList;
+    const orderInfoList: OrderInfoType[] = orderList;
 
-    if (!OrderInfoList) return <></>;
-    if(!OrderInfoList[0]) return <></>;
+    if (!orderInfoList) return <></>;
+    if(!orderInfoList[0]) return <></>;
     
 
     return (
         <div className={styles.order_info_list}>
             {
-                OrderInfoList.map(order => (
+                orderInfoList.map(order => (
                     <React.Fragment key={order.orderId}>
                         <OrderCard order={order} />
                     </React.Fragment>

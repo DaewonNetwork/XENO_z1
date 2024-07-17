@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DeliveryOrdersDTO {
 
+        private Long userId;
         private String address;
         private String phoneNumber;
 }

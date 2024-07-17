@@ -28,5 +28,7 @@ public interface OrdersService {
 
     void updateOrderStatusBySeller(OrdersStatusUpdateDTO dto);
 
+    String getLatestReqForUser(String email);
+
 
 }

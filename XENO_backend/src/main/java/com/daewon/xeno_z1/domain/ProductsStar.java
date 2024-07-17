@@ -29,4 +29,6 @@ public class ProductsStar {
 
   private double starTotal;
 
+
+
 }
