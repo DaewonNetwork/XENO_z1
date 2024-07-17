@@ -16,3 +16,4 @@ public class ProductColorListBySellerDTO {
     private String productName;
     private String color;
 }
+

@@ -1,3 +1,4 @@
+
 package com.daewon.xeno_z1.service;
 
 
@@ -27,7 +28,6 @@ public interface ProductService {
 
     List<ProductsInfoCardDTO> getLikedProductsInfo();
 
-
     Products createProduct(ProductRegisterDTO productregisterDTO, List<MultipartFile> productImage, MultipartFile productDetailImage);
 
     String updateProduct(ProductUpdateDTO productUpdateDTO);
@@ -46,6 +46,5 @@ public interface ProductService {
 
     ProductColorUpdateGetInfoDTO getProductColorSizeInfo(Long productColorId) throws IOException;
 
-    byte[] readImage(Long productColorId) throws IOException;
 
 }

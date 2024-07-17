@@ -1,5 +1,6 @@
 package com.daewon.xeno_z1.repository;
 
+import com.daewon.xeno_z1.domain.ProductsColorSize;
 import com.daewon.xeno_z1.domain.ProductsStar;
 import com.daewon.xeno_z1.domain.ProductsStock;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,6 @@ public interface ProductsStockRepository extends JpaRepository<ProductsStock, Lo
 
     @Query("select p from ProductsStock p where p.productsColorSize.productColorSizeId = :productColorSizeId")
     ProductsStock findByProductColorSizeId(@Param("productColorSizeId") Long productColorSizeId);
+
+    Optional<ProductsStock> findByProductsColorSize(ProductsColorSize productsColorSize);
 }
