@@ -14,7 +14,7 @@ import { useUserRead } from "@/(FSD)/entities/user/api/useUserRead";
 
 export interface ProductOrderType {
     orderPayId: string;
-    productColorSizeId: number;
+    productColorSizeId?: number;
     req: string;
     quantity: number;
     amount: number;
