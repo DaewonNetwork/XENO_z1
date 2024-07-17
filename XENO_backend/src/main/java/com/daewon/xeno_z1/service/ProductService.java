@@ -47,11 +47,9 @@ public interface ProductService {
 
     List<ProductListBySellerDTO> getProductListBySeller(String email);
 
-    PageResponseDTO<ProductsSearchDTO> productCategorySearch(String category, PageRequestDTO pageRequestDTO);
+//    PageResponseDTO<ProductsSearchDTO> productCategorySearch(String category, PageRequestDTO pageRequestDTO);
 
     PageResponseDTO<ProductsSearchDTO> BrandNameOrNameOrCategoryOrCategorysubSearch(String keyword,PageRequestDTO pageRequestDTO);
-
-    PageResponseDTO<ProductsSearchDTO> allSearch(PageRequestDTO pageRequestDTO);
 
     String updateProductColor(ProductUpdateColorDTO dto, List<MultipartFile> productImage, MultipartFile productDetailImage);
 

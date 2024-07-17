@@ -302,11 +302,21 @@ public class ProductController {
         }
     }
 
-    @Operation(summary = "카테고리별 검색")
-    @GetMapping("/search/{category}")
-    public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> productCategorySearch(@PathVariable String category, PageRequestDTO pageRequestDTO) {
-        PageResponseDTO<ProductsSearchDTO> responseDTO = productService.productCategorySearch(category, pageRequestDTO);
-        return ResponseEntity.ok(responseDTO);
+    @Operation(summary = "top10")
+    @GetMapping("/rank/{category}")
+    public ResponseEntity<List<ProductsStarRankListDTO>> getranktop10(
+            @PathVariable String category) {
+        List<ProductsStarRankListDTO> result = productService.getranktop10(category);
+        return ResponseEntity.ok(result);
+    }
+    @Operation(summary = "top50")
+    @GetMapping("/rank/page/{category}")
+    public ResponseEntity<PageInfinityResponseDTO<ProductsStarRankListDTO>> getrankTop50(
+            PageRequestDTO pageRequestDTO,
+            @PathVariable String category) {
+        log.info(category);
+        PageInfinityResponseDTO<ProductsStarRankListDTO> result = productService.getrankTop50(category, pageRequestDTO);
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "브랜드명, 이름 검색")
@@ -315,14 +325,6 @@ public class ProductController {
             @RequestParam String keyword,
             @ModelAttribute PageRequestDTO pageRequestDTO) {
         PageResponseDTO<ProductsSearchDTO> result = productService.BrandNameOrNameOrCategoryOrCategorysubSearch(keyword, pageRequestDTO);
-        return ResponseEntity.ok(result);
-    }
-
-    @Operation(summary = "상품 모두 검색")
-    @GetMapping("/all")
-    public ResponseEntity<PageResponseDTO<ProductsSearchDTO>> allSearch(
-            @ModelAttribute PageRequestDTO pageRequestDTO) {
-        PageResponseDTO<ProductsSearchDTO> result = productService.allSearch(pageRequestDTO);
         return ResponseEntity.ok(result);
     }
 
