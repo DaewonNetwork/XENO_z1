@@ -7,8 +7,8 @@ export const useCartListDelete = ({ onSuccess, onError }: MutationType) => {
     const fetchData = useFetchData();
     
     return useMutation({
-        mutationFn: (data: any) => {
-            return fetchData({ path: "/cart", method: "DELETE", body: data, isAuthRequired: true });
+        mutationFn: (cartId: number) => {
+            return fetchData({ path: `/cart?cartId=${cartId}`, method: "DELETE", isAuthRequired: true });
         },
         onSuccess: (data: any) => {
             onSuccess(data);

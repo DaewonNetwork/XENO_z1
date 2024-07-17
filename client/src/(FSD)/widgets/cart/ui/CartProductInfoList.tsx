@@ -28,9 +28,9 @@ const CartProductInfoList = () => {
             <AppContainer>
                 <AppInner>
                     {
-                        cartProductList.map(product => (
-                            <React.Fragment key={product.productsColorSizeId}>
-                                <CartInfo product={product} />
+                        cartProductList.map(cart => (
+                            <React.Fragment key={cart.productsColorSizeId}>
+                                <CartInfo cart={cart} />
                             </React.Fragment>
                         ))
                     }

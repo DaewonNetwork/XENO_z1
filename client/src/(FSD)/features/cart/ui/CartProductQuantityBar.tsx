@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Ref, useRef, useState } from "react";
 import styles from "@/(FSD)/shareds/styles/CartStyle.module.scss";
 import { Button } from "@nextui-org/button";
 import IconShared from "@/(FSD)/shareds/ui/IconShared";
 import { Input } from "@nextui-org/input";
 import { useCartUpdate } from "../api/useCartUpdate";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { cartProductInfoListRefetchState, cartProductQuantityState } from "@/(FSD)/shareds/stores/CartUpdateAtom";
 
 interface CartProductQuantityBarProps {
@@ -21,7 +21,6 @@ interface HandleClickType {
 const CartProductQuantityBar = ({ defaultQuantity, cartId }: CartProductQuantityBarProps) => {
     const [quantity, setQuantity] = useState(defaultQuantity);
 
-
     const { refetch } = useRecoilValue(cartProductInfoListRefetchState);
 
     const onSuccess = (data: any) => {
@@ -31,17 +30,10 @@ const CartProductQuantityBar = ({ defaultQuantity, cartId }: CartProductQuantity
     const { mutate } = useCartUpdate({ onSuccess });
 
     const handleClick = ({ type }: HandleClickType) => {
-        if (type === "plus") {
-            setQuantity(state => {
-                return state = state + 1;
-            });
-        } else {
-            setQuantity(state => {
-                return state = state - 1;
-            });
-        }
+        const newQuantity = type === "plus" ? quantity + 1 : quantity - 1;
 
-        mutate({ cartId: cartId, quantity: quantity, });
+        setQuantity(newQuantity);
+        mutate({ cartId, quantity: newQuantity });
     };
 
     return (
@@ -50,7 +42,7 @@ const CartProductQuantityBar = ({ defaultQuantity, cartId }: CartProductQuantity
                 handleClick({ type: "plus" });
             }} className={"bg-foreground-200"} radius={"none"} isIconOnly size={"sm"}><IconShared iconType={"plus"} /></Button>
             <div className={styles.input_box}>
-                <Input type={"number"} size={"sm"} radius={"none"} fullWidth value={`${quantity}`} />
+                <Input value={`${quantity}`} type={"number"} size={"sm"} radius={"none"} fullWidth />
             </div>
             <Button onClick={_ => {
                 handleClick({ type: "minus" });

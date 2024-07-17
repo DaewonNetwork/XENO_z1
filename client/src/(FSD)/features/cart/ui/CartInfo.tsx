@@ -7,17 +7,17 @@ import CartProductDeleteBtn from "./CartProductDeleteBtn";
 import CartProductSelectBtn from "./CartProductSelectBtn";
 
 interface CartInfoProps {
-    product: CartProductInfoType;
+    cart: CartProductInfoType;
 }
 
-const CartInfo = ({ product }: CartInfoProps) => {
+const CartInfo = ({ cart }: CartInfoProps) => {
     return (
         <div className={styles.cart_product_info}>
             <div className={styles.left_box}>
                 <CartProductSelectBtn />
-                <CartProductItem product={product} numberBar={<CartProductQuantityBar cartId={product.cartId} defaultQuantity={product.quantity} />} />
+                <CartProductItem cart={cart} numberBar={<CartProductQuantityBar cartId={cart.cartId} defaultQuantity={cart.quantity} />} />
             </div>
-            <CartProductDeleteBtn />
+            <CartProductDeleteBtn cartId={cart.cartId} />
         </div>
     );
 };

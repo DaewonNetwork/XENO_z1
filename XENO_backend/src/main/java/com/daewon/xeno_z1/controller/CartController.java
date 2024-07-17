@@ -133,10 +133,14 @@ public class CartController {
 
     @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartId)")
     @DeleteMapping
-    public ResponseEntity<Map<String, String>> removeFromCart(@RequestParam Long cartId) {
+    public ResponseEntity<?> removeFromCart(@RequestParam Long cartId) {
         boolean removed = cartService.removeFromCart(cartId);
+
+        Map<String, Object> Message = new HashMap<>();
+
         if (removed) {
-            return ResponseEntity.ok().build();
+            Message.put("message", "성공적으로 제거되었습니다.");
+            return ResponseEntity.ok(Message);
         } else {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Cart item not found with id: " + cartId);

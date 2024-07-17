@@ -5,24 +5,24 @@ import TextSmallShared from "@/(FSD)/shareds/ui/TextSmallShared";
 import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
 
 interface CartProductItemProps {
-    product: CartProductInfoType;
+    cart: CartProductInfoType;
     numberBar: ReactNode;
 }
 
-const CartProductItem = ({ numberBar, product }: CartProductItemProps) => {
-    console.log(product);
+const CartProductItem = ({ numberBar, cart }: CartProductItemProps) => {
+    console.log(cart);
 
     return (
         <div className={styles.info_product}>
             <div className={styles.product_image}>
-                <img src="" alt="" />
+                <img src={""} alt={""} />
             </div>
             <div className={styles.product_right}>
                 <div className={styles.product_text}>
-                    <TextSmallShared>{product.brandName}</TextSmallShared>
-                    <TextSmallShared fontWeight={"semibold"}>{product.productName} ({product.color})</TextSmallShared>
-                    <TextMediumShared>{product.amount.toLocaleString()}원</TextMediumShared>
-                    <TextSmallShared className={"text-foreground-500"}>{product.quantity.toLocaleString()}개 | {product.size}</TextSmallShared>
+                    <TextSmallShared>{cart.brandName}</TextSmallShared>
+                    <TextSmallShared fontWeight={"semibold"}>{cart.productName} ({cart.color})</TextSmallShared>
+                    <TextMediumShared>{cart.amount.toLocaleString()}원</TextMediumShared>
+                    <TextSmallShared className={"text-foreground-500"}>{cart.quantity.toLocaleString()}개 | {cart.size}</TextSmallShared>
                 </div>
                 {numberBar}
             </div>
