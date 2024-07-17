@@ -14,13 +14,17 @@ import { usePrdouctListAllRead } from '../../product/api/usePrdouctListAllRead';
 import { useProductRead } from '../../product/api/useProductRead';
 import { useProductColorRead } from '../../product/api/useProductColorRead';
 import { useProductColorCardRead } from '../../product/api/useProductColorCardRead';
+import { useCartListAdd } from '@/(FSD)/features/cart/api/useCartListAdd';
 
 interface CartProductCardProps {
     product: CartItemsProps;
 }
 
-const CartProductCard = ({ product }: CartProductCardProps & ProductType) => {
-    const { mutate: addToCart, status: add, error: addError } = useCartListAdd();
+const CartProductCard = ({ product }: CartProductCardProps & ProductType) => { 
+    const onSuccess=(data: any) => {
+
+    }
+    const { mutate: addToCart, status: add, error: addError } = useCartListAdd({onSuccess});
     const { data: userData, isLoading: userLoading, error: userError } = useUserRead();
 
     // product에서 직접 productColorSizeId를 사용합니다
