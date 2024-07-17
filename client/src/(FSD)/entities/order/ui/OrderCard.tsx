@@ -29,7 +29,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
     return (
         <div className={styles.order_card}>
             <div className={styles.card_header}>
-                <TextLargeShared>{order.orderDate}원</TextLargeShared>
+                <TextLargeShared>{order.orderDate}</TextLargeShared>
                 <Button size={"sm"} variant={"light"} isIconOnly><IconShared iconType={"right"} /></Button>
             </div>
             <div className={styles.card_body}>
