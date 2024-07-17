@@ -7,6 +7,7 @@ import { Button } from "@nextui-org/button";
 import IconShared from "@/(FSD)/shareds/ui/IconShared";
 import { OrderProductInfoType } from "@/(FSD)/shareds/types/product/OrderProductInfo.type";
 import OrderProductInfo from "./OrderProductInfo";
+import LinkBtnShared from "@/(FSD)/shareds/ui/LinkBtnShared";
 
 interface OrderCardProps {
     order: OrderInfoType;
@@ -14,6 +15,7 @@ interface OrderCardProps {
 
 const OrderCard = ({ order }: OrderCardProps) => {
     const router = useRouter();
+
     const orderProductInfo: OrderProductInfoType = {
         productColorId: order.productColorId,
         color: order.color,
@@ -24,16 +26,15 @@ const OrderCard = ({ order }: OrderCardProps) => {
         image: order.productImage
     };
 
-
-
     return (
         <div className={styles.order_card}>
             <div className={styles.card_header}>
                 <TextLargeShared>{order.orderDate}</TextLargeShared>
-                <Button size={"sm"} variant={"light"} isIconOnly><IconShared iconType={"right"} /></Button>
+                <LinkBtnShared href={`/products/${order.productColorId}`} size={"sm"} variant={"light"} isIconOnly><IconShared iconType={"right"} /></LinkBtnShared>
             </div>
             <div className={styles.card_body}>
                 <OrderProductInfo product={orderProductInfo} />
+                <LinkBtnShared href={`/reviews/create/${order.orderId}`} size={"md"} fullWidth variant={"ghost"} radius={"sm"} color={"primary"}>후기 작성하기</LinkBtnShared>
             </div>
         </div>
     );
