@@ -6,10 +6,10 @@ import { Button } from "@nextui-org/button";
 import IconShared from "@/(FSD)/shareds/ui/IconShared";
 import { Input } from "@nextui-org/input";
 import { useCartUpdate } from "../api/useCartUpdate";
-import { useRecoilValue } from "recoil";
-import { cartProductInfoListRefetchState } from "@/(FSD)/shareds/stores/CartUpdateAtom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { cartProductInfoListRefetchState, cartProductQuantityState } from "@/(FSD)/shareds/stores/CartUpdateAtom";
 
-interface CartProductNumberBarProps {
+interface CartProductQuantityBarProps {
     defaultQuantity: number;
     cartId: number;
 }
@@ -18,25 +18,30 @@ interface HandleClickType {
     type: "plus" | "minus";
 }
 
-const CartProductNumberBar = ({ defaultQuantity, cartId }: CartProductNumberBarProps) => {
+const CartProductQuantityBar = ({ defaultQuantity, cartId }: CartProductQuantityBarProps) => {
     const [quantity, setQuantity] = useState(defaultQuantity);
 
-    const onSuccess = (data: any) => {};
 
     const { refetch } = useRecoilValue(cartProductInfoListRefetchState);
 
+    const onSuccess = (data: any) => {
+        refetch();
+    };
+
     const { mutate } = useCartUpdate({ onSuccess });
 
-    const handleClick = ({ type } : HandleClickType) => {
+    const handleClick = ({ type }: HandleClickType) => {
         if (type === "plus") {
-            setQuantity(state => ++state);
+            setQuantity(state => {
+                return state = state + 1;
+            });
         } else {
-            setQuantity(state => --state);
+            setQuantity(state => {
+                return state = state - 1;
+            });
         }
 
-        mutate({ cartId: cartId, quantity: quantity });
-
-        refetch();
+        mutate({ cartId: cartId, quantity: quantity, });
     };
 
     return (
@@ -54,4 +59,4 @@ const CartProductNumberBar = ({ defaultQuantity, cartId }: CartProductNumberBarP
     );
 };
 
-export default CartProductNumberBar;
+export default CartProductQuantityBar;

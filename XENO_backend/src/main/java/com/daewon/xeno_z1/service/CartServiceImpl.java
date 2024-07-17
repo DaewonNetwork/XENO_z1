@@ -91,8 +91,9 @@ public class CartServiceImpl implements CartService {
             return;
         }
 
+        log.info(quantity);
         cart.setQuantity(quantity);
-        cart.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPrice() * quantity);
+        cart.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale() * quantity);
         cartRepository.save(cart);
     }
 

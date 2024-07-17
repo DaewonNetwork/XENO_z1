@@ -1,8 +1,8 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import styles from "@/(FSD)/shareds/styles/CartStyle.module.scss";
 import { CartProductInfoType } from "@/(FSD)/shareds/types/cart/CartProductInfo.type";
 import CartProductItem from "@/(FSD)/entities/cart/ui/CartProductItem";
-import CartProductNumberBar from "./CartProductNumberBar";
+import CartProductQuantityBar from "./CartProductQuantityBar";
 import CartProductDeleteBtn from "./CartProductDeleteBtn";
 import CartProductSelectBtn from "./CartProductSelectBtn";
 
@@ -15,7 +15,7 @@ const CartInfo = ({ product }: CartInfoProps) => {
         <div className={styles.cart_product_info}>
             <div className={styles.left_box}>
                 <CartProductSelectBtn />
-                <CartProductItem product={product} numberBar={<CartProductNumberBar cartId={product.cartId} defaultQuantity={product.quantity} />} />
+                <CartProductItem product={product} numberBar={<CartProductQuantityBar cartId={product.cartId} defaultQuantity={product.quantity} />} />
             </div>
             <CartProductDeleteBtn />
         </div>
