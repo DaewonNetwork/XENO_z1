@@ -1,5 +1,6 @@
 package com.daewon.xeno_z1.controller;
 
+import com.daewon.xeno_z1.domain.Orders;
 import com.daewon.xeno_z1.dto.auth.AuthSigninDTO;
 import com.daewon.xeno_z1.dto.order.*;
 import com.daewon.xeno_z1.dto.page.PageInfinityResponseDTO;
@@ -76,6 +77,14 @@ public class OrdersController {
         } catch (Exception e) {
             return ResponseEntity.status(404).body("해당하는 상품 또는 재고가 없습니다.");
         }
+    }
+
+    @GetMapping("/latestReq")
+    public ResponseEntity<String> getLatestReq(@AuthenticationPrincipal UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        String latestReq = ordersService.getLatestReqForUser(email);
+
+        return ResponseEntity.ok(latestReq);
     }
 
     //  프론트에서 address, phoneNumber 값을 보내주면 해당하는 user의 address, phoneNumber 추가됨.
