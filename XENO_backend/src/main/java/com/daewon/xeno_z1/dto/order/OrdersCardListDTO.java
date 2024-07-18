@@ -22,6 +22,8 @@ public class OrdersCardListDTO {
     private String color;
     private String status;
     private Long amount;
+    private boolean isReview;
+    private Long reviewId;
     private int quantity;
     private byte[] productImage;
 

@@ -12,7 +12,7 @@ import { Button } from "@nextui-org/button";
 import IconShared from "@/(FSD)/shareds/ui/IconShared";
 import AppInner from "../../app/ui/AppInner";
 
-const OrderProductInfoList = () => {
+const OrderCompleteList = () => {
     const [isOpen, handleOpen] = useReducer((state) => !state, true);
     const [newProducts, setNewProducts] = useRecoilState<OrderProductInfoType[]>(productsState);
 
@@ -50,4 +50,4 @@ const OrderProductInfoList = () => {
     );
 };
 
-export default OrderProductInfoList;
+export default OrderCompleteList;

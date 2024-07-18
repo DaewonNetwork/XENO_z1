@@ -19,7 +19,7 @@ const SellerProFileContainer = () => {
             <ProductColorListBtn />
             <ProductOrdersStatusListBtn />
             <QuestionBtn/>
-            <DarkModeSelectBtn/>
+            {/* <DarkModeSelectBtn/> */}
         </>
     )
 }

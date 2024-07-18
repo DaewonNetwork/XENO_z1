@@ -199,7 +199,9 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
     const router = useRouter();
 
     const linkToCart = () => {
-        router.push(`/cart`)
+        // router.push(`/cart`)
+        window.location.href = '/cart'
+       
     }
 
     const handlePurchase = () => {

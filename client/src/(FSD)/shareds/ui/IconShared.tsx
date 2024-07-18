@@ -5,7 +5,7 @@ import { RiKakaoTalkFill } from "react-icons/ri";
 import { FaEye, FaEyeSlash, FaStar } from "react-icons/fa6";
 import { IoCloseOutline, IoSettingsSharp, IoSearchOutline, IoBagOutline, IoMenuOutline } from "react-icons/io5";
 import { IconType } from "../types/Icon.type";
-import { GoHeartFill, GoPlus, GoHeart, GoProjectRoadmap, GoHome, GoHomeFill, GoPerson, GoChevronLeft, GoChevronRight, GoChevronUp, GoChevronDown, GoSun, GoMoon } from "react-icons/go";
+import { GoHeartFill, GoPlus, GoHeart, GoProjectRoadmap, GoHome, GoHomeFill, GoPerson, GoChevronLeft, GoChevronRight, GoChevronUp, GoChevronDown, GoSun, GoMoon, GoDash } from "react-icons/go";
 import { MdLocalHospital } from "react-icons/md";
 
 const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType) => {
@@ -44,6 +44,9 @@ const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType
             break;
         case "plus":
             component = <GoPlus />;
+            break;
+        case "minus":
+            component = <GoDash />;
             break;
         case "person":
             component = <GoPerson />;

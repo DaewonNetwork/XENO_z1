@@ -109,6 +109,8 @@ public class CartController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증되지 않은 사용자입니다.");
         }
 
+        log.info(cartUpdateDTO);
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String email = userDetails.getUsername(); // JWT에서 사용한 email을 가져옵니다.
 
@@ -118,7 +120,7 @@ public class CartController {
             Users user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-            cartService.updateCartItem(user.getUserId(), cartUpdateDTO.getCartId(), cartUpdateDTO.getQuantity());
+            cartService.updateCartItem(user.getUserId(), cartUpdateDTO.getCartId(), cartUpdateDTO.getQuantity(),cartUpdateDTO.getPrice());
 
             if (cartUpdateDTO.getQuantity() <= 0) {
                 Message.put("message", "장바구니 아이템이 삭제되었습니다");

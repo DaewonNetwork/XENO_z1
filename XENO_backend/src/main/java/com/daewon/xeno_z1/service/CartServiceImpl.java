@@ -81,7 +81,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateCartItem(Long userId, Long cartId, Long quantity) {
+    public void updateCartItem(Long userId, Long cartId, Long quantity, Long price) {
         Cart cart = cartRepository.findByCartIdAndUserUserId(cartId, userId)
                 .orElseThrow(() -> new RuntimeException("해당 사용자의 장바구니 상품을 찾을 수 없습니다."));
 
@@ -93,7 +93,7 @@ public class CartServiceImpl implements CartService {
 
         log.info(quantity);
         cart.setQuantity(quantity);
-        cart.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale() * quantity);
+        cart.setPrice(price * quantity);
         cartRepository.save(cart);
     }
 
@@ -129,7 +129,7 @@ public class CartServiceImpl implements CartService {
         cartDTO.setAmount(cart.getPrice());
         cartDTO.setBrandName(cart.getProductsColorSize().getProductsColor().getProducts().getBrandName());
         cartDTO.setSale(cart.getProductsColorSize().getProductsColor().getProducts().getIsSale());
-        cartDTO.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale());
+        cartDTO.setPrice(cart.getPrice()/cart.getQuantity());
         cartDTO.setProductName(cart.getProductsColorSize().getProductsColor().getProducts().getName());
         cartDTO.setColor(cart.getProductsColorSize().getProductsColor().getColor());
         cartDTO.setSize(String.valueOf(cart.getProductsColorSize().getSize()));

@@ -9,6 +9,9 @@ import TextXSmallShared from "@/(FSD)/shareds/ui/TextXSmallShared";
 import IconShared from "@/(FSD)/shareds/ui/IconShared";
 
 const AppNav = () => {
+
+
+    const accessToken = localStorage.getItem("access_token")!;
     return (
         <nav className={`border-default-100 border-t-small ${styles.nav}`}>
             <AppContainer>
@@ -30,10 +33,14 @@ const AppNav = () => {
                             <IconShared iconType={"like"} />
                             <TextXSmallShared>좋아요</TextXSmallShared>
                         </LinkBtnShared>
-                        <LinkBtnShared href={"/mypage"} data-hover={false} disableAnimation>
+                        {accessToken ? (<LinkBtnShared href={"/mypage"} data-hover={false} disableAnimation>
                             <IconShared iconType={"person"} />
                             <TextXSmallShared>마이</TextXSmallShared>
-                        </LinkBtnShared>
+                        </LinkBtnShared> ) : (<LinkBtnShared href={"/auth/signin"} data-hover={false} disableAnimation>
+                            <IconShared iconType={"person"} />
+                            <TextXSmallShared>로그인</TextXSmallShared>
+                        </LinkBtnShared>)}
+                        
                     </div>
                 </AppInner>
             </AppContainer>

@@ -26,7 +26,7 @@ const ProductRankTopPage = () => {
 
 
     return (
-        <ProductCardList productList={productCardList} isColor={true} parentRefetch={refetch} lastCard={<div ref={ref} />} />
+        <ProductCardList productList={productCardList} parentRefetch={refetch} lastCard={<div ref={ref} />} />
     );
 };
 

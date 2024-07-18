@@ -13,7 +13,7 @@ const CartProductItem = ({ numberBar, cart }: CartProductItemProps) => {
     return (
         <div className={styles.info_product}>
             <div className={styles.product_image}>
-                <img src={""} alt={""} />
+                <img src={`data:image/jpeg;base64,${cart.productImage}`} alt={""} />
             </div>
             <div className={styles.product_right}>
                 <div className={styles.product_text}>

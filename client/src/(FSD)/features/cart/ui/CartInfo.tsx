@@ -10,10 +10,11 @@ interface CartInfoProps {
 }
 
 const CartInfo = ({ cart }: CartInfoProps) => {
+    console.log(cart)
     return (
         <div className={styles.cart_product_info}>
             <div className={styles.left_box}>
-                <CartProductItem cart={cart} numberBar={<CartProductQuantityBar cartId={cart.cartId} defaultQuantity={cart.quantity} />} />
+                <CartProductItem cart={cart} numberBar={<CartProductQuantityBar cartId={cart.cartId} defaultQuantity={cart.quantity} price={cart.price} />} />
             </div>
             <CartProductDeleteBtn cartId={cart.cartId} />
         </div>

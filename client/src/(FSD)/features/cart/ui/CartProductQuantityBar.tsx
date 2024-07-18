@@ -13,13 +13,14 @@ import { cartSummaryRefetchState } from "@/(FSD)/shareds/stores/CartSummaryAtome
 interface CartProductQuantityBarProps {
     defaultQuantity: number;
     cartId: number;
+    price: number;
 }
 
 interface HandleClickType {
     type: "plus" | "minus";
 }
 
-const CartProductQuantityBar = ({ defaultQuantity, cartId }: CartProductQuantityBarProps) => {
+const CartProductQuantityBar = ({ defaultQuantity, cartId,price }: CartProductQuantityBarProps) => {
     const [quantity, setQuantity] = useState(defaultQuantity);
 
     const { refetch: cartProductInfoListRefetch } = useRecoilValue(cartProductInfoListRefetchState);
@@ -36,7 +37,7 @@ const CartProductQuantityBar = ({ defaultQuantity, cartId }: CartProductQuantity
         const newQuantity = type === "plus" ? quantity + 1 : quantity - 1;
 
         setQuantity(newQuantity);
-        mutate({ cartId, quantity: newQuantity });
+        mutate({ cartId, quantity: newQuantity , price });
     };
 
     return (

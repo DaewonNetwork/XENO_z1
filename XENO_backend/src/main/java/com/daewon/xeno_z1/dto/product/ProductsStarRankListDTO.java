@@ -16,8 +16,6 @@ public class ProductsStarRankListDTO {
     private String brandName;
 
     private String name;
-
-    private String name;
     
     private Long price;
 

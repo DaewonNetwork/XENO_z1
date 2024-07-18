@@ -75,6 +75,8 @@ const AuthSigninForm = () => {
             <label className={"text-medium font-semibold"} htmlFor={"password"}>비밀번호</label>
             <PasswordInputShared size={"lg"} variant={"underlined"} isInvalid={!!errors.password} radius={"none"} errorMessage={errors.password && <>{errors.password.message}</>} name={"password"} control={control} placeholder={"비밀번호를 입력해주세요."} />
             <Button isDisabled={(!isValid) || (submitCount >= 5)} type={"submit"} variant={"solid"} color={(!isValid) || (submitCount >= 5) ? "default" : "primary"} size={"lg"} radius={"sm"} fullWidth>로그인</Button>
+            <Button  variant={"solid"} onClick={() => router.push('/auth/signup')} size={"lg"} radius={"sm"} fullWidth>회원가입</Button>
+            <Button  variant={"solid"} onClick={() => router.push('/seller/auth/signup')} size={"lg"} radius={"sm"} fullWidth>판매자 회원가입</Button>
         </form>
         </>
 

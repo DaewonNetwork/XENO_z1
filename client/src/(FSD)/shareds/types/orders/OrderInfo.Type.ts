@@ -9,5 +9,6 @@ export interface OrderInfoType {
     status: string;
     amount: number;
     quantity: number;
+    review?: boolean
     productImage: Uint8Array | null; // byte[]에 해당하는 ArrayBuffer로 처리
 }

@@ -39,7 +39,7 @@ const ReviewCreateForm = () => {
     });
 
     const onSuccess = (data: any) => {
-       
+       router.push('/')
     }
 
  

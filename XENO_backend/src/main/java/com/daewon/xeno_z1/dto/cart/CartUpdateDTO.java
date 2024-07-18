@@ -11,4 +11,5 @@ public class CartUpdateDTO {
 
     private Long cartId;
     private Long quantity;
+    private Long price;
 }

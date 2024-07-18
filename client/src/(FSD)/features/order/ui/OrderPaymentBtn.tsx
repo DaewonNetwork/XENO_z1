@@ -30,10 +30,7 @@ const OrderPaymentBtn = ({ productList }: OrderPaymentBtnProps) => {
     const router = useRouter();
 
     const onSuccess = (data: any) => {
-        // setOrdersCompleteInfo(data)
-        console.log("post 성공");
-        localStorage.removeItem('newProducts');
-        router.push('/order/complete')
+        window.location.href = '/complete'
     }
 
     const { data } = useUserRead();
@@ -89,7 +86,9 @@ const OrderPaymentBtn = ({ productList }: OrderPaymentBtnProps) => {
 
 
 
-        const handleClick = async () => {
+    const handleClick = async () => {
+       
+
 
         const customerKey = generateCustomerKey();
 

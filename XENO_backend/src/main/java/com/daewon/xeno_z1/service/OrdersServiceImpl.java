@@ -45,6 +45,7 @@ public class OrdersServiceImpl implements OrdersService {
     private final ProductsColorSizeRepository productsColorSizeRepository;
     private final ProductsImageRepository productsImageRepository;
     private final ProductsSellerRepository productsSellerRepository;
+    private final ReviewRepository reviewRepository;
 
 
     @Value("${org.daewon.upload.path}")
@@ -89,16 +90,7 @@ public class OrdersServiceImpl implements OrdersService {
 
         List<Orders> savedOrders = new ArrayList<>();
 
-        // 사용자의 가장 최근 주문에서 req 값을 가져옵니다.
-        String latestReq = ordersRepository.findTopByUserOrderByCreateAtDesc(users)
-                .map(Orders::getReq)
-                .orElse(null);
-
-        log.info("latestReq: " + latestReq);
         for(OrdersDTO dto : ordersDTO) {
-            // dto의 req가 null이거나 비어있으면 최근 req 값을 사용합니다.
-            String reqToUse = (dto.getReq() == null || dto.getReq().trim().isEmpty()) ? latestReq : dto.getReq();
-
             Orders orders  = Orders.builder()
                 .orderPayId(orderPayId)
                 .orderNumber(orderNumber)
@@ -241,31 +233,43 @@ public class OrdersServiceImpl implements OrdersService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
-        for(Orders order : orders.getContent()) {
-            OrdersCardListDTO dto = new OrdersCardListDTO();
-            dto.setOrderId(order.getOrderId());
-            dto.setOrderDate(order.getCreateAt().format(formatter));
-            dto.setStatus(order.getStatus());
-            dto.setAmount(order.getAmount());
-            dto.setQuantity(order.getQuantity());
-            dto.setColor(order.getProductsColorSize().getProductsColor().getColor());
-            dto.setSize(order.getProductsColorSize().getSize().name());
-            dto.setBrandName(order.getProductsColorSize().getProductsColor().getProducts().getBrandName());
-            dto.setProductName(order.getProductsColorSize().getProductsColor().getProducts().getName());
-            dto.setProductColorId(order.getProductsColorSize().getProductsColor().getProductColorId());
-            ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(order.getProductsColorSize().getProductsColor().getProductColorId());
-            if (productsImage != null) {
-                try {
-                    byte[] data = getImage(productsImage.getUuid(), productsImage.getFileName());
-                    dto.setProductImage(data);
-                } catch (java.io.IOException e) {
-                    throw new RuntimeException(e);
+
+
+
+                for(Orders order : orders.getContent()) {
+                OrdersCardListDTO dto = new OrdersCardListDTO();
+                Review reviews = reviewRepository.findByUsersAndOrders(users,order);
+                if(reviews != null) {
+                    dto.setReview(true);
+                    dto.setReviewId(reviews.getReviewId());
+                } else{
+                    dto.setReview(false);
                 }
-            } else {
-                dto.setProductImage(null);
+
+                dto.setOrderId(order.getOrderId());
+                dto.setOrderDate(order.getCreateAt().format(formatter));
+                dto.setStatus(order.getStatus());
+                dto.setAmount(order.getAmount());
+                dto.setQuantity(order.getQuantity());
+                dto.setColor(order.getProductsColorSize().getProductsColor().getColor());
+                dto.setSize(order.getProductsColorSize().getSize().name());
+                dto.setBrandName(order.getProductsColorSize().getProductsColor().getProducts().getBrandName());
+                dto.setProductName(order.getProductsColorSize().getProductsColor().getProducts().getName());
+                dto.setProductColorId(order.getProductsColorSize().getProductsColor().getProductColorId());
+                ProductsImage productsImage = productsImageRepository.findFirstByProductColorId(order.getProductsColorSize().getProductsColor().getProductColorId());
+                if (productsImage != null) {
+                    try {
+                        byte[] data = getImage(productsImage.getUuid(), productsImage.getFileName());
+                        dto.setProductImage(data);
+                    } catch (java.io.IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    dto.setProductImage(null);
+                }
+                dtoList.add(dto);
             }
-            dtoList.add(dto);
-        }
+
 
         return PageInfinityResponseDTO.<OrdersCardListDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
