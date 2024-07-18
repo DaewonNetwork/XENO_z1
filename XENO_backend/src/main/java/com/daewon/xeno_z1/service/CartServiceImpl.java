@@ -91,8 +91,9 @@ public class CartServiceImpl implements CartService {
             return;
         }
 
+        log.info(quantity);
         cart.setQuantity(quantity);
-        cart.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPrice() * quantity);
+        cart.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale() * quantity);
         cartRepository.save(cart);
     }
 
@@ -113,29 +114,31 @@ public class CartServiceImpl implements CartService {
         Long totalPrice = carts.stream()
                 .mapToLong(cart -> cart.getPrice())
                 .sum();
-        int totalItems = carts.stream()
+        int totalProductIndex = carts.stream()
                 .mapToInt(cart -> cart.getQuantity().intValue())
                 .sum();
-        return new CartSummaryDTO(totalItems, totalPrice);
+        return new CartSummaryDTO(totalProductIndex, totalPrice);
     }
 
     @Override
     public CartDTO convertToDTO(Cart cart) {
         CartDTO cartDTO = new CartDTO();
         cartDTO.setCartId(cart.getCartId());
-        cartDTO.setUserId(cart.getUser().getUserId());
         cartDTO.setProductsColorSizeId(cart.getProductsColorSize().getProductColorSizeId());
         cartDTO.setQuantity(cart.getQuantity());
-        cartDTO.setPrice(cart.getPrice());
+        cartDTO.setAmount(cart.getPrice());
         cartDTO.setBrandName(cart.getProductsColorSize().getProductsColor().getProducts().getBrandName());
         cartDTO.setSale(cart.getProductsColorSize().getProductsColor().getProducts().getIsSale());
-        cartDTO.setPriceSale(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale());
+        cartDTO.setPrice(cart.getProductsColorSize().getProductsColor().getProducts().getPriceSale());
+        cartDTO.setProductName(cart.getProductsColorSize().getProductsColor().getProducts().getName());
+        cartDTO.setColor(cart.getProductsColorSize().getProductsColor().getColor());
+        cartDTO.setSize(String.valueOf(cart.getProductsColorSize().getSize()));
 
         ProductsImage image = cart.getProductsImage();
         if (image != null) {
             try {
                 byte[] imageData = getImage(image.getUuid(), image.getFileName());
-                cartDTO.setImageData(imageData);
+                cartDTO.setProductImage(imageData);
             } catch (IOException e) {
                 log.error("이미지 로딩 실패: " + e.getMessage());
             }

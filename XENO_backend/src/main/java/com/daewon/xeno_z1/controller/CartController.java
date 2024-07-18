@@ -5,6 +5,7 @@ import com.daewon.xeno_z1.dto.auth.AuthSigninDTO;
 import com.daewon.xeno_z1.dto.cart.AddToCartDTO;
 import com.daewon.xeno_z1.dto.cart.CartDTO;
 import com.daewon.xeno_z1.dto.cart.CartSummaryDTO;
+import com.daewon.xeno_z1.dto.cart.CartUpdateDTO;
 import com.daewon.xeno_z1.repository.UserRepository;
 import com.daewon.xeno_z1.service.CartService;
 import com.daewon.xeno_z1.utils.JWTUtil;
@@ -99,9 +100,9 @@ public class CartController {
         }
     }
 
-    @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartDTO.cartId)")
+    @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartUpdateDTO.cartId)")
     @PutMapping
-    public ResponseEntity<String> updateCartItem(@RequestBody CartDTO cartDTO) {
+    public ResponseEntity<?> updateCartItem(@RequestBody CartUpdateDTO cartUpdateDTO) {
         // SecurityContext에서 인증된 사용자 정보를 가져옵니다.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {
@@ -111,16 +112,20 @@ public class CartController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String email = userDetails.getUsername(); // JWT에서 사용한 email을 가져옵니다.
 
+        Map<String, Object> Message = new HashMap<>();
+
         try {
             Users user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-            cartService.updateCartItem(user.getUserId(), cartDTO.getCartId(), cartDTO.getQuantity());
+            cartService.updateCartItem(user.getUserId(), cartUpdateDTO.getCartId(), cartUpdateDTO.getQuantity());
 
-            if (cartDTO.getQuantity() <= 0) {
-                return ResponseEntity.ok("장바구니 아이템이 삭제되었습니다.");
+            if (cartUpdateDTO.getQuantity() <= 0) {
+                Message.put("message", "장바구니 아이템이 삭제되었습니다");
+                return ResponseEntity.ok(Message);
             }
-            return ResponseEntity.ok("장바구니 수량이 수정되었습니다.");
+            Message.put("message", "완료되었습니다.");
+            return ResponseEntity.ok(Message);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -128,10 +133,14 @@ public class CartController {
 
     @PreAuthorize("@cartAndOrderSecurityUtils.isCartOwner(#cartId)")
     @DeleteMapping
-    public ResponseEntity<Map<String, String>> removeFromCart(@RequestParam Long cartId) {
+    public ResponseEntity<?> removeFromCart(@RequestParam Long cartId) {
         boolean removed = cartService.removeFromCart(cartId);
+
+        Map<String, Object> Message = new HashMap<>();
+
         if (removed) {
-            return ResponseEntity.ok().build();
+            Message.put("message", "성공적으로 제거되었습니다.");
+            return ResponseEntity.ok(Message);
         } else {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Cart item not found with id: " + cartId);

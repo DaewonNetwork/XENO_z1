@@ -1094,6 +1094,7 @@ log.info(dto.getProductImage());
                     ProductsStarRankListDTO dto = ProductsStarRankListDTO.builder()
                             .productColorId(productColorId)
                             .brandName(product.getBrandName())
+                            .name(product.getName())
                             .price(product.getPrice())
                             .priceSale(product.getPriceSale())
                             .isSale(product.getIsSale())

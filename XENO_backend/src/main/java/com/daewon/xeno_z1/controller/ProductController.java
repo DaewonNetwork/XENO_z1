@@ -35,6 +35,7 @@ public class ProductController {
     private final ProductService productService;
 
     // @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('SELLER')")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(
             @RequestPart("productCreateDTO") String productRegisterDTOStr,

@@ -45,6 +45,9 @@ const IconShared = ({ iconType, iconSize = "md", className, ...props }: IconType
         case "plus":
             component = <GoPlus />;
             break;
+        case "minus":
+            component = <GoDash />;
+            break;   
         case "person":
             component = <GoPerson />;
             break;

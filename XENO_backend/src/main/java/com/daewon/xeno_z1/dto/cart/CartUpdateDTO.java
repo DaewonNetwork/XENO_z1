@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartSummaryDTO {   // 장바구니의 요약 정보를 담는 DTO
+public class CartUpdateDTO {
 
-    private int totalProductIndex;
-    private Long totalPrice;
+    private Long cartId;
+    private Long quantity;
 }
