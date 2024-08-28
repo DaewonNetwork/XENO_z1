@@ -15,9 +15,13 @@ export interface ProductInfoType {
   reviewIndex: number;
   booleanColor: boolean;
   color: string;
-  colorType: string[];
-  productImages: Uint8Array[];
-  productColorImages: Uint8Array[];
+  url_1: string;
+  url_2: string;
+  url_3: string;
+  url_4: string;
+  url_5: string;
+  url_6: string;
+  detail_url: string;
   category: "상의" | "하의" | "아우터";
   categorySub: "반팔" | "긴팔" | "청바지" | "반바지" | "면" | "나일론" | "후드집업" | "코트" | "바람막이" | "패딩" | "자켓";
 }

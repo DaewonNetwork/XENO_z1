@@ -4,9 +4,13 @@ import React, { useState } from "react";
 import Slider from "react-slick";
 import style from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
 
-const ProductImagesSlideList = ({ productImages }: { productImages?: Uint8Array[] }) => {
+const ProductImagesSlideList = ({ productImages }: { productImages?: string[] }) => {
     const [currentSlide, setCurrentSlide] = useState<number>(0);
     const images = productImages || [];
+    
+    // 빈 문자열이 아닌 유효한 이미지 배열을 생성
+    const validImages = images.filter(image => image !== null);
+    const imageCount = validImages.length;
 
     const sliderSettings = {
         dots: false,
@@ -21,10 +25,10 @@ const ProductImagesSlideList = ({ productImages }: { productImages?: Uint8Array[
     return (
         <div className={style.product_detail_slide_list}>
             <Slider {...sliderSettings}>
-                {images.map((image, index) => (
+                {validImages.map((image, index) => (
                     <div className={style.slide_block} key={index}>
                         <img
-                            src={`data:image/jpeg;base64,${image}`}
+                            src={image}
                             alt={`Product Image ${index + 1}`}
                             className={style.image}
                         />
@@ -32,7 +36,7 @@ const ProductImagesSlideList = ({ productImages }: { productImages?: Uint8Array[
                 ))}
             </Slider>
             <div className={style.image_order}>
-                <strong>{currentSlide + 1}</strong> <span style={{ margin: "0 4px" }}>/</span> {images.length}
+                <strong>{currentSlide + 1}</strong> <span style={{ margin: "0 4px" }}>/</span> {imageCount}
             </div>
         </div>
     );

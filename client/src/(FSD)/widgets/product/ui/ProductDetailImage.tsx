@@ -8,43 +8,22 @@ import { Button } from "@nextui-org/button";
 import { useProductColorDetailImageListRead } from "@/(FSD)/entities/product/api/useProductColorDetailImageListRead";
 
 interface ProductDetailImageProps {
-    productColorId: string;
+    url: string;
 }
 
-const ProductDetailImage = ({ productColorId }: ProductDetailImageProps) => {
+const ProductDetailImage = ({ url }: ProductDetailImageProps) => {
     const [size, setSize] = useState(2);
     const [isOpen, setIsOpen] = useState(false);
     const [loaded, setLoaded] = useState(false);
-    const { data, isError, error, isPending, refetch } = useProductColorDetailImageListRead(+productColorId, size);
 
-    useEffect(() => {
-        refetch();
-    }, [size]);
 
-    if (isError) {
-        return <div>Error: {error.message}</div>;
-    }
 
-    if (isPending || !data) {
-        return (
-            <div className={style.product_detail_images_list}>
-                <div className={style.product_detail_slide_list}>
-                    {[...Array(size)].map((_, index) => (
-                        <ProductImageSkeleton key={index} />
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    const images: Uint8Array[] = data.productImages.content || [];
-    const totalImagesCount: number = data.imagesCount || 0;
 
     const handleLoadMore = () => {
         if (!isOpen) {
             setIsOpen(true);
             if (!loaded) {
-                setSize(totalImagesCount);
+                setSize(0);
                 setLoaded(true);
             }
         } else {
@@ -57,15 +36,15 @@ const ProductDetailImage = ({ productColorId }: ProductDetailImageProps) => {
     return (
         <div>
             <div className={`${style.product_detail_images_list} ${isOpen ? style.expanded : style.collapsed}`}>
-                {images.map((image, index) => (
-                    <div className={style.image_block} key={index}>
+              
+                    <div className={style.image_block} >
                         <img
-                            src={`data:image/jpeg;base64,${image}`}
-                            alt={`제품 이미지 ${index + 1}`}
+                            src={url}
+                            alt={'상세이미지'}
                             className={style.detail_image}
                         />
                     </div>
-                ))}
+          
             </div>
             <div className={style.gradient_overlay_block}>
                 {!isOpen && <div className={style.gradient_overlay}></div>}

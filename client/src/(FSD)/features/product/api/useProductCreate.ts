@@ -4,7 +4,7 @@ import { MutationType } from "../../types/mutation.type";
 const productCreateFetch = async (data: FormData) => {
     const accessToken = localStorage.getItem("access_token");
 
-    const response = await fetch("http://localhost:8090/api/product/create", {
+    const response = await fetch("http://localhost:8090/api/product/upload", {
         method: "POST",
         headers: {
             Authorization: `Bearer ${accessToken}`,

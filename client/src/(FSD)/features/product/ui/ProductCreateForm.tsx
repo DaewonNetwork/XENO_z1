@@ -1,204 +1,159 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
-import { set, useForm } from "react-hook-form";
-import { z } from "zod";
+import { Button, Input } from "@nextui-org/react";
 import styles from "@/(FSD)/shareds/styles/ProductStyle.module.scss";
-import FormInputShared from "@/(FSD)/shareds/ui/FormInputShared";
-import TextMediumShared from "@/(FSD)/shareds/ui/TextMediumShared";
-import { Button } from "@nextui-org/button";
-import { Select, SelectItem, } from "@nextui-org/select";
-import ProductImageCreateModal from "./ProductImageCreateModal";
-import { useRecoilValue } from "recoil";
-import { productDetailImageState, productImagesState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
-import { useProductCreate } from "../api/useProductCreate";
-import { SizeStocksType } from "./ProductColorCreateForm";
-import { Input } from "@nextui-org/input";
-import { useRouter } from "next/navigation";
-
 
 const ProductCreateForm = () => {
-    const [category, setCategory] = useState<string>("");
-    const [categorySub, setCategorySub] = useState<string>("");
-    const [sizeStocks, setSizeStocks] = useState<SizeStocksType[]>([]);
-    const sizeArray = ["S", "M", "L", "XL"];
-    const router = useRouter();
-    const categories: Record<string, string[]> = {
-        상의: ["반팔", "긴팔"],
-        하의: ["청바지", "반바지", "면", "나일론"],
-        아우터: ["후드집업", "코트", "바람막이", "패딩", "자켓"]
+    const [sections, setSections] = useState([{ id: Date.now(), productNumber: "", images: [], detailImage: null }]);
+    const [excelFile, setExcelFile] = useState<File | null>(null);
+
+    const accessToken = localStorage.getItem("access_token");
+
+    const handleExcelFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            setExcelFile(event.target.files[0]);
+        }
     };
 
+    const handleInputChange = (sectionId: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, files } = event.target;
 
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-
-    const productImages = useRecoilValue(productImagesState);
-    const productDetailImage = useRecoilValue(productDetailImageState);
-
-    const schema = z.object({
-        name: z.string(),
-        season: z.string(),
-        price: z.string(),
-        priceSale: z.string(),
-        productNumber: z.string(),
-        colors: z.string(),
-    });
-
-    const { control, handleSubmit, formState: { errors, isValid, submitCount } } = useForm({
-        resolver: zodResolver(schema),
-        mode: "onChange"
-    });
-
-    const onSuccess = (data: any) => {
-        router.push('/seller')
-    };
-
-    const onError = () => {
-        console.log("error");
-    };
-
-    const { mutate, error } = useProductCreate({ onSuccess, onError });
-
-    console.log(error);
-
-    const onSubmit = (data: any) => {
-        const formData = new FormData();
-        const sizeStocksToSend = sizeStocks.map(({ id, ...rest }) => rest);
-        formData.append("productCreateDTO", JSON.stringify({category: category, categorySub: categorySub, price: +data.price, sale: !!data.priceSale, priceSale: +data.priceSale, size: sizeStocksToSend , ...data }));
-        productImages.forEach((image:File) => {
-            if (image) {
-                formData.append("productImages", image);
+        setSections(prevSections => prevSections.map(section => {
+            if (section.id === sectionId) {
+                if (name === "productNumber") {
+                    return { ...section, productNumber: value };
+                } else if (name === "images") {
+                    return { ...section, images: Array.from(files || []) };
+                } else if (name === "detailImage") {
+                    return { ...section, detailImage: files ? files[0] : null };
+                }
             }
-        });
-        formData.append("productDetailImage", productDetailImage);
-
-        mutate(formData);
+            return section;
+        }));
     };
 
+    const handleExcelUpload = async () => {
+        if (!excelFile) {
+            alert('엑셀 파일을 선택해 주세요.');
+            return;
+        }
 
-    const handleAddSizeStock = () => {
-        const newId = sizeStocks.length > 0 ? sizeStocks[sizeStocks.length - 1].id + 1 : 1;
-        setSizeStocks([...sizeStocks, { id: newId, size: '', stock: 0 }]);
+        const formData = new FormData();
+        formData.append('excel', excelFile);
+
+        try {
+            const response = await fetch("http://localhost:8090/api/product/create", {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Success:', data);
+                alert('엑셀 파일 업로드 성공');
+                window.location.reload();
+            } else {
+                const errorText = await response.text();
+                alert(`업로드 실패: ${errorText}`);
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('엑셀 파일 업로드 중 오류가 발생했습니다.');
+        }
     };
 
-    const handleRemoveSizeStock = (idToRemove: number) => {
-        const updatedSizeStocks = sizeStocks.filter((item) => item.id !== idToRemove);
-        setSizeStocks(updatedSizeStocks);
+    const handleUploadAll = async () => {
+        for (let i = 0; i < sections.length; i++) {
+            const section = sections[i];
+            const formData = new FormData();
+            formData.append('productNumber', section.productNumber);
+            section.images.forEach(file => formData.append('productImages', file));
+            if (section.detailImage) {
+                formData.append('productDetailImage', section.detailImage);
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8090/api/product/upload`, {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Success:', data);
+                    alert(`섹션 ${i + 1}의 이미지가 업로드되었습니다.`);
+                } else {
+                    console.error('Upload failed:', response.statusText);
+                    alert(`섹션 ${i + 1}의 업로드 실패`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`섹션 ${i + 1}의 업로드 중 오류가 발생했습니다.`);
+            }
+        }
+        window.location.reload(); // 모든 업로드가 완료된 후 페이지 새로고침
     };
 
-    const handleSizeChange = (selectedSize: string, id: number) => {
-        const updatedSizeStocks = sizeStocks.map(item =>
-            item.id === id ? { ...item, size: selectedSize } : item
-        );
-        setSizeStocks(updatedSizeStocks);
-    };
-
-    const handleStockChange = (e: any, id: number) => {
-        const updatedSizeStocks = sizeStocks.map(item =>
-            item.id === id ? { ...item, stock: e.target.value } : item
-        );
-        setSizeStocks(updatedSizeStocks);
+    const handleAddSection = () => {
+        setSections([...sections, { id: Date.now(), productNumber: "", images: [], detailImage: null }]);
     };
 
     return (
         <>
-            <form style={{ display: isOpen ? "none" : "block" }} className={styles.product_create_form} onSubmit={handleSubmit(onSubmit)}>
-                <TextMediumShared isLabel={true} htmlFor={"name"}>상품 이름</TextMediumShared>
-                <FormInputShared autoFocus={true} isClearable size={"lg"} variant={"flat"} isInvalid={!!errors.name} radius={"none"} errorMessage={errors.name && <>{errors.name.message}</>} name={"name"} control={control} placeholder={"상품명을 입력해주세요."} />
-                <TextMediumShared isLabel={true} htmlFor={"productNumber"}>품번</TextMediumShared>
-                <FormInputShared isClearable size={"lg"} variant={"flat"} isInvalid={!!errors.product_number} radius={"none"} errorMessage={errors.product_number && <>{errors.product_number.message}</>} name={"productNumber"} control={control} placeholder={"품번을 입력해주세요."} />
-                <TextMediumShared isLabel={true} htmlFor={"season"}>시즌</TextMediumShared>
-                <FormInputShared isClearable size={"lg"} variant={"flat"} isInvalid={!!errors.season} radius={"none"} errorMessage={errors.season && <>{errors.season.message}</>} name={"season"} control={control} placeholder={"시즌을 입력해주세요."} />
-                <TextMediumShared isLabel={true} htmlFor={"price"}>가격</TextMediumShared>
-                <FormInputShared isClearable size={"lg"} variant={"flat"} isInvalid={!!errors.price} radius={"none"} errorMessage={errors.price && <>{errors.price.message}</>} name={"price"} control={control} placeholder={"가격을 입력해주세요."} />
-                <TextMediumShared isLabel={true} htmlFor={"priceSale"}>할인 가격</TextMediumShared>
-                <FormInputShared isClearable size="lg" variant="flat" isInvalid={!!errors.priceSale} radius="none" errorMessage={errors.priceSale && <>{errors.priceSale.message}</>} name={"priceSale"} control={control} placeholder="할인 가격을 입력해주세요." />
-                <TextMediumShared>카테고리</TextMediumShared>
-                <Select
-                    size={"lg"}
-                    onChange={e => {
-                        setCategory(e.target.value);
-                        setCategorySub("");
-                    }}
-                    placeholder={"카테고리를 입력해주세요."}
-                >
-                    {Object.keys(categories).map((cat) => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                    ))}
-                </Select>
-                <TextMediumShared>서브 카테고리</TextMediumShared>
-                <Select
-                    size={"lg"}
-                    onChange={e => setCategorySub(e.target.value)}
-                    placeholder={"서브 카테고리를 입력해주세요."}
-                >
-                    {categories[category || "상의"].map((subCat) => (
-                        <SelectItem key={subCat} value={subCat}>{subCat}</SelectItem>
-                    ))}
-                </Select>
-                <TextMediumShared isLabel={true} htmlFor={"colors"}>색상</TextMediumShared>
-                <FormInputShared isClearable size="lg" variant="flat" isInvalid={!!errors.colors} radius="none" errorMessage={errors.colors && <>{errors.colors.message}</>} name={"colors"} control={control} placeholder="색상을 입력해주세요." />
-                <Button
-                    type="button"
-                    onClick={handleAddSizeStock}
-                    style={{ marginTop: "1rem" }}
-                >
-                    사이즈 추가
-                </Button>
-                {sizeStocks.map((sizeStock) => (
-                    <div key={sizeStock.id} style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-start" }} >
+            {/* 엑셀 파일 업로드 부분 */}
+            <div>
+                <input
+                    type="file"
+                    accept=".xlsx, .xls"
+                    onChange={handleExcelFileChange}
+                />
+                <Button onClick={handleExcelUpload}>엑셀 등록하기</Button>
+            </div>
 
-                        <Select
-                            placeholder="사이즈 선택"
-                            aria-label="사이즈 선택창"
-                            value={sizeStock.size}
-                            size="md"
-                            classNames={{
-                                base: "w-100"
-                            }}
-                            style={{ width: "150px" }}
-                            onChange={(selectedSize) => handleSizeChange(selectedSize.target.value, sizeStock.id)}
-
-                        >
-                            {sizeArray.map((size) => (
-                                <SelectItem key={size} value={size} isDisabled={sizeStocks.some((item) => item.size === size && item.id !== sizeStock.id)}>
-                                    {size}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                        <Input
-                            isClearable
-                            size="md"
-                            classNames={{
-                                base: "w-100"
-                            }}
-
-                            style={{ width: "100px" }}
-                            placeholder="재고 입력"
-                            onChange={(e) => handleStockChange(e, sizeStock.id)}
-                            aria-label="재고 입력란"
+            {/* 품번 입력 및 이미지 업로드 부분 */}
+            {sections.map((section, index) => (
+                <div key={section.id} className={styles.section}>
+                    <div className={styles.field}>
+                        <label>품번:</label>
+                        <input 
+                            type="text" 
+                            name="productNumber"
+                            value={section.productNumber}
+                            onChange={(event) => handleInputChange(section.id, event)}
+                            placeholder="품번 입력" 
                         />
-                        <Button
-                            variant="flat"
-                            onClick={() => handleRemoveSizeStock(sizeStock.id)}
-                        >
-                            삭제
-                        </Button>
                     </div>
-                ))}
-                <TextMediumShared>이미지</TextMediumShared>
-                <Button
-                    onClick={_ => {
-                        setIsOpen(true);
-                    }}
-                    fullWidth size={"lg"} type={"button"} variant={"ghost"}
-                >
-                    이미지 등록하기
-                </Button>
-                <Button isDisabled={(!isValid) || (!productImages) || (!productDetailImage) || (!category) || (!categorySub)} fullWidth size={"lg"} type={"submit"} color={"primary"}>등록하기</Button>
-            </form>
-            {isOpen && <ProductImageCreateModal setIsOpen={setIsOpen} files={productImages} detailFile={productDetailImage}/>}
+                    <div className={styles.field}>
+                        <label>이미지 6개 업로드:</label>
+                        <input 
+                            type="file" 
+                            name="images"
+                            accept="image/*" 
+                            multiple 
+                            onChange={(event) => handleInputChange(section.id, event)}
+                        />
+                    </div>
+                    <div className={styles.field}>
+                        <label>상세 이미지 업로드:</label>
+                        <input 
+                            type="file" 
+                            name="detailImage"
+                            accept="image/*" 
+                            onChange={(event) => handleInputChange(section.id, event)}
+                        />
+                    </div>
+                </div>
+            ))}
+            <Button onClick={handleAddSection}>추가</Button>
+            <Button onClick={handleUploadAll}>모두 업로드</Button>
         </>
     );
 };

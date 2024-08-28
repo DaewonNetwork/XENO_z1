@@ -25,7 +25,7 @@ const ReviewInfoContainer = () => {
 
     const reviewInfo: ReviewInfoType = data;
 
-    const { data: productData, refetch } = useProductColorCardRead(reviewInfo?.productColorId);
+    const { data: productData, refetch } = useProductColorCardRead(reviewInfo?.productId);
 
 
     const product: ProductType | undefined = productData;

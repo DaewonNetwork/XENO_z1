@@ -6,10 +6,10 @@ import { ReviewInfoType } from "@/(FSD)/shareds/types/review/ReviewInfo.type";
 import React, { useEffect, useMemo, useState } from "react";
 import style from "@/(FSD)/shareds/styles/ReviewStyle.module.scss";
 
-const ReviewInfoList = ({ productColorId }: { productColorId: string }) => {
+const ReviewInfoList = ({ productId }: { productId: string }) => {
     const [pageIndex, setPageIndex] = useState(1);
 
-    const { data , refetch} = useReviewInfoListRead(Number(productColorId),pageIndex);
+    const { data , refetch} = useReviewInfoListRead(Number(productId),pageIndex);
 
     const reviewList: ReviewInfoType[] = useMemo(() => {
         return data?.dtoList || [];

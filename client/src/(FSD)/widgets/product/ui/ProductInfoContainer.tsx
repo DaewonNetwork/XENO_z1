@@ -11,10 +11,11 @@ import { nameState } from "@/(FSD)/shareds/stores/ProductAtom";
 import ProductOtherColorImageList from "./ProductOtherColorImageList";
 import ReviewInfoList from "../../review/ui/ReviewInfoList";
 import ProductDetailImage from "./ProductDetailImage";
+import { useProductRead } from "@/(FSD)/entities/product/api/useProductRankRead";
 
 const ProductInfoContainer = () => {
-    const { productColorId } = useParams<{ productColorId: string }>();
-    const { data, isError, error, isPending, refetch } = useProductColorRead(+productColorId);
+    const { productId } = useParams<{ productId: string }>();
+    const { data, isError, error, isPending, refetch } = useProductRead(+productId);
 
     const setName = useSetRecoilState(nameState)
 
@@ -23,22 +24,23 @@ const ProductInfoContainer = () => {
     useEffect(() => {
         console.log(productInfo)
         refetch();
-    }, [productColorId, data,refetch]);
+    }, [productId, data,refetch]);
 
     if (!productInfo) return <></>;
 
+    console.log(productInfo)
+
     setName(productInfo.name);
+    
+    const urls = [productInfo.url_1, productInfo.url_2, productInfo.url_3, productInfo.url_4, productInfo.url_5, productInfo.url_6];
 
     return (
         <>
-            <ProductImagesSlideList productImages={productInfo.productImages} />
+            <ProductImagesSlideList productImages={urls} />
             <ProductInfo product={productInfo} />
+            <ProductDetailImage url={productInfo.detail_url} />
 
-            {productInfo.booleanColor && (<ProductOtherColorImageList />)}
-            
-            <ProductDetailImage productColorId={productColorId} />
-
-            <ReviewInfoList productColorId={productColorId} />
+            {/* <ReviewInfoList productId={productId} /> */}
         </>
     );
 };

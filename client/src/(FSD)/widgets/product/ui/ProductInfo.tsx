@@ -11,6 +11,8 @@ const ProductInfo = ({ product }: { product: ProductInfoType }) => {
         return Math.round(((price - priceSale) / price) * 100);
     };
 
+    console.log(product)
+
     const discountPercent = calculateDiscountPercent(product.price, product.priceSale);
 
     const categoryId = getCategoryID(product.category);

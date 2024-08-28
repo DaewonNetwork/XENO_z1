@@ -19,7 +19,6 @@ const MyPageInfoContainer = () => {
         <AppInner>
                     <UserInfoCard />
                     <OrderInfoListBtn/>
-
         </AppInner>
     );
 };

@@ -22,8 +22,8 @@ export interface ProductOrderBarType {
 }
 
 const ProductOrderBarContainer = () => {
-    const { productColorId } = useParams<{ productColorId: string }>();
-    const { data, isError, error, isPending, refetch } = useProductColorOrderBarRead(Number(productColorId));
+    const { productId } = useParams<{ productId: string }>();
+    const { data, isError, error, isPending, refetch } = useProductColorOrderBarRead(Number(productId));
     
     const orderBar: ProductOrderBarType = data || { orderInfo: [] };
 
@@ -33,7 +33,7 @@ const ProductOrderBarContainer = () => {
     useEffect(() => {
         console.log(orderBar);
         refetch();
-    }, [productColorId, orderBar, refetch]);
+    }, [productId, orderBar, refetch]);
 
     if(!data && !orderBar) return <></>
 
