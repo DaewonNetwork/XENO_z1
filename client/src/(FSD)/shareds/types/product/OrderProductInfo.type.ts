@@ -1,6 +1,6 @@
 export type OrderProductInfoType = {
     productColorSizeId?: number;
-    productColorId?: number;
+    productId?: number;
     color: string;
     size: string;
     quantity: number;

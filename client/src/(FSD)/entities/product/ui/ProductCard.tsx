@@ -29,7 +29,7 @@ const ProductCard = ({ product, likeBtn, isRank = false, rank = 0 , isColor = fa
         <div 
         className={styles.product_card}
         onClick={_ => {
-            router.push(`/products/${product.productColorId}`);
+            router.push(`/products/${product.productId}`);
         }}
         >
             <div className={styles.card_top}>

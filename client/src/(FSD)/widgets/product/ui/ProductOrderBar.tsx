@@ -24,7 +24,7 @@ type SizeAndStockType = {
 
 const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBarType, parentRefetch?: any }) => {
     if(!orderBar) return <></>
-    const {productColorId } = useParams<{ productColorId: string }>();
+    const {productId } = useParams<{ productId: string }>();
     const [isOpenOrder, setisOpenOrder] = useState(false);
     const [isSelectedColor, setIsSelectedColor] = useState(false);
     const [isSelectedSize, setIsSelectedSize] = useState(false);
@@ -85,9 +85,9 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
         return orderItem?.productColorSizeId;
     };
 
-    const getProductColorId = (color: string): number | undefined => {
+    const getproductId = (color: string): number | undefined => {
         const orderItem = orderBar.orderInfo.find(item => item.color === color);
-        return orderItem?.productColorId;
+        return orderItem?.productId;
     };
 
     const handleBuyClick = () => {
@@ -116,7 +116,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
         setSize(size);
         setIsSelectedSize(false);
         const productColorSizeId = getProductColorSizeId(color, size);
-        const productColorId = getProductColorId(color)
+        const productId = getproductId(color)
 
         if (productColorSizeId !== undefined) {
             // 제품 정보를 products 배열에 추가하기 전에 중복 체크
@@ -127,7 +127,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
             } else {
                 setProducts(prevProducts => [
                     ...prevProducts,
-                    { productColorSizeId, color, size, quantity: 1, price: orderBar.price, productColorId: productColorId }
+                    { productColorSizeId, color, size, quantity: 1, price: orderBar.price, productId: productId }
                 ]);
                 setColor("");
                 setSize("");
@@ -215,7 +215,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
             setIsSelectedSize(false);
             const newProducts1: OrderProductInfoType[] = products.map(product => {
 
-                const matchingImage = images.find(image => image.productColorId === product.productColorId);
+                const matchingImage = images.find(image => image.productId === product.productId);
 
                 const productImage = matchingImage ? matchingImage.productColorImage : null;
 
@@ -288,7 +288,7 @@ const ProductOrderBar = ({ orderBar, parentRefetch }: { orderBar: ProductOrderBa
                         <AppInner>
                             <div className={styles.order_inner}>
                                 <div className={styles.order_like_btn}>
-                                    <ProductLikeBtn productColorId={Number(productColorId)} isLike={orderBar?.like} isIndex={true} size={"md"} index={orderBar?.likeIndex}
+                                    <ProductLikeBtn productId={Number(productId)} isLike={orderBar?.like} isIndex={true} size={"md"} index={orderBar?.likeIndex}
                                         parentRefetch={parentRefetch} />
                                 </div>
                                 <div className={styles.order_btn}>

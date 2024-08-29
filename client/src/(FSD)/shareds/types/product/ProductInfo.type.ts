@@ -1,8 +1,8 @@
 
 export interface ProductInfoType {
   productId: number;
-  productColorId: number;
-  otherProductColorId: number[];
+  productId: number;
+  otherproductId: number[];
   name: string;
   brandName: string;
   price: number;

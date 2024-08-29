@@ -8,8 +8,8 @@ export const useProductLikeToggle = ({ onSuccess, onError }: MutationType) => {
     const fetchData = useFetchData();
 
     return useMutation({
-        mutationFn: (productColorId: number) => {
-            return fetchData({ path: `/like?productColorId=${productColorId}`, isAuthRequired: true })
+        mutationFn: (productId: number) => {
+            return fetchData({ path: `/like?productId=${productId}`, isAuthRequired: true })
         },
         onSuccess: (data: any) => {
             onSuccess(data);

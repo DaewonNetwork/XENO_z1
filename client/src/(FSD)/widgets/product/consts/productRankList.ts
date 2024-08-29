@@ -2,7 +2,7 @@ import type { ProductType } from "@/(FSD)/shareds/types/product/Product.type";
 
 export const productRankList: ProductType[] = [
     {
-        productColorId: 1,
+        productId: 1,
         name: "화이트 기본 반팔 티셔츠",
         brandName: "유니클로",
         price: 15000,
@@ -15,7 +15,7 @@ export const productRankList: ProductType[] = [
         like: true,
     },
     {
-        productColorId: 2,
+        productId: 2,
         name: "블랙 긴팔 티셔츠",
         brandName: "지오다노",
         price: 20000,
@@ -28,7 +28,7 @@ export const productRankList: ProductType[] = [
         like: false,
     },
     {
-        productColorId: 3,
+        productId: 3,
         name: "빈티지 청바지",
         brandName: "리바이스",
         price: 50000,
@@ -41,7 +41,7 @@ export const productRankList: ProductType[] = [
         like: false,
     },
     {
-        productColorId: 4,
+        productId: 4,
         name: "캐주얼 면바지",
         brandName: "에잇세컨즈",
         price: 30000,
@@ -54,7 +54,7 @@ export const productRankList: ProductType[] = [
         like: false,
     },
     {
-        productColorId: 5,
+        productId: 5,
         name: "블루 나일론 바지",
         brandName: "아디다스",
         price: 40000,
@@ -67,7 +67,7 @@ export const productRankList: ProductType[] = [
         like: false,
     },
     {
-        productColorId: 6,
+        productId: 6,
         name: "그레이 후드집업",
         brandName: "나이키",
         price: 60000,
@@ -80,7 +80,7 @@ export const productRankList: ProductType[] = [
         like: false,
     },
     {
-        productColorId: 7,
+        productId: 7,
         name: "네이비 롱 코트",
         brandName: "버버리",
         price: 200000,
@@ -93,7 +93,7 @@ export const productRankList: ProductType[] = [
         like: false,
     },
     {
-        productColorId: 8,
+        productId: 8,
         name: "블랙 바람막이",
         brandName: "파타고니아",
         price: 80000,
@@ -106,7 +106,7 @@ export const productRankList: ProductType[] = [
         like: false,
     },
     {
-        productColorId: 9,
+        productId: 9,
         name: "그린 패딩",
         brandName: "노스페이스",
         price: 150000,
@@ -119,7 +119,7 @@ export const productRankList: ProductType[] = [
         like: false,
     },
     {
-        productColorId: 10,
+        productId: 10,
         name: "브라운 가죽 자켓",
         brandName: "자라",
         price: 100000,

@@ -42,49 +42,6 @@ const ProductListBtn = () => {
 
     return (
         <div style={{marginBottom:"10px"}}>
-            <Button onClick={onOpen} size={"sm"}   className="w-full h-[100px] bg-white border-2" radius="none" 
-             endContent={<IconShared iconType={isOpen ? "top" : "bottom"} />}><TextMediumShared>기존 상품 목록 보기</TextMediumShared></Button>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">상품 목록</ModalHeader>
-                            <ModalBody>
-                                {productInfoList.length > 0 ? (
-                                    <Select label="기존 상품에서 색상 추가하기" >
-                                        {productInfoList.map(product => (
-                                            <SelectItem key={product.productId} onClick={() => handleCreate(product.productId)}>
-                                                품번 : {product.productNumber} 상품 이름 : {product.productName}
-                                            </SelectItem>
-                                        ))}
-                                    </Select>
-                                ) : (
-                                    <p>등록된 상품이 없습니다.</p>
-                                )}
-
-                                {productInfoList.length > 0 ? (
-                                    <Select label="기존 상품 정보 수정하기" >
-                                        {productInfoList.map(product => (
-                                            <SelectItem key={product.productId} onClick={() => handleUpdate(product.productId)}>
-                                                품번 : {product.productNumber} 상품 이름 : {product.productName}
-                                            </SelectItem>
-                                        ))}
-                                    </Select>
-                                ) : (
-                                    ""
-                                )}
-
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="danger" variant="light" onPress={onClose}>
-                                    닫기
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
-
         </div>
     );
 };

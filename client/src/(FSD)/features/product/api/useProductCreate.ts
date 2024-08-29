@@ -1,7 +1,18 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { MutationType } from "../../types/mutation.type";
 
-const productCreateFetch = async (data: FormData) => {
+interface ProductCreateData {
+    formData: FormData;
+    index: number;
+}
+
+export interface ProductCreateResponse {
+    responseData: any;
+    index: number;
+}
+
+const productCreateFetch = async (data: ProductCreateData): Promise<ProductCreateResponse> => {
+    const { formData, index } = data;
     const accessToken = localStorage.getItem("access_token");
 
     const response = await fetch("http://localhost:8090/api/product/upload", {
@@ -9,28 +20,28 @@ const productCreateFetch = async (data: FormData) => {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
-        body: data,
+        body: formData,
     });
 
     if (!response.ok) {
         const errorMessage = await response.text();
         throw new Error(errorMessage);
-    };
+    }
 
     const responseData = await response.json();
 
-    return responseData;
+    return { responseData, index };
 }
 
-export const useProductCreate = ({ onSuccess, onError }: MutationType) => {
+export const useProductCreate = ({ onSuccess, onError }: MutationType): UseMutationResult<ProductCreateResponse, Error, ProductCreateData> => {
     return useMutation({
-        mutationFn: (data: FormData) => {
+        mutationFn: (data: ProductCreateData) => {
             return productCreateFetch(data);
         },
-        onSuccess: (data: any) => {
-            onSuccess(data);
+        onSuccess: (data: ProductCreateResponse) => {
+            onSuccess(data.index);
         },
-        onError: _ => {
+        onError: (error: Error) => {
             if (onError) {
                 onError();
             }

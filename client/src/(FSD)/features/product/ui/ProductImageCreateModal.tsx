@@ -13,15 +13,17 @@ import FileInputShared from "@/(FSD)/shareds/ui/FileInputShared";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { productDetailImageState, productImagesState } from "@/(FSD)/shareds/stores/ProductCreateAtome";
 
+
 interface ProductImageCreateModalProps {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
     files: File[] | null;
     detailFile: File | null;
+    index: number;
 }
 
-const ProductImageCreateModal = ({ setIsOpen ,files, detailFile}: ProductImageCreateModalProps) => {
-    const setProductImages = useSetRecoilState(productImagesState);
-    const setProductDetailImage = useSetRecoilState(productDetailImageState);
+const ProductImageCreateModal = ({ setIsOpen ,files, detailFile,index}: ProductImageCreateModalProps) => {
+    const [productImages, setProductImages] = useRecoilState(productImagesState);
+    const [productDetailImage, setProductDetailImage] = useRecoilState(productDetailImageState);
 
     const [img1, setImg1] = useState<File>();
     const [img2, setImg2] = useState<File>();
@@ -30,10 +32,18 @@ const ProductImageCreateModal = ({ setIsOpen ,files, detailFile}: ProductImageCr
     const [img5, setImg5] = useState<File>();
     const [img6, setImg6] = useState<File>();
     const [productDetailImg, setProductDetailImg] = useState<File>();
-
+    
     const handleClick = () => {
-        setProductImages([img1, img2, img3, img4, img5, img6]);
-        setProductDetailImage(productDetailImg);
+        setProductImages((prevImages:any) => {
+            const updatedImages = [...prevImages];
+            updatedImages[index] = [img1, img2, img3, img4, img5, img6].filter(Boolean) as File[];
+            return updatedImages;
+        });
+        setProductDetailImage((prevImages:any) => {
+            const updatedDetailImages = [...prevImages];
+            updatedDetailImages[index] = productDetailImg || null;
+            return updatedDetailImages;
+        });
         setIsOpen(false);
     };
 

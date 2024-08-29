@@ -48,8 +48,8 @@ interface ProductColorSizeType {
 
 const ProductColorUpdateForm = () => {
 
-    const { productColorId } = useParams<{ productColorId: string }>();
-    const { data } = useProductColorSizeStockRead(+productColorId)
+    const { productId } = useParams<{ productId: string }>();
+    const { data } = useProductColorSizeStockRead(+productId)
     const productImages = useRecoilValue(productImagesState);
     const productDetailImage = useRecoilValue(productDetailImageState);
     const [images,setImages] = useRecoilState(imagesState)
@@ -102,7 +102,7 @@ const ProductColorUpdateForm = () => {
     const onSubmit = (data: any) => {
         const formData = new FormData();
         const sizeStocksToSend = sizeStocks.map(({ id, ...rest }) => rest);
-        formData.append("productColorUpdateDTO", JSON.stringify({ productColorId: productColorId, size: sizeStocksToSend }));
+        formData.append("productColorUpdateDTO", JSON.stringify({ productId: productId, size: sizeStocksToSend }));
         productImages.forEach((image: File) => {
             if (image) {
                 formData.append("productImages", image);
@@ -204,7 +204,7 @@ const ProductColorUpdateForm = () => {
                     이미지 수정하기
                 </Button>
                 <Button isDisabled={(!isValid) || (!productImages) || (!productDetailImage)} fullWidth size={"lg"} type={"submit"}>수정하기</Button>
-                <Button fullWidth size={"lg"} onClick={() => deleteProductColor(+productColorId)} >삭제하기</Button>
+                <Button fullWidth size={"lg"} onClick={() => deleteProductColor(+productId)} >삭제하기</Button>
             </form>
             {isOpen && <ProductImageUpdateModal setIsOpen={setIsOpen} files={productImages} detailFile={productDetailImage} />}
         </>

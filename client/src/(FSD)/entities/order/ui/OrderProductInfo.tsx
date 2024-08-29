@@ -17,12 +17,12 @@ const OrderProductInfo = ({ product }: OrderProductInfoProps) => {
     return (
         <div 
         onClick={_ => {
-            router.push(`/products/${product.productColorId}`);
+            router.push(`/products/${product.productId}`);
         }}
         className={styles.order_product_info}
         >
             <div className={styles.info_image}>
-                <img src={`data:image/jpeg;base64,${product.image}`} onClick={()=>  router.push(`/products/${product.productColorId}`)} style={{cursor: "pointer"}} />
+                <img src={`data:image/jpeg;base64,${product.image}`} onClick={()=>  router.push(`/products/${product.productId}`)} style={{cursor: "pointer"}} />
             </div>
             <div className={styles.info_text}>
                 <div className={styles.text_top}>

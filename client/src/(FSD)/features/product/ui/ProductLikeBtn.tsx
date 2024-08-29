@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 
 
 interface ProductLikeBtnType {
-    productColorId: number;
+    productId: number;
     isLike?: boolean;
     isIndex?: boolean;
     index?: number;
@@ -20,7 +20,7 @@ interface ProductLikeBtnType {
     parentRefetch?: any;
 }
 
-const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = false, index, parentRefetch }: ProductLikeBtnType) => {
+const ProductLikeBtn = ({ productId, isLike = true, size = "sm", isIndex = false, index, parentRefetch }: ProductLikeBtnType) => {
 
     const  isLoggedIn  = useRecoilValue(isLoggedInState);
 
@@ -35,7 +35,7 @@ const ProductLikeBtn = ({ productColorId, isLike = true, size = "sm", isIndex = 
 
     const like = () => {
         if(isLoggedIn){
-        mutate(productColorId)
+        mutate(productId)
         } else {
             router.push("/auth/signin")
         }

@@ -12,7 +12,7 @@ import React, { useEffect } from "react";
 interface ReviewHeaderType {
     name: string;
     color: string;
-    productColorId: number;
+    productId: number;
 
 }
 
