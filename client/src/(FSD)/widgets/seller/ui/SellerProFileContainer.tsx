@@ -33,9 +33,9 @@ const SellerProFileContainer = () => {
                 // isDisabled={(!isValid)}
                 fullWidth size={"lg"}
                 type={"button"} color={"primary"}
-                onClick={() => setCheckOpen(true)} // 모든 폼 블록을 한 번에 제출
+                onClick={() => setCheckOpen(true)}
             >
-                이미지 조회하기
+                업로드한 이미지 조회하기
             </Button>
             {/* <DarkModeSelectBtn/> */}
         </>

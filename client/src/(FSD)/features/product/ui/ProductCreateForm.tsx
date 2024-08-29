@@ -15,6 +15,8 @@ import { ProductCreateResponse, useProductCreate } from "../api/useProductCreate
 import { useRouter } from "next/navigation";
 import ProductImageCheckModal from "@/(FSD)/entities/product/ui/ProductImageCheckModal";
 
+
+
 export interface ImageListType {
     productNumber: string;
     url_1: string;
@@ -42,6 +44,7 @@ const ProductCreateForm = () => {
     const [productImages, setProductImages] = useRecoilState(productImagesState);
     const [productDetailImage, setProductDetailImage] = useRecoilState(productDetailImageState);
     const [excelFile, setExcelFile] = useState<File | null>(null);
+
 
     const handleExcelFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -102,7 +105,7 @@ const ProductCreateForm = () => {
     };
 
     const accessToken = localStorage.getItem("access_token");
-    
+
     const addFormBlock = () => {
         setFormBlocks([...formBlocks, formBlocks.length + 1]);
     };
@@ -140,6 +143,33 @@ const ProductCreateForm = () => {
         }
     };
 
+    const downloadExcel = async () => {
+        try {
+            const response = await fetch('https://localhost:8090/api/product/download/excel', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const blob = await response.blob(); // 응답을 Blob 형식으로 처리
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'spring_excel_download.xlsx'); // 다운로드할 파일 이름 설정
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } catch (error) {
+            console.error('Error downloading Excel file:', error);
+        }
+    };
+
 
     return (
         <>
@@ -170,7 +200,7 @@ const ProductCreateForm = () => {
                     </Button>
                     {idx === formBlocks.length - 1 && (
                         <Button
-                            fullWidth size={"lg"} type={"button"} color={"primary"}
+                            fullWidth size={"lg"} type={"button"} variant={"ghost"}
                             onClick={addFormBlock}
                         >
                             추가 이미지
@@ -192,7 +222,7 @@ const ProductCreateForm = () => {
             {checkOpen && (
                 <ProductImageCheckModal
                     setCheckOpen={setCheckOpen}
-                
+
                 />
             )}
 
@@ -204,16 +234,27 @@ const ProductCreateForm = () => {
             >
                 이미지 업로드하기
             </Button>
-
-            <br></br>
-
+            <br />
             <Button
                 // isDisabled={(!isValid)}
-                fullWidth size={"lg"}
-                type={"button"} color={"primary"}
+                fullWidth size={"lg"} type={"button"} variant={"ghost"}
                 onClick={() => setCheckOpen(true)} // 모든 폼 블록을 한 번에 제출
             >
-                이미지 조회하기
+                업로드한 이미지 조회하기
+            </Button>
+            <Button
+                // isDisabled={(!isValid)}
+                fullWidth size={"lg"} type={"button"} variant={"ghost"}
+                onClick={() => setCheckOpen(true)} // 모든 폼 블록을 한 번에 제출
+            >
+                새 엑셀 템플릿 다운받기
+            </Button>
+            <Button
+                // isDisabled={(!isValid)}
+                fullWidth size={"lg"} type={"button"} variant={"ghost"}
+                onClick={() => downloadExcel()} // 모든 폼 블록을 한 번에 제출
+            >
+                나의 상품 목록 엑셀 다운받기
             </Button>
 
             <div>

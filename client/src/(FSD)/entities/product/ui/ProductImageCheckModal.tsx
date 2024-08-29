@@ -89,11 +89,21 @@ const ProductImageCheckModal = ({ setCheckOpen }: ProductImageCheckModalProps) =
                                 <div className={styles.preview_img_box}>
                                     <img src={image.detailUrl} alt="상세 이미지" />
                                 </div>
+
+
                             ) : (
                                 <div className={styles.empty_image_box}>
                                     <TextMediumShared>상세 이미지 없음</TextMediumShared>
                                 </div>
                             )}
+
+                            <div>
+                                <Button onClick={() => copyImagesToClipboard([
+                                    image.detailUrl
+                                ])}>
+                                    상세 이미지 링크 복사하기
+                                </Button>
+                            </div>
                         </div>
                     </AppInner>
                 </AppSection>
