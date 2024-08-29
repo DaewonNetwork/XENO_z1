@@ -9,6 +9,8 @@ import ProductCreateBtn from '../../product/ui/ProductCreateBtn'
 import DarkModeSelectBtn from './DarkModeSelectBtn'
 import { Button } from '@nextui-org/button'
 import ProductImageCheckModal from '@/(FSD)/entities/product/ui/ProductImageCheckModal'
+import IconShared from '@/(FSD)/shareds/ui/IconShared'
+import TextMediumShared from '@/(FSD)/shareds/ui/TextMediumShared'
 
 const SellerProFileContainer = () => {
 
@@ -19,7 +21,7 @@ const SellerProFileContainer = () => {
             {checkOpen && (
                 <ProductImageCheckModal
                     setCheckOpen={setCheckOpen}
-        
+
                 />
             )}
 
@@ -29,14 +31,9 @@ const SellerProFileContainer = () => {
             <ProductListBtn />
             <ProductOrdersStatusListBtn />
             <QuestionBtn />
-            <Button
-                // isDisabled={(!isValid)}
-                fullWidth size={"lg"}
-                type={"button"} color={"primary"}
-                onClick={() => setCheckOpen(true)}
-            >
-                업로드한 이미지 조회하기
-            </Button>
+
+            <Button onClick={() => setCheckOpen(true)} size={"sm"} className="w-full h-[100px] bg-white border-2" radius="none" endContent={<IconShared iconType={checkOpen ? "top" : "bottom"} />}><TextMediumShared>
+                업로드한 이미지 조회</TextMediumShared></Button>
             {/* <DarkModeSelectBtn/> */}
         </>
     )
